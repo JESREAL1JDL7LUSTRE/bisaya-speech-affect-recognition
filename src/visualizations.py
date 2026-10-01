@@ -44,9 +44,12 @@ SESSION_PALETTE = {
 
 
 def generate_all_visualizations(
-    dataset_csv: str = "datasets/cleaned_multimodal_dataset.csv",
+    dataset_csv: str = "datasets/multimodal/cleaned_multimodal_dataset.csv",
     output_dir: str = "outputs/visualizations"
 ):
+    if not os.path.exists(dataset_csv) and os.path.exists("datasets/cleaned_multimodal_dataset.csv"):
+        dataset_csv = "datasets/cleaned_multimodal_dataset.csv"
+        
     os.makedirs(output_dir, exist_ok=True)
     df = pd.read_csv(dataset_csv)
     print(f"Loaded dataset for visualizations: {df.shape}")

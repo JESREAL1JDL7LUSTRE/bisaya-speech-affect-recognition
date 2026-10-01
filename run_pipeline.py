@@ -31,11 +31,11 @@ def main():
     raw_audio_dir = "DATA/2AudioRecordings/Raw .wav"
     raw_video_dir = "DATA/3ImageRecording/Raw Cut Video"
     
-    audio_csv = "datasets/audio_feature_dataset.csv"
-    facial_csv = "datasets/facial_feature_dataset.csv"
-    raw_multimodal_csv = "datasets/cleaned_multimodal_dataset.csv"
-    scaled_multimodal_csv = "datasets/cleaned_multimodal_dataset_scaled.csv"
-    data_dict_csv = "datasets/multimodal_data_dictionary.csv"
+    audio_csv = "datasets/audio/audio_feature_dataset.csv"
+    facial_csv = "datasets/facial/facial_feature_dataset.csv"
+    raw_multimodal_csv = "datasets/multimodal/cleaned_multimodal_dataset.csv"
+    scaled_multimodal_csv = "datasets/multimodal/cleaned_multimodal_dataset_scaled.csv"
+    data_dict_csv = "datasets/multimodal/multimodal_data_dictionary.csv"
     stats_dir = "outputs/descriptive_statistics"
     vis_dir = "outputs/visualizations"
     
@@ -65,17 +65,6 @@ def main():
         output_dictionary_csv=data_dict_csv
     )
     print(f"[OK] Step 3 Complete: {df_multi.shape[0]} observations, {df_multi.shape[1]} multimodal variables.")
-
-    # Populate matching upload folders: AudioDataset, FaceDataset, MultimodalDataset
-    import shutil
-    for folder, src_file, target_name in [
-        ("AudioDataset", audio_csv, "audio_feature_dataset.csv"),
-        ("FaceDataset", facial_csv, "facial_feature_dataset.csv"),
-        ("MultimodalDataset", raw_multimodal_csv, "cleaned_multimodal_dataset.csv")
-    ]:
-        os.makedirs(folder, exist_ok=True)
-        shutil.copy2(src_file, os.path.join(folder, target_name))
-    shutil.copy2(data_dict_csv, os.path.join("MultimodalDataset", "multimodal_data_dictionary.csv"))
     
     # -------------------------------------------------------------
     # Step 4: Descriptive Statistics & Hypothesis Testing

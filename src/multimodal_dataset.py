@@ -17,12 +17,18 @@ from sklearn.preprocessing import StandardScaler
 
 
 def build_cleaned_multimodal_dataset(
-    audio_csv: str = "datasets/audio_feature_dataset.csv",
-    facial_csv: str = "datasets/facial_feature_dataset.csv",
-    output_raw_csv: str = "datasets/cleaned_multimodal_dataset.csv",
-    output_scaled_csv: str = "datasets/cleaned_multimodal_dataset_scaled.csv",
-    output_dictionary_csv: str = "datasets/multimodal_data_dictionary.csv"
+    audio_csv: str = "datasets/audio/audio_feature_dataset.csv",
+    facial_csv: str = "datasets/facial/facial_feature_dataset.csv",
+    output_raw_csv: str = "datasets/multimodal/cleaned_multimodal_dataset.csv",
+    output_scaled_csv: str = "datasets/multimodal/cleaned_multimodal_dataset_scaled.csv",
+    output_dictionary_csv: str = "datasets/multimodal/multimodal_data_dictionary.csv"
 ):
+    # Fallback to subfolder paths if old paths provided and missing
+    if not os.path.exists(audio_csv) and os.path.exists("datasets/audio/audio_feature_dataset.csv"):
+        audio_csv = "datasets/audio/audio_feature_dataset.csv"
+    if not os.path.exists(facial_csv) and os.path.exists("datasets/facial/facial_feature_dataset.csv"):
+        facial_csv = "datasets/facial/facial_feature_dataset.csv"
+
     print("Loading Audio and Facial Feature Datasets...")
     df_audio = pd.read_csv(audio_csv)
     df_facial = pd.read_csv(facial_csv)
@@ -180,6 +186,7 @@ def build_cleaned_multimodal_dataset(
         })
         
     df_dict = pd.DataFrame(dict_records)
+    os.makedirs(os.path.dirname(os.path.abspath(output_dictionary_csv)), exist_ok=True)
     df_dict.to_csv(output_dictionary_csv, index=False)
     print(f"Multimodal Data Dictionary saved to: {output_dictionary_csv} ({len(df_dict)} entries)")
     

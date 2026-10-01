@@ -42,9 +42,12 @@ def compute_univariate_stats(series: pd.Series) -> dict:
 
 
 def run_descriptive_statistics(
-    dataset_csv: str = "datasets/cleaned_multimodal_dataset.csv",
+    dataset_csv: str = "datasets/multimodal/cleaned_multimodal_dataset.csv",
     output_dir: str = "outputs/descriptive_statistics"
 ):
+    if not os.path.exists(dataset_csv) and os.path.exists("datasets/cleaned_multimodal_dataset.csv"):
+        dataset_csv = "datasets/cleaned_multimodal_dataset.csv"
+        
     os.makedirs(output_dir, exist_ok=True)
     df = pd.read_csv(dataset_csv)
     print(f"Loaded dataset for statistical analysis: {df.shape}")

@@ -313,5 +313,5 @@ def extract_all_audio_features(raw_audio_dir: str, output_csv: str = None) -> pd
 
 if __name__ == "__main__":
     audio_dir = "DATA/2AudioRecordings/Raw .wav"
-    out_csv = "datasets/audio_feature_dataset.csv"
+    out_csv = "datasets/audio/audio_feature_dataset.csv"
     extract_all_audio_features(audio_dir, out_csv)

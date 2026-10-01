@@ -322,5 +322,5 @@ def extract_all_facial_features(raw_video_dir: str, output_csv: str = None) -> p
 
 if __name__ == "__main__":
     video_dir = "DATA/3ImageRecording/Raw Cut Video"
-    out_csv = "datasets/facial_feature_dataset.csv"
+    out_csv = "datasets/facial/facial_feature_dataset.csv"
     extract_all_facial_features(video_dir, out_csv)

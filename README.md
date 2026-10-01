@@ -13,25 +13,27 @@ All components specified in the **Second Deliverables** have been fully generate
 
 | Deliverable Component | Output Artifact | Status | Description |
 |---|---|:---:|---|
-| **1. Audio Feature Dataset** | [`datasets/audio_feature_dataset.csv`](file:///d:/SCHOOL/affective/datasets/audio_feature_dataset.csv) | **Completed** | 40 observations, 119 acoustic & prosodic features (F0, RMS, ZCR, 13 MFCCs, Deltas, Delta-Deltas, Spectral Centroid, Bandwidth, Rolloff, Flatness, Contrast, Local Jitter & Shimmer) |
-| **2. Facial Feature Dataset** | [`datasets/facial_feature_dataset.csv`](file:///d:/SCHOOL/affective/datasets/facial_feature_dataset.csv) | **Completed** | 40 observations, 200 vision features (52 FACS Blendshapes [mean, std, max], Eye Aspect Ratio [EAR], Mouth Aspect Ratio [MAR], Head Pose [Pitch, Yaw, Roll], Expressiveness) |
-| **3. Cleaned Multimodal Dataset** | [`datasets/cleaned_multimodal_dataset.csv`](file:///d:/SCHOOL/affective/datasets/cleaned_multimodal_dataset.csv)<br>[`datasets/cleaned_multimodal_dataset_scaled.csv`](file:///d:/SCHOOL/affective/datasets/cleaned_multimodal_dataset_scaled.csv) | **Completed** | 40 observations, 314 multimodal variables, 0 missing/null values, 0 infinite values. Includes standardized z-score dataset and data dictionary. |
-| **4. Descriptive Statistics** | [`outputs/descriptive_statistics/descriptive_statistics_report.md`](file:///d:/SCHOOL/affective/outputs/descriptive_statistics/descriptive_statistics_report.md)<br>6 CSV Tables in `outputs/descriptive_statistics/` | **Completed** | Univariate statistics, AM vs. PM hypothesis testing (Welch's t-test, Mann-Whitney U, Cohen's d), Affect taxonomy breakdown, Lexically controlled analysis, Cross-modal correlation matrix. |
+| **1. Audio Feature Dataset** | [`datasets/audio/audio_feature_dataset.csv`](file:///d:/SCHOOL/affective/datasets/audio/audio_feature_dataset.csv) | **Completed** | 40 observations, 125 acoustic & prosodic features (F0, RMS, ZCR, 13 MFCCs, Deltas, Delta-Deltas, Spectral Centroid, Bandwidth, Rolloff, Flatness, Contrast, Local Jitter & Shimmer) |
+| **2. Facial Feature Dataset** | [`datasets/facial/facial_feature_dataset.csv`](file:///d:/SCHOOL/affective/datasets/facial/facial_feature_dataset.csv) | **Completed** | 40 observations, 206 vision features (52 FACS Blendshapes [mean, std, max], Eye Aspect Ratio [EAR], Mouth Aspect Ratio [MAR], Head Pose [Pitch, Yaw, Roll], Expressiveness) |
+| **3. Cleaned Multimodal Dataset** | [`datasets/multimodal/cleaned_multimodal_dataset.csv`](file:///d:/SCHOOL/affective/datasets/multimodal/cleaned_multimodal_dataset.csv)<br>[`datasets/multimodal/cleaned_multimodal_dataset_scaled.csv`](file:///d:/SCHOOL/affective/datasets/multimodal/cleaned_multimodal_dataset_scaled.csv) | **Completed** | 40 observations, 319 multimodal variables, 0 missing/null values, 0 infinite values. Includes standardized z-score dataset and data dictionary. |
+| **4. Descriptive Statistics** | [`outputs/descriptive_statistics/descriptive_statistics_report.md`](file:///d:/SCHOOL/affective/outputs/descriptive_statistics/descriptive_statistics_report.md)<br>8 CSV Tables in `outputs/descriptive_statistics/` | **Completed** | Univariate statistics, AM vs. PM hypothesis testing (Welch's t-test, Mann-Whitney U, Cohen's d), Affect taxonomy breakdown, Lexically controlled analysis, Cross-modal correlation matrix. |
 | **5. Tables & Visualizations** | 10 Publication-Grade Figures in [`outputs/visualizations/`](file:///d:/SCHOOL/affective/outputs/visualizations/) | **Completed** | 300 DPI high-resolution figures (Circumplex affect space, MFCC heatmaps, session boxplots, facial action units, cross-modal synchronization, PCA/t-SNE clustering, radar profiles). |
 
 ---
 
-## 📁 Repository & Upload Folder Structure
+## 📁 Repository & Dataset Folder Structure
 
 ```text
 d:\SCHOOL\affective\
-├── AudioDataset/                       # Matches portal upload folder
-│   └── audio_feature_dataset.csv       # Extracted audio acoustic features (40 x 118)
-├── FaceDataset/                        # Matches portal upload folder
-│   └── facial_feature_dataset.csv      # Extracted facial vision features (40 x 199)
-├── MultimodalDataset/                  # Matches portal upload folder
-│   ├── cleaned_multimodal_dataset.csv  # THE TRUE CLEANED MULTIMODAL DATASET (40 x 312)
-│   └── multimodal_data_dictionary.csv  # 312-entry data dictionary / codebook
+├── datasets/
+│   ├── audio/
+│   │   └── audio_feature_dataset.csv       # Extracted audio acoustic features (40 x 125)
+│   ├── facial/
+│   │   └── facial_feature_dataset.csv      # Extracted facial vision features (40 x 206)
+│   └── multimodal/
+│       ├── cleaned_multimodal_dataset.csv  # THE TRUE CLEANED MULTIMODAL DATASET (40 x 319)
+│       ├── cleaned_multimodal_dataset_scaled.csv # Standardized z-score normalized dataset
+│       └── multimodal_data_dictionary.csv  # 319-entry data dictionary / codebook
 │
 ├── outputs/
 │   ├── descriptive_statistics/
