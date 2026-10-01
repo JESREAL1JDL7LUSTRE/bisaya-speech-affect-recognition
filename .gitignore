@@ -1,1 +1,4 @@
 DATA
+.venv/
+__pycache__/
+*.pyc
