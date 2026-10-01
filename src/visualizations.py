@@ -101,38 +101,9 @@ def generate_all_visualizations(
     print(f"Saved: {f1_path}")
     
     # -------------------------------------------------------------
-    # Figure 2: Russell's Circumplex Affect Taxonomy Space
+    # Figure 2: Russell's Circumplex Affect Taxonomy Space (Empirical)
     # -------------------------------------------------------------
     fig, ax = plt.subplots(figsize=(10, 8))
-    
-    # Circumplex coordinates approximation based on affect taxonomy
-    circumplex_coords = {
-        # Word: (Valence [-1 to 1], Arousal [-1 to 1])
-        "Thrilled": (0.85, 0.80),
-        "Lingaw": (0.80, 0.70),
-        "Chuy": (0.65, 0.30),
-        "Gihigugma": (0.75, 0.40),
-        "Hapsay": (0.60, 0.20),
-        "Nahuwasan": (0.70, 0.10),
-        "Relibo": (0.68, 0.12),
-        "Okay": (0.10, -0.05),
-        "Hilom": (0.05, -0.40),
-        "Kamatuoran": (0.00, -0.10),
-        "Ambot": (-0.15, -0.20),
-        "Kulba": (-0.65, 0.75),
-        "Kapuliki": (-0.75, 0.70),
-        "Lisod": (-0.60, 0.50),
-        "Libog": (-0.55, 0.40),
-        "Gaduha-duha": (-0.45, 0.30),
-        "Labad": (-0.70, 0.35),
-        "Gakaguol": (-0.80, -0.30),
-        "Kaguol": (-0.85, -0.35),
-        "Pildi": (-0.75, -0.45),
-        "Kapoy": (-0.60, -0.65),
-        "Hangak": (-0.65, -0.50),
-        "Mamatay": (-0.80, -0.70),
-        "Lutang": (-0.35, -0.75)
-    }
     
     # Background Quadrant shading
     ax.axhline(0, color='gray', linestyle='--', linewidth=1.2, alpha=0.7)
@@ -144,27 +115,37 @@ def generate_all_visualizations(
     ax.text(0.85, -0.90, "LOW AROUSAL\nPOSITIVE (Calm / Relief)", ha='center', va='center', fontsize=9, fontweight='bold', color='#3C5488', alpha=0.6)
     
     word_freq = df['spoken_word'].value_counts()
-    for word, (val, aro) in circumplex_coords.items():
-        count = word_freq.get(word, 0)
-        if count == 0:
-            continue
-        cat = df[df['spoken_word'] == word]['affect_category'].iloc[0]
-        color = AFFECT_PALETTE.get(cat, '#888888')
-        size = 180 + count * 80
-        ax.scatter(val, aro, s=size, color=color, alpha=0.75, edgecolors='black', linewidth=1.5, zorder=5)
-        
-        # Annotation text
-        offset_y = 0.045 if aro >= 0 else -0.045
-        ax.annotate(
-            f"{word}\n(n={count})",
-            (val, aro),
-            textcoords="offset points",
-            xytext=(0, 10 if aro >= 0 else -18),
-            ha='center',
-            fontsize=9,
-            fontweight='bold',
-            bbox=dict(boxstyle="round,pad=0.2", fc="white", ec=color, alpha=0.85, lw=1)
-        )
+    
+    if "valence_score" in df.columns and "arousal_score" in df.columns:
+        # Compute true empirical coordinates from participant self-reports (centered on neutral=3)
+        mean_v = df.groupby('spoken_word')['valence_score'].mean()
+        mean_a = df.groupby('spoken_word')['arousal_score'].mean()
+        # Scale 1-5 to [-1, 1] with slight jitter for overlapping points
+        np.random.seed(42)
+        for word in word_freq.index:
+            count = word_freq[word]
+            cat = df[df['spoken_word'] == word]['affect_category'].iloc[0]
+            color = AFFECT_PALETTE.get(cat, '#888888')
+            
+            val = (mean_v[word] - 3.0) / 2.0 + (np.random.uniform(-0.04, 0.04) if count == 1 else 0)
+            aro = (mean_a[word] - 3.0) / 2.0 + (np.random.uniform(-0.04, 0.04) if count == 1 else 0)
+            val = np.clip(val, -0.95, 0.95)
+            aro = np.clip(aro, -0.95, 0.95)
+            
+            size = 180 + count * 85
+            ax.scatter(val, aro, s=size, color=color, alpha=0.8, edgecolors='black', linewidth=1.5, zorder=5)
+            
+            ax.annotate(
+                f"{word}\n(n={count}, V:{mean_v[word]:.1f}, A:{mean_a[word]:.1f})",
+                (val, aro),
+                textcoords="offset points",
+                xytext=(0, 12 if aro >= 0 else -20),
+                ha='center',
+                fontsize=8.5,
+                fontweight='bold',
+                bbox=dict(boxstyle="round,pad=0.2", fc="white", ec=color, alpha=0.85, lw=1)
+            )
+    ax.set_title("Empirical Circumplex Affect Space of Bisaya Post-Class Reactions\n(Coordinates derived directly from participant self-reported Valence & Arousal ratings)", fontsize=13, fontweight='bold', pad=14)
         
     ax.set_xlim(-1.05, 1.05)
     ax.set_ylim(-1.05, 1.05)

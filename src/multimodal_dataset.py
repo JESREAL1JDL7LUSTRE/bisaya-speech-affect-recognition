@@ -32,8 +32,10 @@ def build_cleaned_multimodal_dataset(
     
     # Common metadata columns
     shared_cols = [
-        "participant_code", "year_level", "session", "spoken_word",
-        "affect_category", "valence_group", "arousal_group", "word_english"
+        "participant_code", "year_level", "class_activity", "subject",
+        "session", "session_name", "spoken_word", "self_reported_feeling",
+        "valence_score", "valence_label", "arousal_score", "arousal_label",
+        "affect_category", "word_english", "date_collected"
     ]
     
     # Check for matching participants
@@ -50,6 +52,9 @@ def build_cleaned_multimodal_dataset(
         on="participant_code",
         how="inner"
     ).copy()
+    
+    if "self_reported_feeling" in df_multimodal.columns:
+        df_multimodal["self_reported_feeling"] = df_multimodal["self_reported_feeling"].fillna(df_multimodal["spoken_word"])
     
     # Compute Cross-Modal Affective Indices
     # 1. Multimodal Expressiveness Index: normalized audio RMS energy * facial expressiveness score

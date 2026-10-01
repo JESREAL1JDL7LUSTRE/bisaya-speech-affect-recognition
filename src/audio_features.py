@@ -47,10 +47,47 @@ AFFECT_TAXONOMY = {
 }
 
 
+def load_survey_metadata(csv_path: str = "DATA/RESEARCH MINI-PROJECT v2 - G7 - 4th year.csv") -> dict:
+    """Loads official participant survey responses (Valence, Arousal, Class Activity, etc.)."""
+    if not os.path.exists(csv_path):
+        return {}
+    try:
+        df_meta = pd.read_csv(csv_path, encoding='utf-8')
+    except Exception:
+        df_meta = pd.read_csv(csv_path, encoding='cp1252')
+        
+    val_map = {1: 'Very Unpleasant', 2: 'Unpleasant', 3: 'Neutral', 4: 'Pleasant', 5: 'Very Pleasant'}
+    aro_map = {1: 'Very Low', 2: 'Low', 3: 'Moderate', 4: 'High', 5: 'Very High'}
+    
+    meta_dict = {}
+    for _, row in df_meta.iterrows():
+        p_code = str(row['Participant Code']).strip()
+        v_raw = str(row['Valence (1-5)']).strip()
+        a_raw = str(row['Arousal (1-5)']).strip()
+        
+        v_score = int(v_raw[0]) if len(v_raw) > 0 and v_raw[0].isdigit() else 3
+        a_score = int(a_raw[0]) if len(a_raw) > 0 and a_raw[0].isdigit() else 3
+        
+        meta_dict[p_code] = {
+            'class_activity': str(row['Class Activity']).strip(),
+            'subject': str(row['Subject']).strip(),
+            'session_name': str(row['Session']).strip(),
+            'self_reported_feeling': str(row['Self-Reported Feeling']).strip() if (pd.notna(row['Self-Reported Feeling']) and str(row['Self-Reported Feeling']).strip() != '') else str(row['Spoken Word']).strip(),
+            'valence_score': v_score,
+            'valence_label': val_map.get(v_score, 'Neutral'),
+            'arousal_score': a_score,
+            'arousal_label': aro_map.get(a_score, 'Moderate'),
+            'date_collected': str(row['Date Collected']).strip() if pd.notna(row['Date Collected']) else ''
+        }
+    return meta_dict
+
+
+SURVEY_METADATA = load_survey_metadata()
+
+
 def parse_filename(filepath: str):
     """
-    Parses ParticipantCode_YearLevel_Session_Word.wav
-    Example: Y4-001_Y4_PM_Thrilled.WAV
+    Parses ParticipantCode_YearLevel_Session_Word.wav and enriches with ground truth survey metadata.
     """
     filename = os.path.basename(filepath)
     stem, _ = os.path.splitext(filename)
@@ -58,12 +95,12 @@ def parse_filename(filepath: str):
     if len(parts) >= 4:
         participant_code = parts[0]
         year_level = parts[1]
-        session = parts[2]
+        session_code = parts[2]
         spoken_word = parts[3]
     else:
         participant_code = stem
         year_level = "Unknown"
-        session = "Unknown"
+        session_code = "Unknown"
         spoken_word = "Unknown"
     
     tax = AFFECT_TAXONOMY.get(spoken_word, {
@@ -73,15 +110,24 @@ def parse_filename(filepath: str):
         "english": spoken_word
     })
     
+    survey = SURVEY_METADATA.get(participant_code, {})
+    
     return {
         "participant_code": participant_code,
-        "year_level": year_level,
-        "session": session,
+        "year_level": survey.get("year_level", "4th Year"),
+        "class_activity": survey.get("class_activity", "Unknown"),
+        "subject": survey.get("subject", "Unknown"),
+        "session": session_code,
+        "session_name": survey.get("session_name", "Morning" if session_code == "AM" else "Afternoon"),
         "spoken_word": spoken_word,
+        "self_reported_feeling": survey.get("self_reported_feeling", spoken_word),
+        "valence_score": survey.get("valence_score", 3),
+        "valence_label": survey.get("valence_label", tax["valence_group"]),
+        "arousal_score": survey.get("arousal_score", 3),
+        "arousal_label": survey.get("arousal_label", tax["arousal_group"]),
         "affect_category": tax["category"],
-        "valence_group": tax["valence_group"],
-        "arousal_group": tax["arousal_group"],
         "word_english": tax["english"],
+        "date_collected": survey.get("date_collected", ""),
         "audio_filename": filename
     }
 

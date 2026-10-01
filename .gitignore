@@ -1,4 +1,5 @@
-DATA
+DATA/2AudioRecordings/
+DATA/3ImageRecording/
 .venv/
 __pycache__/
 *.pyc

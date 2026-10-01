@@ -19,7 +19,7 @@ import mediapipe as mp
 from mediapipe.tasks.python import vision, BaseOptions
 from tqdm import tqdm
 
-from src.audio_features import AFFECT_TAXONOMY, parse_filename
+from src.audio_features import AFFECT_TAXONOMY, parse_filename, SURVEY_METADATA
 
 
 
@@ -151,16 +151,24 @@ def extract_facial_features_from_video(video_path: str, detector: vision.FaceLan
     cap.release()
     
     detection_rate = detected_frames / total_frames if total_frames > 0 else 0.0
+    survey = SURVEY_METADATA.get(participant_code, {})
     
     features = {
         "participant_code": participant_code,
-        "year_level": year_level,
+        "year_level": survey.get("year_level", "4th Year"),
+        "class_activity": survey.get("class_activity", "Unknown"),
+        "subject": survey.get("subject", "Unknown"),
         "session": session,
+        "session_name": survey.get("session_name", "Morning" if session == "AM" else "Afternoon"),
         "spoken_word": spoken_word,
+        "self_reported_feeling": survey.get("self_reported_feeling", spoken_word),
+        "valence_score": survey.get("valence_score", 3),
+        "valence_label": survey.get("valence_label", tax["valence_group"]),
+        "arousal_score": survey.get("arousal_score", 3),
+        "arousal_label": survey.get("arousal_label", tax["arousal_group"]),
         "affect_category": tax["category"],
-        "valence_group": tax["valence_group"],
-        "arousal_group": tax["arousal_group"],
         "word_english": tax["english"],
+        "date_collected": survey.get("date_collected", ""),
         "video_filename": filename,
         "video_fps": round(fps, 2),
         "video_total_frames": total_frames,

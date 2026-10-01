@@ -1,12 +1,19 @@
 Column_Name,Modality,Feature_Family,Data_Type,Unit,Description
 participant_code,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (participant_code)
 year_level,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (year_level)
+class_activity,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (class_activity)
+subject,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (subject)
 session,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (session)
+session_name,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (session_name)
 spoken_word,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (spoken_word)
+self_reported_feeling,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (self_reported_feeling)
+valence_score,Metadata,Identifiers & Educational Context,int64,categorical/string,Participant / Context variable (valence_score)
+valence_label,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (valence_label)
+arousal_score,Metadata,Identifiers & Educational Context,int64,categorical/string,Participant / Context variable (arousal_score)
+arousal_label,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (arousal_label)
 affect_category,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (affect_category)
-valence_group,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (valence_group)
-arousal_group,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (arousal_group)
 word_english,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (word_english)
+date_collected,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (date_collected)
 audio_filename,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (audio_filename)
 audio_duration_sec,Acoustic / Speech,Audio Metadata,float64,seconds/count,Audio property: audio_duration_sec
 audio_trimmed_dur_sec,Acoustic / Speech,Audio Metadata,float64,seconds/count,Audio property: audio_trimmed_dur_sec

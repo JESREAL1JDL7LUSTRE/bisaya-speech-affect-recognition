@@ -170,15 +170,37 @@ def run_descriptive_statistics(
     # ---------------------------------------------------------
     df_kapoy = df[df["spoken_word"] == "Kapoy"].copy()
     kapoy_features = [
-        "participant_code", "session", "audio_duration_sec", "audio_f0_mean_hz",
+        "participant_code", "session", "class_activity", "self_reported_feeling",
+        "valence_score", "arousal_score", "audio_duration_sec", "audio_f0_mean_hz",
         "audio_rms_mean", "audio_spec_centroid_mean", "face_smile_mean",
         "face_frown_mean", "face_brow_lowerer_mean", "face_ear_mean", "face_mar_mean",
         "multimodal_expressiveness_index"
     ]
-    df_kapoy_out = df_kapoy[kapoy_features].sort_values("audio_f0_mean_hz", ascending=False)
+    avail_kapoy_features = [c for c in kapoy_features if c in df_kapoy.columns]
+    df_kapoy_out = df_kapoy[avail_kapoy_features].sort_values("audio_f0_mean_hz", ascending=False)
     df_kapoy_out.to_csv(os.path.join(output_dir, "lexically_controlled_kapoy.csv"), index=False)
     print(f"Saved: {os.path.join(output_dir, 'lexically_controlled_kapoy.csv')} ({len(df_kapoy_out)} Kapoy instances)")
     
+    # ---------------------------------------------------------
+    # 5b. Class Activity Breakdown (RQ2: Educational Context)
+    # ---------------------------------------------------------
+    if "class_activity" in df.columns:
+        act_counts = df["class_activity"].value_counts().reset_index()
+        act_counts.columns = ["class_activity", "Count"]
+        act_counts["Percentage"] = (act_counts["Count"] / len(df) * 100).round(2)
+        
+        act_num_cols = [c for c in [
+            "valence_score", "arousal_score", "audio_f0_mean_hz", "audio_rms_mean",
+            "face_smile_mean", "face_frown_mean", "face_brow_lowerer_mean"
+        ] if c in df.columns]
+        
+        act_means = df.groupby("class_activity")[act_num_cols].mean().round(4).reset_index()
+        act_summary = pd.merge(act_counts, act_means, on="class_activity")
+        act_summary.to_csv(os.path.join(output_dir, "class_activity_summary.csv"), index=False)
+        print(f"Saved: {os.path.join(output_dir, 'class_activity_summary.csv')}")
+    else:
+        act_summary = pd.DataFrame()
+
     # ---------------------------------------------------------
     # 6. Audio-Facial Cross-Modal Correlation Analysis
     # ---------------------------------------------------------
@@ -212,6 +234,30 @@ def run_descriptive_statistics(
     df_corr = df_corr.sort_values(by="Pearson_p", ascending=True)
     df_corr.to_csv(os.path.join(output_dir, "audio_facial_correlations.csv"), index=False)
     print(f"Saved: {os.path.join(output_dir, 'audio_facial_correlations.csv')}")
+    
+    # ---------------------------------------------------------
+    # 6b. Ground Truth Valence & Arousal Correlations
+    # ---------------------------------------------------------
+    if "valence_score" in df.columns and "arousal_score" in df.columns:
+        test_features = audio_corr_cols + facial_corr_cols
+        gt_records = []
+        for feat in test_features:
+            r_v, p_v = stats.pearsonr(df[feat], df["valence_score"])
+            r_a, p_a = stats.pearsonr(df[feat], df["arousal_score"])
+            gt_records.append({
+                "Feature": feat,
+                "Valence_Pearson_r": round(float(r_v), 4),
+                "Valence_p": round(float(p_v), 5),
+                "Arousal_Pearson_r": round(float(r_a), 4),
+                "Arousal_p": round(float(p_a), 5),
+                "Valence_Sig": "Yes" if p_v < 0.05 else "No",
+                "Arousal_Sig": "Yes" if p_a < 0.05 else "No"
+            })
+        df_gt_corr = pd.DataFrame(gt_records)
+        df_gt_corr.to_csv(os.path.join(output_dir, "ground_truth_affect_correlations.csv"), index=False)
+        print(f"Saved: {os.path.join(output_dir, 'ground_truth_affect_correlations.csv')}")
+    else:
+        df_gt_corr = pd.DataFrame()
     
     # ---------------------------------------------------------
     # 7. Generate Comprehensive Markdown Report
