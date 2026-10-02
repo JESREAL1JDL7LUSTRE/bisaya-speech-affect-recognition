@@ -1,4 +1,0 @@
-class_activity,Count,Mean_valence_score,Mean_arousal_score,Mean_audio_f0_mean_hz,Mean_audio_rms_mean,Mean_face_smile_mean
-Lecture / Review,6,3.6667,3.3333,143.97,0.0272,0.3974
-Prelim Exam,14,3.7143,3.6429,152.5086,0.0605,0.1621
-Quiz,20,2.45,2.55,192.0812,0.0854,0.2564

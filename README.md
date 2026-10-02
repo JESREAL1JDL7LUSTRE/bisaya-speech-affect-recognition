@@ -15,13 +15,12 @@
 > In accordance with course instructor Ma'am Love Jhoye's guidance, the primary scope for the Midterm PIT modeling and presentation focuses strictly on **Acoustic and Prosodic Speech Emotion Recognition (Audio Modality)**.
 > All facial action unit and multimodal cross-referencing features have been systematically preserved and categorized into dedicated subdirectories (`outputs/facial/` and `outputs/multimodal/`) for complete academic rigor, but all primary analytical tables and 10 publication figures for the PIT presentation are located in [`outputs/audio/`](file:///d:/SCHOOL/affective/outputs/audio/).
 
-| Deliverable Component | Primary Output Artifact | Status | Description |
+| Deliverable Component | Output Directory | Status | Description |
 |---|---|:---:|---|
-| **1. Audio Feature Dataset (PRIMARY FOCUS)** | [`datasets/audio/audio_feature_dataset.csv`](file:///d:/SCHOOL/affective/datasets/audio/audio_feature_dataset.csv) | **Completed** | 40 observations, 146 acoustic & prosodic variables (F0 with pitch-detected flag, RMS energy, ZCR, 13 MFCCs, Deltas, Delta-Deltas, Spectral characteristics, pitch dynamics). |
-| **2. Audio Figures & Statistics** | [`outputs/audio/`](file:///d:/SCHOOL/affective/outputs/audio/) | **Completed** | 10 high-resolution (300 DPI) publication figures and 5 CSV summary tables covering speech distribution, Russell's circumplex, session tests, MFCC profiles, spectral contrasts, F0 dynamics, lexically controlled *Kapoy*, and PCA/t-SNE acoustic clustering. |
-| **3. Facial Feature Dataset (Vision)** | [`datasets/facial/facial_feature_dataset.csv`](file:///d:/SCHOOL/affective/datasets/facial/facial_feature_dataset.csv)<br>[`outputs/facial/`](file:///d:/SCHOOL/affective/outputs/facial/) | **Completed** | 40 observations, 225 vision variables (52 FACS Blendshapes, EAR, MAR, Head Pose) + 5 facial figures & summary CSV. |
-| **4. Multimodal Dataset & Cross-Analysis** | [`datasets/multimodal/cleaned_multimodal_dataset.csv`](file:///d:/SCHOOL/affective/datasets/multimodal/cleaned_multimodal_dataset.csv)<br>[`outputs/multimodal/`](file:///d:/SCHOOL/affective/outputs/multimodal/) | **Completed** | 40 observations, 344 variables (295 numeric predictors) + 4 cross-modal correlation figures & joint statistics. |
-| **5. Descriptive Statistics & Audits** | [`outputs/descriptive_statistics/descriptive_statistics_report.md`](file:///d:/SCHOOL/affective/outputs/descriptive_statistics/descriptive_statistics_report.md)<br>[`outputs/data_quality/`](file:///d:/SCHOOL/affective/outputs/data_quality/) | **Completed** | Missing-aware univariate stats, FDR-adjusted AM vs. PM Welch tests, empirical rating affect groups, and data quality flags. |
+| **1. Audio Modality (PRIMARY FOCUS)** | [`outputs/audio/`](file:///d:/SCHOOL/affective/outputs/audio/) | **Completed** | 10 high-resolution (300 DPI) figures, 5 summary CSV tables, and descriptive markdown report covering acoustic & prosodic features, pitch dynamics, and session tests. |
+| **2. Facial Modality (Vision)** | [`outputs/facial/`](file:///d:/SCHOOL/affective/outputs/facial/) | **Completed** | 5 high-resolution (300 DPI) figures and 1 summary CSV table covering MediaPipe FACS blendshapes, EAR/MAR, and head pose dynamics. |
+| **3. Multimodal Analysis** | [`outputs/multimodal/`](file:///d:/SCHOOL/affective/outputs/multimodal/) | **Completed** | 4 high-resolution (300 DPI) figures and 4 summary CSV tables covering cross-modal correlations, joint embeddings, and lexically controlled *Kapoy* profiles. |
+| **4. Clean Datasets** | [`datasets/`](file:///d:/SCHOOL/affective/datasets/) | **Completed** | Clean datasets categorized into `datasets/audio/`, `datasets/facial/`, and `datasets/multimodal/` (including 344-entry data dictionary). |
 
 ---
 
@@ -43,7 +42,7 @@ d:\SCHOOL\affective\
 │       └── multimodal_data_dictionary.csv        # 344-entry comprehensive data dictionary
 │
 ├── outputs/
-│   ├── audio/                                    # ⭐ PRIMARY FOCUS FOR MIDTERM PIT
+│   ├── audio/                                    # ⭐ PRIMARY FOR MIDTERM PIT (Figures + CSVs)
 │   │   ├── 01_audio_sample_distribution.png      # Sample, activity, word frequencies, duration
 │   │   ├── 02_empirical_affect_circumplex_audio.png # Russell's 2D valence-arousal space
 │   │   ├── 03_prosodic_features_by_session.png   # F0, RMS, ZCR, duration boxplots with Welch t & FDR q
@@ -54,35 +53,30 @@ d:\SCHOOL\affective\
 │   │   ├── 08_audio_predictor_pca_tsne_clustering.png  # Acoustic-only unsupervised embeddings
 │   │   ├── 09_acoustic_feature_correlation_matrix.png  # Inter-feature acoustic correlation matrix
 │   │   ├── 10_educational_context_acoustic_shifts.png  # Exam/quiz/lecture acoustic shifts
-│   │   ├── summary_statistics_audio.csv
-│   │   ├── session_am_pm_comparison.csv
-│   │   ├── spoken_word_affect_summary.csv
-│   │   ├── year_level_affect_summary.csv
-│   │   └── class_activity_summary.csv
+│   │   ├── summary_statistics_audio.csv          # Missing-aware audio descriptive statistics
+│   │   ├── session_am_pm_comparison.csv          # AM vs. PM Welch t-test & FDR q-values
+│   │   ├── class_activity_summary.csv            # Exam/quiz/lecture distribution
+│   │   ├── spoken_word_affect_summary.csv        # Per-word valence and arousal means
+│   │   ├── year_level_affect_summary.csv         # 4th-year affect statistics
+│   │   └── audio_descriptive_report.md           # Summary report for audio modality
 │   │
-│   ├── facial/                                   # Vision-only analysis
-│   │   ├── 01_facial_action_units_by_valence.png
-│   │   ├── 02_geometric_ratios_ear_mar.png
-│   │   ├── 03_head_pose_dynamics.png
-│   │   ├── 04_facial_expression_variability.png
-│   │   ├── 05_facial_predictor_pca_tsne.png
-│   │   └── summary_statistics_facial.csv
+│   ├── facial/                                   # Vision Only (Figures + CSV)
+│   │   ├── 01_facial_action_units_by_valence.png # AU12 smile, AU15 frown, AU4 brow lowerer
+│   │   ├── 02_geometric_ratios_ear_mar.png       # Eye & Mouth Aspect Ratios across valence
+│   │   ├── 03_head_pose_dynamics.png             # Head pitch, yaw, roll across sessions
+│   │   ├── 04_facial_expression_variability.png  # Cross-AU variability & disgust proxy
+│   │   ├── 05_facial_predictor_pca_tsne.png      # Facial predictor PCA & t-SNE
+│   │   └── summary_statistics_facial.csv         # Facial descriptive statistics
 │   │
-│   ├── multimodal/                               # Cross-modal analysis
-│   │   ├── 01_audio_facial_correlation_heatmap.png
-│   │   ├── 02_multimodal_joint_pca_tsne.png
-│   │   ├── 03_multimodal_lexically_controlled_kapoy.png
-│   │   ├── 04_educational_context_affect_profiles.png
-│   │   ├── audio_facial_correlations.csv
-│   │   ├── affect_taxonomy_summary.csv
-│   │   ├── ground_truth_affect_correlations.csv
-│   │   └── lexically_controlled_kapoy.csv
-│   │
-│   ├── descriptive_statistics/
-│   │   └── descriptive_statistics_report.md
-│   └── data_quality/
-│       ├── data_quality_report.csv
-│       └── data_quality_report.md
+│   └── multimodal/                               # Cross-Modal Analysis (Figures + CSVs)
+│       ├── 01_audio_facial_correlation_heatmap.png # Cross-modal Pearson correlations with FDR threshold
+│       ├── 02_multimodal_joint_pca_tsne.png      # Joint 295 acoustic + facial predictor embeddings
+│       ├── 03_multimodal_lexically_controlled_kapoy.png # Acoustic vs. visual Action Units for Kapoy
+│       ├── 04_educational_context_affect_profiles.png # Activity × Session confounding matrix
+│       ├── audio_facial_correlations.csv         # Inter-modality correlation table
+│       ├── ground_truth_affect_correlations.csv  # Correlations with valence & arousal
+│       ├── affect_taxonomy_summary.csv           # Binned taxonomy statistics
+│       └── lexically_controlled_kapoy.csv        # Kapoy cross-modal observations
 │
 ├── DATA/                                         # Source survey & recordings
 ├── run_pipeline.py                               # Master execution pipeline

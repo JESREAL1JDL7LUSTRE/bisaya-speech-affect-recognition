@@ -517,21 +517,20 @@ def generate_multimodal_visualizations(df: pd.DataFrame, output_dirs: list[Path]
 
 def generate_all_visualizations(
     dataset_csv: str = "datasets/multimodal/cleaned_multimodal_dataset.csv",
-    output_dir: str = "outputs/visualizations",
+    output_dir: str = "outputs",
 ):
     """
-    Generates all figures into:
-    1. outputs/audio/ AND outputs/visualizations/audio/ (10 Audio Figures)
-    2. outputs/facial/ AND outputs/visualizations/facial/ (5 Facial Figures)
-    3. outputs/multimodal/ AND outputs/visualizations/multimodal/ (4 Multimodal Figures)
+    Generates all figures into dedicated modality directories:
+    1. outputs/audio/ (10 Audio-only Figures)
+    2. outputs/facial/ (5 Facial-only Figures)
+    3. outputs/multimodal/ (4 Multimodal Figures)
     """
     df = pd.read_csv(dataset_csv)
-    base_vis = Path(output_dir)
-    base_outputs = Path("outputs")
+    base_outputs = Path(output_dir)
 
-    audio_dirs = [base_outputs / "audio", base_vis / "audio"]
-    facial_dirs = [base_outputs / "facial", base_vis / "facial"]
-    multimodal_dirs = [base_outputs / "multimodal", base_vis / "multimodal"]
+    audio_dirs = [base_outputs / "audio"]
+    facial_dirs = [base_outputs / "facial"]
+    multimodal_dirs = [base_outputs / "multimodal"]
 
     print("=================================================================")
     print(" GENERATING DISAGGREGATED FIGURES (AUDIO, FACIAL, MULTIMODAL)")
@@ -540,7 +539,7 @@ def generate_all_visualizations(
     generate_facial_visualizations(df, facial_dirs)
     generate_multimodal_visualizations(df, multimodal_dirs)
     print("=================================================================")
-    print(f"All figures generated successfully across outputs/ and {output_dir}!")
+    print(f"All figures generated successfully under {output_dir}/audio, {output_dir}/facial, {output_dir}/multimodal!")
 
 
 if __name__ == "__main__":

@@ -116,10 +116,16 @@ def _correlations(df: pd.DataFrame, left: list[str], right: list[str], left_name
 
 def run_descriptive_statistics(
     dataset_csv: str = "datasets/multimodal/cleaned_multimodal_dataset.csv",
-    output_dir: str = "outputs/descriptive_statistics",
+    audio_output_dir: str = "outputs/audio",
+    facial_output_dir: str = "outputs/facial",
+    multimodal_output_dir: str = "outputs/multimodal",
 ):
-    output = Path(output_dir)
-    output.mkdir(parents=True, exist_ok=True)
+    audio_out = Path(audio_output_dir)
+    facial_out = Path(facial_output_dir)
+    multi_out = Path(multimodal_output_dir)
+    audio_out.mkdir(parents=True, exist_ok=True)
+    facial_out.mkdir(parents=True, exist_ok=True)
+    multi_out.mkdir(parents=True, exist_ok=True)
     df = pd.read_csv(dataset_csv)
 
     audio_features = [
@@ -136,12 +142,12 @@ def run_descriptive_statistics(
         "face_ear_mean", "face_ear_min", "face_mar_mean", "face_mar_max",
         "face_pitch_mean_deg", "face_yaw_mean_deg", "face_roll_mean_deg", "face_detection_rate",
     ]
-    audio_stats = _save_summary(df, audio_features, output / "summary_statistics_audio.csv")
-    facial_stats = _save_summary(df, facial_features, output / "summary_statistics_facial.csv")
+    audio_stats = _save_summary(df, audio_features, audio_out / "summary_statistics_audio.csv")
+    facial_stats = _save_summary(df, facial_features, facial_out / "summary_statistics_facial.csv")
 
-    session_features = ["valence_score", "arousal_score"] + audio_features[:15] + facial_features[:16]
+    session_features = ["valence_score", "arousal_score"] + audio_features[:15]
     session = _session_comparison(df, session_features)
-    session.to_csv(output / "session_am_pm_comparison.csv", index=False)
+    session.to_csv(audio_out / "session_am_pm_comparison.csv", index=False)
 
     affect = df.groupby(["valence_group", "arousal_group", "affect_category"], dropna=False).agg(
         Count=("participant_code", "size"),
@@ -150,7 +156,7 @@ def run_descriptive_statistics(
         Mean_RMS=("audio_rms_mean", "mean"), Mean_Smile_Proxy=("face_smile_mean", "mean"),
     ).reset_index()
     affect["Percentage"] = affect.Count / len(df) * 100
-    affect.round(4).to_csv(output / "affect_taxonomy_summary.csv", index=False)
+    affect.round(4).to_csv(multi_out / "affect_taxonomy_summary.csv", index=False)
 
     kapoy_columns = [
         "participant_code", "session", "class_activity", "self_reported_feeling",
@@ -160,20 +166,20 @@ def run_descriptive_statistics(
         "face_ear_mean", "face_mar_mean",
     ]
     kapoy = df.loc[df.spoken_word.eq("Kapoy"), [c for c in kapoy_columns if c in df]].sort_values(["valence_score", "arousal_score", "participant_code"])
-    kapoy.to_csv(output / "lexically_controlled_kapoy.csv", index=False)
+    kapoy.to_csv(multi_out / "lexically_controlled_kapoy.csv", index=False)
 
-    context_metrics = ["valence_score", "arousal_score", "audio_f0_mean_hz", "audio_rms_mean", "face_smile_mean"]
-    activity = df.groupby("class_activity").agg(Count=("participant_code", "size"), **{f"Mean_{c}": (c, "mean") for c in context_metrics}).reset_index()
-    activity.round(4).to_csv(output / "class_activity_summary.csv", index=False)
+    context_metrics = ["valence_score", "arousal_score", "audio_f0_mean_hz", "audio_rms_mean"]
+    activity = df.groupby("class_activity").agg(Count=("participant_code", "size"), **{f"Mean_{c}": (c, "mean") for c in context_metrics if c in df}).reset_index()
+    activity.round(4).to_csv(audio_out / "class_activity_summary.csv", index=False)
     words = df.groupby("spoken_word").agg(Count=("participant_code", "size"), Mean_Valence=("valence_score", "mean"), Mean_Arousal=("arousal_score", "mean"), Pitch_Available=("audio_pitch_detected", "sum"), Mean_F0_Hz=("audio_f0_mean_hz", "mean")).reset_index()
-    words.round(4).to_csv(output / "spoken_word_affect_summary.csv", index=False)
+    words.round(4).to_csv(audio_out / "spoken_word_affect_summary.csv", index=False)
     years = df.groupby("year_level").agg(Count=("participant_code", "size"), Mean_Valence=("valence_score", "mean"), Mean_Arousal=("arousal_score", "mean")).reset_index()
-    years.round(4).to_csv(output / "year_level_affect_summary.csv", index=False)
+    years.round(4).to_csv(audio_out / "year_level_affect_summary.csv", index=False)
 
     audio_corr = [c for c in ["audio_f0_mean_hz", "audio_f0_range_hz", "audio_rms_mean", "audio_zcr_mean", "audio_spec_centroid_mean", "audio_spec_rolloff85_mean", "audio_duration_sec", "audio_period_variation_proxy", "audio_rms_frame_variation_proxy"] if c in df]
     face_corr = [c for c in ["face_smile_mean", "face_frown_mean", "face_brow_lowerer_mean", "face_brow_inner_raiser_mean", "face_jaw_open_mean", "face_ear_mean", "face_mar_mean", "face_expressiveness_proxy", "face_pitch_mean_deg", "face_yaw_mean_deg"] if c in df]
     cross = _correlations(df, audio_corr, face_corr, "Audio_Feature", "Facial_Feature")
-    cross.to_csv(output / "audio_facial_correlations.csv", index=False)
+    cross.to_csv(multi_out / "audio_facial_correlations.csv", index=False)
 
     ground_rows = []
     for feature in audio_corr + face_corr:
@@ -187,31 +193,10 @@ def run_descriptive_statistics(
         ground.loc[mask, "Pearson_q_BH"] = benjamini_hochberg(ground.loc[mask, "Pearson_p"])
     ground["Pearson_FDR_05"] = ground.Pearson_q_BH < 0.05
     ground = ground.round(6).sort_values(["Outcome", "Pearson_q_BH", "Pearson_p"])
-    ground.to_csv(output / "ground_truth_affect_correlations.csv", index=False)
+    ground.to_csv(multi_out / "ground_truth_affect_correlations.csv", index=False)
 
     report = generate_descriptive_report(df, audio_stats, facial_stats, session, affect, kapoy, cross, ground)
-    (output / "descriptive_statistics_report.md").write_text(report, encoding="utf-8")
-
-    # Also mirror modality-specific tables to outputs/audio, outputs/facial, outputs/multimodal
-    audio_dir = Path("outputs/audio")
-    facial_dir = Path("outputs/facial")
-    multi_dir = Path("outputs/multimodal")
-    audio_dir.mkdir(parents=True, exist_ok=True)
-    facial_dir.mkdir(parents=True, exist_ok=True)
-    multi_dir.mkdir(parents=True, exist_ok=True)
-
-    audio_stats.to_csv(audio_dir / "summary_statistics_audio.csv", index=False)
-    session.to_csv(audio_dir / "session_am_pm_comparison.csv", index=False)
-    activity.to_csv(audio_dir / "class_activity_summary.csv", index=False)
-    words.to_csv(audio_dir / "spoken_word_affect_summary.csv", index=False)
-    years.to_csv(audio_dir / "year_level_affect_summary.csv", index=False)
-
-    facial_stats.to_csv(facial_dir / "summary_statistics_facial.csv", index=False)
-
-    cross.to_csv(multi_dir / "audio_facial_correlations.csv", index=False)
-    ground.to_csv(multi_dir / "ground_truth_affect_correlations.csv", index=False)
-    affect.to_csv(multi_dir / "affect_taxonomy_summary.csv", index=False)
-    kapoy.to_csv(multi_dir / "lexically_controlled_kapoy.csv", index=False)
+    (audio_out / "audio_descriptive_report.md").write_text(report, encoding="utf-8")
 
     return {
         "audio_stats": audio_stats, "facial_stats": facial_stats, "session_comp": session,

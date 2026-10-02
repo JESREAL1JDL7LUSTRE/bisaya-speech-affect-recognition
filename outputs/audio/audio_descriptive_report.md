@@ -18,43 +18,27 @@ Session, subject and activity are completely confounded in this group: PM contai
 
 ## Session comparisons
 
-Welch tests were treated as the primary session tests and adjusted as one family using Benjamini–Hochberg FDR. 6 of 33 comparisons have q < .05. Mann–Whitney results are secondary sensitivity checks.
+Welch tests were treated as the primary session tests and adjusted as one family using Benjamini–Hochberg FDR. 6 of 17 comparisons have q < .05. Mann–Whitney results are secondary sensitivity checks.
 
 | Feature                         |   AM_N |   PM_N |     AM_Mean |     PM_Mean |   Welch_p |   Welch_q_BH |   Cohens_d |
 |:--------------------------------|-------:|-------:|------------:|------------:|----------:|-------------:|-----------:|
-| valence_score                   |     34 |      6 |    2.97059  |    3.66667  |  0.037203 |     0.153463 |  -0.552557 |
-| arousal_score                   |     34 |      6 |    3        |    3.33333  |  0.283248 |     0.424872 |  -0.281366 |
-| audio_duration_sec              |     34 |      6 |    0.907644 |    0.712117 |  3.9e-05  |     0.000426 |   0.976147 |
-| audio_trimmed_dur_sec           |     34 |      6 |    0.907644 |    0.712117 |  3.9e-05  |     0.000426 |   0.976147 |
-| audio_f0_mean_hz                |     23 |      5 |  180.037    |  143.97     |  0.024223 |     0.114193 |   0.732321 |
-| audio_f0_std_hz                 |     23 |      5 |   21.6504   |   15.83     |  0.393531 |     0.519461 |   0.288408 |
-| audio_f0_range_hz               |     23 |      5 |   60.6474   |   45.364    |  0.355161 |     0.489785 |   0.289639 |
-| audio_voiced_ratio              |     34 |      6 |    0.456044 |    0.640033 |  0.240272 |     0.412264 |  -0.507947 |
-| audio_period_variation_proxy    |     23 |      5 |    0.007385 |    0.009958 |  0.247265 |     0.412264 |  -0.719426 |
+| valence_score                   |     34 |      6 |    2.97059  |    3.66667  |  0.037203 |     0.079057 |  -0.552557 |
+| arousal_score                   |     34 |      6 |    3        |    3.33333  |  0.283248 |     0.370401 |  -0.281366 |
+| audio_duration_sec              |     34 |      6 |    0.907644 |    0.712117 |  3.9e-05  |     0.000219 |   0.976147 |
+| audio_trimmed_dur_sec           |     34 |      6 |    0.907644 |    0.712117 |  3.9e-05  |     0.000219 |   0.976147 |
+| audio_f0_mean_hz                |     23 |      5 |  180.037    |  143.97     |  0.024223 |     0.058827 |   0.732321 |
+| audio_f0_std_hz                 |     23 |      5 |   21.6504   |   15.83     |  0.393531 |     0.446002 |   0.288408 |
+| audio_f0_range_hz               |     23 |      5 |   60.6474   |   45.364    |  0.355161 |     0.431267 |   0.289639 |
+| audio_voiced_ratio              |     34 |      6 |    0.456044 |    0.640033 |  0.240272 |     0.350292 |  -0.507947 |
+| audio_period_variation_proxy    |     23 |      5 |    0.007385 |    0.009958 |  0.247265 |     0.350292 |  -0.719426 |
 | audio_rms_mean                  |     34 |      6 |    0.075131 |    0.0272   |  0        |     0        |   1.83261  |
-| audio_rms_std                   |     34 |      6 |    0.033953 |    0.018165 |  0.000189 |     0.001561 |   1.22098  |
-| audio_rms_frame_variation_proxy |     34 |      6 |    0.111999 |    0.148353 |  0.09479  |     0.24062  |  -1.15655  |
-| audio_zcr_mean                  |     34 |      6 |    0.11991  |    0.095127 |  0.008983 |     0.049406 |   1.31463  |
-| audio_spec_centroid_mean        |     34 |      6 | 1586.47     | 1490.42     |  0.071483 |     0.235892 |   0.613957 |
-| audio_spec_bandwidth_mean       |     34 |      6 | 1514.22     | 1620.59     |  0.000342 |     0.002257 |  -0.946783 |
-| audio_spec_rolloff85_mean       |     34 |      6 | 3162.82     | 3207.41     |  0.657081 |     0.747713 |  -0.118143 |
+| audio_rms_std                   |     34 |      6 |    0.033953 |    0.018165 |  0.000189 |     0.000804 |   1.22098  |
+| audio_rms_frame_variation_proxy |     34 |      6 |    0.111999 |    0.148353 |  0.09479  |     0.161142 |  -1.15655  |
+| audio_zcr_mean                  |     34 |      6 |    0.11991  |    0.095127 |  0.008983 |     0.025452 |   1.31463  |
+| audio_spec_centroid_mean        |     34 |      6 | 1586.47     | 1490.42     |  0.071483 |     0.135023 |   0.613957 |
+| audio_spec_bandwidth_mean       |     34 |      6 | 1514.22     | 1620.59     |  0.000342 |     0.001163 |  -0.946783 |
+| audio_spec_rolloff85_mean       |     34 |      6 | 3162.82     | 3207.41     |  0.657081 |     0.698149 |  -0.118143 |
 | audio_spec_flatness_mean        |     34 |      6 |    0.019603 |    0.020122 |  0.859162 |     0.859162 |  -0.051272 |
-| face_smile_mean                 |     34 |      6 |    0.217585 |    0.397367 |  0.247902 |     0.412264 |  -0.762093 |
-| face_smile_max                  |     34 |      6 |    0.432641 |    0.61525  |  0.239331 |     0.412264 |  -0.583736 |
-| face_frown_mean                 |     34 |      6 |    0.002185 |    0.001867 |  0.770862 |     0.847949 |   0.070898 |
-| face_frown_max                  |     34 |      6 |    0.016585 |    0.009117 |  0.42904  |     0.54455  |   0.168847 |
-| face_brow_lowerer_mean          |     34 |      6 |    0.051294 |    0.112917 |  0.26235  |     0.412264 |  -0.876968 |
-| face_brow_inner_raiser_mean     |     34 |      6 |    0.108662 |    0.067367 |  0.46324  |     0.566182 |   0.353832 |
-| face_jaw_open_mean              |     34 |      6 |    0.061168 |    0.0546   |  0.799944 |     0.851553 |   0.091519 |
-| face_eye_squint_mean            |     34 |      6 |    0.369688 |    0.462633 |  0.080928 |     0.238675 |  -0.796154 |
-| face_disgust_proxy_mean         |     34 |      6 |    0.096994 |    0.136783 |  0.250414 |     0.412264 |  -0.423512 |
-| face_expressiveness_proxy       |     34 |      6 |    0.039797 |    0.043417 |  0.356207 |     0.489785 |  -0.292854 |
-| face_ear_mean                   |     34 |      6 |    0.330759 |    0.309833 |  0.086791 |     0.238675 |   0.693276 |
-| face_ear_min                    |     34 |      6 |    0.292647 |    0.256667 |  0.062011 |     0.227372 |   0.662427 |
-| face_mar_mean                   |     34 |      6 |    0.161579 |    0.1855   |  0.539257 |     0.635552 |  -0.371695 |
-| face_mar_max                    |     34 |      6 |    0.326529 |    0.279717 |  0.23771  |     0.412264 |   0.515326 |
-| face_pitch_mean_deg             |     34 |      6 |   -3.65941  |    1.17667  |  0.132258 |     0.31175  |  -0.886272 |
-| face_yaw_mean_deg               |     34 |      6 |   -2.04794  |   -2.75667  |  0.826758 |     0.852594 |   0.110706 |
 
 ## Rating-derived affect groups
 

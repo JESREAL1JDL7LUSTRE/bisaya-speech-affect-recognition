@@ -36,8 +36,10 @@ def main():
     raw_multimodal_csv = "datasets/multimodal/cleaned_multimodal_dataset.csv"
     scaled_multimodal_csv = "datasets/multimodal/cleaned_multimodal_dataset_scaled.csv"
     data_dict_csv = "datasets/multimodal/multimodal_data_dictionary.csv"
-    stats_dir = "outputs/descriptive_statistics"
-    vis_dir = "outputs/visualizations"
+    audio_dir = "outputs/audio"
+    facial_dir = "outputs/facial"
+    multimodal_dir = "outputs/multimodal"
+    outputs_dir = "outputs"
     
     # -------------------------------------------------------------
     # Step 1: Audio Feature Extraction
@@ -67,28 +69,32 @@ def main():
     print(f"[OK] Step 3 Complete: {df_multi.shape[0]} observations, {df_multi.shape[1]} multimodal variables.")
     
     # -------------------------------------------------------------
-    # Step 4: Descriptive Statistics & Hypothesis Testing
+    # Step 4: Descriptive Statistics & Summaries
     # -------------------------------------------------------------
-    print("\n>>> STEP 4/5: Computing missing-aware statistics and FDR-adjusted exploratory tests...")
-    stats_results = run_descriptive_statistics(raw_multimodal_csv, stats_dir)
-    print(f"[OK] Step 4 Complete: Descriptive reports & CSV tables saved to {stats_dir}.")
+    print("\n>>> STEP 4/5: Computing missing-aware statistics and summaries...")
+    stats_results = run_descriptive_statistics(
+        raw_multimodal_csv,
+        audio_output_dir=audio_dir,
+        facial_output_dir=facial_dir,
+        multimodal_output_dir=multimodal_dir,
+    )
+    print(f"[OK] Step 4 Complete: Statistics CSVs saved to {audio_dir}, {facial_dir}, and {multimodal_dir}.")
     
     # -------------------------------------------------------------
     # Step 5: High-Resolution Visualizations
     # -------------------------------------------------------------
     print("\n>>> STEP 5/5: Generating rating-grounded exploratory visualizations (300 DPI)...")
-    generate_all_visualizations(raw_multimodal_csv, vis_dir)
-    print(f"[OK] Step 5 Complete: All disaggregated figures saved across outputs/ and {vis_dir}.")
+    generate_all_visualizations(raw_multimodal_csv, outputs_dir)
+    print(f"[OK] Step 5 Complete: All figures saved directly to {audio_dir}, {facial_dir}, and {multimodal_dir}.")
     
     elapsed = time.time() - t_start
     print("\n" + "=" * 75)
     print(f" ALL DELIVERABLES SUCCESSFULLY PRODUCED IN {elapsed:.2f} SECONDS!")
     print("=" * 75)
     print(f"Datasets generated in:        {os.path.abspath('datasets')}")
-    print(f"Statistics generated in:      {os.path.abspath(stats_dir)}")
-    print(f"Audio Outputs in:             {os.path.abspath('outputs/audio')}")
-    print(f"Facial Outputs in:            {os.path.abspath('outputs/facial')}")
-    print(f"Multimodal Outputs in:        {os.path.abspath('outputs/multimodal')}")
+    print(f"Audio Outputs in:             {os.path.abspath(audio_dir)}")
+    print(f"Facial Outputs in:            {os.path.abspath(facial_dir)}")
+    print(f"Multimodal Outputs in:        {os.path.abspath(multimodal_dir)}")
 
 
 if __name__ == "__main__":
