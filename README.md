@@ -15,12 +15,13 @@
 > In accordance with course instructor Ma'am Love Jhoye's guidance, the primary scope for the Midterm PIT modeling and presentation focuses strictly on **Acoustic and Prosodic Speech Emotion Recognition (Audio Modality)**.
 > All facial action unit and multimodal cross-referencing features have been systematically preserved and categorized into dedicated subdirectories (`outputs/facial/` and `outputs/multimodal/`) for complete academic rigor, but all primary analytical tables and 10 publication figures for the PIT presentation are located in [`outputs/audio/`](file:///d:/SCHOOL/affective/outputs/audio/).
 
-| Deliverable Component | Output Directory | Status | Description |
+| Deliverable Component | Output Directory / Files | Status | Description |
 |---|---|:---:|---|
-| **1. Audio Modality (PRIMARY FOCUS)** | [`outputs/audio/`](file:///d:/SCHOOL/affective/outputs/audio/) | **Completed** | 10 high-resolution (300 DPI) figures, 5 summary CSV tables, and descriptive markdown report covering acoustic & prosodic features, pitch dynamics, and session tests. |
-| **2. Facial Modality (Vision)** | [`outputs/facial/`](file:///d:/SCHOOL/affective/outputs/facial/) | **Completed** | 5 high-resolution (300 DPI) figures and 1 summary CSV table covering MediaPipe FACS blendshapes, EAR/MAR, and head pose dynamics. |
-| **3. Multimodal Analysis** | [`outputs/multimodal/`](file:///d:/SCHOOL/affective/outputs/multimodal/) | **Completed** | 4 high-resolution (300 DPI) figures and 4 summary CSV tables covering cross-modal correlations, joint embeddings, and lexically controlled *Kapoy* profiles. |
-| **4. Clean Datasets** | [`datasets/`](file:///d:/SCHOOL/affective/datasets/) | **Completed** | Clean datasets categorized into `datasets/audio/`, `datasets/facial/`, and `datasets/multimodal/` (including 344-entry data dictionary). |
+| **1. Audio Feature Dataset** | [`datasets/audio/audio_feature_dataset.csv`](file:///d:/SCHOOL/affective/datasets/audio/audio_feature_dataset.csv) | **Completed** | 40 observations, 146 acoustic & prosodic variables (F0, RMS, ZCR, MFCC 1–13, Deltas, Delta-Deltas, Spectral characteristics). |
+| **2. Audio Descriptive Statistics** | [`outputs/audio/`](file:///d:/SCHOOL/affective/outputs/audio/) | **Completed** | Full Markdown report ([`audio_descriptive_report.md`](file:///d:/SCHOOL/affective/outputs/audio/audio_descriptive_report.md)) + 5 summary CSV tables (univariate acoustic stats, AM vs. PM Welch tests with FDR, activity breakdowns, and word affect). |
+| **3. Audio Figures & Visualizations** | [`outputs/audio/`](file:///d:/SCHOOL/affective/outputs/audio/) | **Completed** | 10 publication-quality (300 DPI) figures covering sample distribution, Russell's circumplex, session boxplots, MFCC profiles, spectral contrasts, and PCA/t-SNE clustering. |
+| **4. Facial Modality (Vision)** | [`outputs/facial/`](file:///d:/SCHOOL/affective/outputs/facial/) | **Completed** | 5 high-resolution (300 DPI) figures and 1 summary CSV table covering MediaPipe FACS blendshapes, EAR/MAR, and head pose dynamics. |
+| **5. Multimodal Cross-Analysis** | [`outputs/multimodal/`](file:///d:/SCHOOL/affective/outputs/multimodal/) | **Completed** | 4 high-resolution (300 DPI) figures and 4 summary CSV tables covering cross-modal correlations, joint embeddings, and lexically controlled *Kapoy* profiles. |
 
 ---
 
