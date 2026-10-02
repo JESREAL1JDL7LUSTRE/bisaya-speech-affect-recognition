@@ -1,440 +1,179 @@
-"""
-Visualization Generation Module for Bisaya Speech and Affect Recognition.
-Generates publication-quality, high-resolution figures (300 DPI) for academic reports,
-research presentations, and PIT deliverable submission.
-"""
+"""Exploratory figures grounded in self-reported valence and arousal."""
+
+from __future__ import annotations
 
 import os
 import sys
+from pathlib import Path
 
-# Ensure workspace root is in path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-import warnings
-warnings.filterwarnings('ignore', category=FutureWarning)
-
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
 from sklearn.decomposition import PCA
+from sklearn.impute import SimpleImputer
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
 
-# Set aesthetic defaults
-plt.style.use('seaborn-v0_8-whitegrid')
-plt.rcParams['font.sans-serif'] = 'Arial'
-plt.rcParams['font.family'] = 'sans-serif'
-plt.rcParams['figure.dpi'] = 300
-plt.rcParams['savefig.dpi'] = 300
-plt.rcParams['savefig.bbox'] = 'tight'
+from src.multimodal_dataset import predictor_columns
+from src.statistics_analysis import benjamini_hochberg
 
-AFFECT_PALETTE = {
-    "Fatigue": "#E64B35",        # Muted Red/Coral
-    "Stress/Anxiety": "#4DBBD5", # Cyan/Teal
-    "Positive": "#00A087",       # Emerald Green
-    "Neutral": "#3C5488"         # Deep Slate Blue
-}
 
-SESSION_PALETTE = {
-    "AM": "#E64B35",
-    "PM": "#3C5488"
-}
+sns.set_theme(style="whitegrid")
+plt.rcParams.update({"figure.dpi": 150, "savefig.dpi": 300, "font.family": "DejaVu Sans"})
+VALENCE_PALETTE = {"Negative": "#D95F59", "Neutral": "#6C7A89", "Positive": "#2A9D8F"}
+SESSION_PALETTE = {"AM": "#E76F51", "PM": "#457B9D"}
+
+
+def _save(fig, output: Path, filename: str):
+    fig.tight_layout()
+    fig.savefig(output / filename, bbox_inches="tight")
+    plt.close(fig)
 
 
 def generate_all_visualizations(
     dataset_csv: str = "datasets/multimodal/cleaned_multimodal_dataset.csv",
-    output_dir: str = "outputs/visualizations"
+    output_dir: str = "outputs/visualizations",
 ):
-    if not os.path.exists(dataset_csv) and os.path.exists("datasets/cleaned_multimodal_dataset.csv"):
-        dataset_csv = "datasets/cleaned_multimodal_dataset.csv"
-        
-    os.makedirs(output_dir, exist_ok=True)
+    output = Path(output_dir)
+    output.mkdir(parents=True, exist_ok=True)
     df = pd.read_csv(dataset_csv)
-    print(f"Loaded dataset for visualizations: {df.shape}")
-    
-    # -------------------------------------------------------------
-    # Figure 1: Dataset Distribution Overview (Session & Spoken Words)
-    # -------------------------------------------------------------
-    fig, axes = plt.subplots(1, 2, figsize=(14, 6), gridspec_kw={'width_ratios': [1, 1.6]})
-    
-    # Left: Session Distribution Donut
-    session_counts = df['session'].value_counts()
-    colors = [SESSION_PALETTE.get(s, '#888888') for s in session_counts.index]
-    wedges, texts, autotexts = axes[0].pie(
-        session_counts.values,
-        labels=[f"{s} Session\n(n={v})" for s, v in session_counts.items()],
-        autopct='%1.1f%%',
-        startangle=140,
-        colors=colors,
-        wedgeprops=dict(width=0.45, edgecolor='w', linewidth=2),
-        textprops=dict(fontsize=11, fontweight='bold')
-    )
-    for at in autotexts:
-        at.set_color('white')
-        at.set_fontsize(11)
-        at.set_fontweight('bold')
-    axes[0].set_title("Class Session Distribution (N=40)", fontsize=13, fontweight='bold', pad=12)
-    
-    # Right: Spoken Word Frequency Bar Chart
-    word_counts = df['spoken_word'].value_counts()
-    top_words = word_counts.head(10)
-    word_colors = [AFFECT_PALETTE.get(df[df['spoken_word'] == w]['affect_category'].iloc[0], '#888888') for w in top_words.index]
-    
-    bars = axes[1].barh(top_words.index[::-1], top_words.values[::-1], color=word_colors[::-1], edgecolor='black', alpha=0.85, height=0.65)
-    for bar in bars:
-        w = bar.get_width()
-        axes[1].text(w + 0.15, bar.get_y() + bar.get_height()/2, f"{int(w)} ({w/len(df)*100:.1f}%)",
-                     ha='left', va='center', fontsize=10, fontweight='bold')
-                     
-    axes[1].set_xlabel("Participant Response Count", fontsize=11, fontweight='bold')
-    axes[1].set_title("Top Bisaya Spoken Word Reactions Elicited Post-Class", fontsize=13, fontweight='bold', pad=12)
-    axes[1].set_xlim(0, max(top_words.values) + 2)
-    
-    # Custom Legend for Categories
-    from matplotlib.patches import Patch
-    legend_elements = [Patch(facecolor=c, edgecolor='black', label=cat) for cat, c in AFFECT_PALETTE.items()]
-    axes[1].legend(handles=legend_elements, title="Affect Category", loc='lower right', frameon=True)
-    
-    plt.tight_layout()
-    f1_path = os.path.join(output_dir, "01_dataset_distribution_overview.png")
-    plt.savefig(f1_path)
-    plt.close()
-    print(f"Saved: {f1_path}")
-    
-    # -------------------------------------------------------------
-    # Figure 2: Russell's Circumplex Affect Taxonomy Space (Empirical)
-    # -------------------------------------------------------------
-    fig, ax = plt.subplots(figsize=(10, 8))
-    
-    # Background Quadrant shading
-    ax.axhline(0, color='gray', linestyle='--', linewidth=1.2, alpha=0.7)
-    ax.axvline(0, color='gray', linestyle='--', linewidth=1.2, alpha=0.7)
-    
-    ax.text(0.85, 0.90, "HIGH AROUSAL\nPOSITIVE (Joy / Excitement)", ha='center', va='center', fontsize=9, fontweight='bold', color='#00A087', alpha=0.6)
-    ax.text(-0.75, 0.90, "HIGH AROUSAL\nNEGATIVE (Stress / Anxiety)", ha='center', va='center', fontsize=9, fontweight='bold', color='#4DBBD5', alpha=0.6)
-    ax.text(-0.75, -0.90, "LOW AROUSAL\nNEGATIVE (Fatigue / Exhaustion)", ha='center', va='center', fontsize=9, fontweight='bold', color='#E64B35', alpha=0.6)
-    ax.text(0.85, -0.90, "LOW AROUSAL\nPOSITIVE (Calm / Relief)", ha='center', va='center', fontsize=9, fontweight='bold', color='#3C5488', alpha=0.6)
-    
-    word_freq = df['spoken_word'].value_counts()
-    
-    if "valence_score" in df.columns and "arousal_score" in df.columns:
-        # Compute true empirical coordinates from participant self-reports (centered on neutral=3)
-        mean_v = df.groupby('spoken_word')['valence_score'].mean()
-        mean_a = df.groupby('spoken_word')['arousal_score'].mean()
-        # Scale 1-5 to [-1, 1] with slight jitter for overlapping points
-        np.random.seed(42)
-        for word in word_freq.index:
-            count = word_freq[word]
-            cat = df[df['spoken_word'] == word]['affect_category'].iloc[0]
-            color = AFFECT_PALETTE.get(cat, '#888888')
-            
-            val = (mean_v[word] - 3.0) / 2.0 + (np.random.uniform(-0.04, 0.04) if count == 1 else 0)
-            aro = (mean_a[word] - 3.0) / 2.0 + (np.random.uniform(-0.04, 0.04) if count == 1 else 0)
-            val = np.clip(val, -0.95, 0.95)
-            aro = np.clip(aro, -0.95, 0.95)
-            
-            size = 180 + count * 85
-            ax.scatter(val, aro, s=size, color=color, alpha=0.8, edgecolors='black', linewidth=1.5, zorder=5)
-            
-            ax.annotate(
-                f"{word}\n(n={count}, V:{mean_v[word]:.1f}, A:{mean_a[word]:.1f})",
-                (val, aro),
-                textcoords="offset points",
-                xytext=(0, 12 if aro >= 0 else -20),
-                ha='center',
-                fontsize=8.5,
-                fontweight='bold',
-                bbox=dict(boxstyle="round,pad=0.2", fc="white", ec=color, alpha=0.85, lw=1)
-            )
-    ax.set_title("Empirical Circumplex Affect Space of Bisaya Post-Class Reactions\n(Coordinates derived directly from participant self-reported Valence & Arousal ratings)", fontsize=13, fontweight='bold', pad=14)
-        
-    ax.set_xlim(-1.05, 1.05)
-    ax.set_ylim(-1.05, 1.05)
-    ax.set_xlabel("Valence (Unpleasant ← 0 → Pleasant)", fontsize=12, fontweight='bold')
-    ax.set_ylabel("Arousal (Low Energy ← 0 → High Energy)", fontsize=12, fontweight='bold')
-    ax.set_title("Russell's Circumplex Affect Space of Bisaya Post-Class Reactions\n(Bubble size proportional to participant frequency)", fontsize=13, fontweight='bold', pad=14)
-    ax.legend(handles=legend_elements, title="Affect Dimension", loc='upper left', frameon=True)
-    
-    plt.tight_layout()
-    f2_path = os.path.join(output_dir, "02_affect_word_taxonomy.png")
-    plt.savefig(f2_path)
-    plt.close()
-    print(f"Saved: {f2_path}")
-    
-    # -------------------------------------------------------------
-    # Figure 3: Prosodic Pitch, Energy & Duration by Session (AM vs PM)
-    # -------------------------------------------------------------
-    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
-    prosody_vars = [
-        ("audio_f0_mean_hz", "Pitch F0 Mean (Hz)", "Fundamental Frequency"),
-        ("audio_rms_mean", "RMS Energy (Amplitude)", "Acoustic Loudness / Energy"),
-        ("audio_zcr_mean", "Zero Crossing Rate (ZCR)", "Signal Rate of Sign-Changes"),
-        ("audio_duration_sec", "Utterance Duration (seconds)", "Spoken Response Duration")
-    ]
-    
-    for idx, (var, ylabel, title) in enumerate(prosody_vars):
-        row, col = idx // 2, idx % 2
-        ax = axes[row, col]
-        sns.boxplot(x="session", y=var, data=df, ax=ax, palette=SESSION_PALETTE, width=0.45, boxprops=dict(alpha=0.7), showmeans=True, meanprops={"marker":"o","markerfacecolor":"white", "markeredgecolor":"black"})
-        sns.stripplot(x="session", y=var, data=df, ax=ax, color='black', alpha=0.6, jitter=0.15, size=6)
-        
-        # Compute p-value
-        am_v = df[df["session"] == "AM"][var].dropna()
-        pm_v = df[df["session"] == "PM"][var].dropna()
-        _, pval = stats.ttest_ind(am_v, pm_v, equal_var=False)
-        sig_str = "*** p < .001" if pval < 0.001 else ("** p < .01" if pval < 0.01 else ("* p < .05" if pval < 0.05 else "n.s. (p > .05)"))
-        
-        ax.set_title(f"{title} (Session Effect: {sig_str})", fontsize=11, fontweight='bold')
-        ax.set_xlabel("Class Session", fontsize=10, fontweight='bold')
-        ax.set_ylabel(ylabel, fontsize=10, fontweight='bold')
-        
-    plt.suptitle("Acoustic & Prosodic Speech Characteristics: Morning (AM) vs. Afternoon–Evening (PM)", fontsize=14, fontweight='bold', y=0.99)
-    plt.tight_layout()
-    f3_path = os.path.join(output_dir, "03_audio_prosodic_features_by_session.png")
-    plt.savefig(f3_path)
-    plt.close()
-    print(f"Saved: {f3_path}")
-    
-    # -------------------------------------------------------------
-    # Figure 4: MFCC Timbral Feature Heatmaps across Top Words
-    # -------------------------------------------------------------
-    mfcc_cols = [f"audio_mfcc_{i}_mean" for i in range(1, 14)]
-    top_5_words = df['spoken_word'].value_counts().head(6).index.tolist()
-    mfcc_df = df[df['spoken_word'].isin(top_5_words)].groupby('spoken_word')[mfcc_cols].mean()
-    mfcc_df.columns = [f"MFCC-{i}" for i in range(1, 14)]
-    
-    fig, ax = plt.subplots(figsize=(12, 6))
-    sns.heatmap(mfcc_df, cmap="coolwarm", annot=True, fmt=".1f", linewidths=1, linecolor='white', cbar_kws={'label': 'Mean Coefficient Amplitude'}, ax=ax)
-    ax.set_title("Timbral Profile: Mean 13 Mel-Frequency Cepstral Coefficients (MFCCs) Across Top Reaction Words", fontsize=13, fontweight='bold', pad=12)
-    ax.set_xlabel("MFCC Cepstral Coefficients", fontsize=11, fontweight='bold')
-    ax.set_ylabel("Bisaya Spoken Reaction", fontsize=11, fontweight='bold')
-    
-    plt.tight_layout()
-    f4_path = os.path.join(output_dir, "04_mfcc_feature_heatmaps.png")
-    plt.savefig(f4_path)
-    plt.close()
-    print(f"Saved: {f4_path}")
-    
-    # -------------------------------------------------------------
-    # Figure 5: Spectral Characteristics Across Affect Categories
-    # -------------------------------------------------------------
-    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
-    spectral_vars = [
-        ("audio_spec_centroid_mean", "Spectral Centroid (Hz)", "Vocal Brightness / Frequency Center"),
-        ("audio_spec_rolloff85_mean", "Spectral Rolloff 85% (Hz)", "High-Frequency Cutoff"),
-        ("audio_spec_contrast_mean", "Spectral Contrast", "Peak-to-Valley Spectral Dynamics")
-    ]
-    
-    for idx, (var, ylabel, title) in enumerate(spectral_vars):
-        ax = axes[idx]
-        sns.barplot(x="affect_category", y=var, data=df, ax=ax, palette=AFFECT_PALETTE, capsize=0.1, edgecolor='black', alpha=0.85)
-        sns.stripplot(x="affect_category", y=var, data=df, ax=ax, color='black', alpha=0.5, jitter=0.2, size=5)
-        ax.set_title(title, fontsize=11, fontweight='bold')
-        ax.set_xlabel("Affect Category", fontsize=10, fontweight='bold')
-        ax.set_ylabel(ylabel, fontsize=10, fontweight='bold')
-        ax.tick_params(axis='x', rotation=15)
-        
-    plt.suptitle("Spectral Characteristics of Bisaya Speech Across Affect Categories", fontsize=14, fontweight='bold', y=1.02)
-    plt.tight_layout()
-    f5_path = os.path.join(output_dir, "05_spectral_characteristics.png")
-    plt.savefig(f5_path)
-    plt.close()
-    print(f"Saved: {f5_path}")
-    
-    # -------------------------------------------------------------
-    # Figure 6: Facial Action Units & Geometric Ratios Across Affect Categories
-    # -------------------------------------------------------------
-    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
-    facial_vars = [
-        ("face_smile_mean", "Smile Intensity (AU12)", "Zygomaticus Major Activation"),
-        ("face_frown_mean", "Frown Intensity (AU15)", "Depressor Anguli Oris Activation"),
-        ("face_brow_lowerer_mean", "Brow Lowerer (AU4)", "Corrugator / Concentration / Anger"),
-        ("face_ear_mean", "Eye Aspect Ratio (EAR)", "Eyelid Openness Baseline"),
-        ("face_mar_mean", "Mouth Aspect Ratio (MAR)", "Speech Articulation Dynamics"),
-        ("face_expressiveness_score", "Facial Expressiveness Score", "Overall Dynamic Facial Variability")
-    ]
-    
-    for idx, (var, ylabel, title) in enumerate(facial_vars):
-        row, col = idx // 3, idx % 3
-        ax = axes[row, col]
-        sns.boxplot(x="affect_category", y=var, data=df, ax=ax, palette=AFFECT_PALETTE, width=0.5, boxprops=dict(alpha=0.75))
-        sns.stripplot(x="affect_category", y=var, data=df, ax=ax, color='black', alpha=0.6, jitter=0.15, size=5)
-        ax.set_title(title, fontsize=11, fontweight='bold')
-        ax.set_xlabel("Affect Category", fontsize=10, fontweight='bold')
-        ax.set_ylabel(ylabel, fontsize=10, fontweight='bold')
-        ax.tick_params(axis='x', rotation=15)
-        
-    plt.suptitle("Facial Action Units and Morphological Dynamics Across Affect Categories", fontsize=14, fontweight='bold', y=0.99)
-    plt.tight_layout()
-    f6_path = os.path.join(output_dir, "06_facial_action_units_by_session.png")
-    plt.savefig(f6_path)
-    plt.close()
-    print(f"Saved: {f6_path}")
-    
-    # -------------------------------------------------------------
-    # Figure 7: Audio-Facial Multimodal Correlation Heatmap
-    # -------------------------------------------------------------
-    audio_sub = [
-        "audio_f0_mean_hz", "audio_f0_range_hz", "audio_rms_mean", "audio_zcr_mean",
-        "audio_spec_centroid_mean", "audio_spec_rolloff85_mean", "audio_duration_sec"
-    ]
-    face_sub = [
-        "face_smile_mean", "face_frown_mean", "face_brow_lowerer_mean",
-        "face_ear_mean", "face_mar_mean", "face_expressiveness_score", "face_pitch_mean_deg"
-    ]
-    
-    corr_matrix = pd.DataFrame(index=[c.replace("audio_", "").replace("_hz", "").replace("_mean", "") for c in audio_sub],
-                               columns=[c.replace("face_", "").replace("_mean", "") for c in face_sub])
-    
-    for a in audio_sub:
-        a_label = a.replace("audio_", "").replace("_hz", "").replace("_mean", "")
-        for f in face_sub:
-            f_label = f.replace("face_", "").replace("_mean", "")
-            r, _ = stats.pearsonr(df[a], df[f])
-            corr_matrix.loc[a_label, f_label] = round(r, 2)
-            
-    corr_matrix = corr_matrix.astype(float)
-    
-    fig, ax = plt.subplots(figsize=(10, 7))
-    sns.heatmap(corr_matrix, cmap="vlag", annot=True, fmt=".2f", vmin=-0.6, vmax=0.6, linewidths=1.2, linecolor='white', ax=ax, cbar_kws={'label': 'Pearson Correlation (r)'})
-    ax.set_title("Cross-Modal Audio-Visual Synchronization Matrix\n(Acoustic Prosody vs. Facial Action Units)", fontsize=13, fontweight='bold', pad=12)
-    ax.set_xlabel("Facial Expression & Morphological Markers", fontsize=11, fontweight='bold')
-    ax.set_ylabel("Acoustic Speech Features", fontsize=11, fontweight='bold')
-    
-    plt.tight_layout()
-    f7_path = os.path.join(output_dir, "07_audio_facial_multimodal_correlations.png")
-    plt.savefig(f7_path)
-    plt.close()
-    print(f"Saved: {f7_path}")
-    
-    # -------------------------------------------------------------
-    # Figure 8: Multimodal PCA & t-SNE Clustering
-    # -------------------------------------------------------------
-    numeric_cols = df.select_dtypes(include=[np.number]).columns
-    # Exclude metadata IDs
-    feature_cols = [c for c in numeric_cols if not ('rate' in c and df[c].std() == 0)]
-    X = StandardScaler().fit_transform(df[feature_cols])
-    
-    # PCA
-    pca = PCA(n_components=2, random_state=42)
-    X_pca = pca.fit_transform(X)
-    
-    # t-SNE
-    tsne = TSNE(n_components=2, perplexity=10, random_state=42, max_iter=1000)
-    X_tsne = tsne.fit_transform(X)
-    
+
+    # 1. Sample composition
     fig, axes = plt.subplots(1, 2, figsize=(14, 6))
-    
-    for cat in df['affect_category'].unique():
-        mask = df['affect_category'] == cat
-        color = AFFECT_PALETTE.get(cat, '#888888')
-        
-        # PCA plot
-        axes[0].scatter(X_pca[mask, 0], X_pca[mask, 1], label=cat, color=color, s=80, alpha=0.85, edgecolors='black', linewidth=1)
-        # t-SNE plot
-        axes[1].scatter(X_tsne[mask, 0], X_tsne[mask, 1], label=cat, color=color, s=80, alpha=0.85, edgecolors='black', linewidth=1)
-        
-    axes[0].set_title(f"Multimodal PCA (PC1: {pca.explained_variance_ratio_[0]*100:.1f}%, PC2: {pca.explained_variance_ratio_[1]*100:.1f}%)", fontsize=12, fontweight='bold')
-    axes[0].set_xlabel("Principal Component 1", fontsize=10, fontweight='bold')
-    axes[0].set_ylabel("Principal Component 2", fontsize=10, fontweight='bold')
-    axes[0].legend(title="Affect Category", frameon=True)
-    
-    axes[1].set_title("Multimodal t-SNE 2D Manifold Projection", fontsize=12, fontweight='bold')
-    axes[1].set_xlabel("t-SNE Dimension 1", fontsize=10, fontweight='bold')
-    axes[1].set_ylabel("t-SNE Dimension 2", fontsize=10, fontweight='bold')
-    axes[1].legend(title="Affect Category", frameon=True)
-    
-    plt.suptitle("Dimensionality Reduction & Clustering of 314-Feature Multimodal Representation", fontsize=14, fontweight='bold', y=0.99)
-    plt.tight_layout()
-    f8_path = os.path.join(output_dir, "08_multimodal_pca_tsne_clustering.png")
-    plt.savefig(f8_path)
-    plt.close()
-    print(f"Saved: {f8_path}")
-    
-    # -------------------------------------------------------------
-    # Figure 9: Lexically Controlled Analysis (Kapoy n=11)
-    # -------------------------------------------------------------
-    df_kapoy = df[df["spoken_word"] == "Kapoy"].sort_values("audio_f0_mean_hz", ascending=True)
-    
-    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
-    
-    # Pitch F0 across Kapoy speakers
-    axes[0].barh(df_kapoy['participant_code'], df_kapoy['audio_f0_mean_hz'], color='#E64B35', alpha=0.8, edgecolor='black', height=0.6)
-    axes[0].set_xlabel("Pitch F0 Mean (Hz)", fontsize=10, fontweight='bold')
-    axes[0].set_title("Vocal Pitch Variation within 'Kapoy'\n(Range: 0 - 240 Hz)", fontsize=11, fontweight='bold')
-    
-    # RMS Energy across Kapoy speakers
-    axes[1].barh(df_kapoy['participant_code'], df_kapoy['audio_rms_mean'], color='#4DBBD5', alpha=0.8, edgecolor='black', height=0.6)
-    axes[1].set_xlabel("RMS Energy (Amplitude)", fontsize=10, fontweight='bold')
-    axes[1].set_title("Speech Loudness Variation within 'Kapoy'", fontsize=11, fontweight='bold')
-    
-    # Smile intensity across Kapoy speakers (ironic vs genuinely fatigued)
-    axes[2].barh(df_kapoy['participant_code'], df_kapoy['face_smile_mean'], color='#00A087', alpha=0.8, edgecolor='black', height=0.6)
-    axes[2].set_xlabel("Smile Intensity (AU12)", fontsize=10, fontweight='bold')
-    axes[2].set_title("Facial Smile Modulation within 'Kapoy'\n(Ironic/Smiley vs Flat Fatigue)", fontsize=11, fontweight='bold')
-    
-    plt.suptitle("Lexically Controlled Analysis: Holding Word Constant to 'Kapoy' (n=11)\nProves Speech & Facial Prosody Vary Independently of Lexical Semantics (Protocol Section XVII)", fontsize=13, fontweight='bold', y=1.04)
-    plt.tight_layout()
-    f9_path = os.path.join(output_dir, "09_lexically_controlled_analysis.png")
-    plt.savefig(f9_path)
-    plt.close()
-    print(f"Saved: {f9_path}")
-    
-    # -------------------------------------------------------------
-    # Figure 10: Multimodal Radar Affect Profiles
-    # -------------------------------------------------------------
-    radar_features = [
-        ("audio_f0_mean_hz", "Pitch F0"),
-        ("audio_rms_mean", "RMS Energy"),
-        ("audio_spec_centroid_mean", "Brightness"),
-        ("audio_duration_sec", "Duration"),
-        ("face_smile_mean", "Smile (AU12)"),
-        ("face_brow_lowerer_mean", "Brow Furrow"),
-        ("face_mar_mean", "Mouth Open (MAR)"),
-        ("face_expressiveness_score", "Expressiveness")
+    sessions = df.session.value_counts()
+    axes[0].pie(sessions, labels=[f"{k} (n={v})" for k, v in sessions.items()], autopct="%1.1f%%", colors=[SESSION_PALETTE.get(k, "#999") for k in sessions.index], startangle=120)
+    axes[0].set_title("Class-session composition")
+    words = df.spoken_word.value_counts().head(12).sort_values()
+    axes[1].barh(words.index, words.values, color="#577590")
+    axes[1].set(title="Most frequent spoken words", xlabel="Observations")
+    fig.suptitle(f"Dataset composition (N={len(df)})\nSpoken words are lexical context, not emotion labels", fontweight="bold")
+    _save(fig, output, "01_dataset_distribution_overview.png")
+
+    # 2. Empirical valence-arousal space
+    fig, ax = plt.subplots(figsize=(10, 8))
+    ax.axhline(3, color="grey", ls="--", lw=1); ax.axvline(3, color="grey", ls="--", lw=1)
+    grouped = df.groupby("spoken_word").agg(Valence=("valence_score", "mean"), Arousal=("arousal_score", "mean"), N=("participant_code", "size")).reset_index()
+    for _, row in grouped.iterrows():
+        ax.scatter(row.Valence, row.Arousal, s=80 + 45 * row.N, color="#4C78A8", alpha=.75, edgecolor="black")
+        ax.annotate(f"{row.spoken_word} (n={row.N})", (row.Valence, row.Arousal), xytext=(4, 5), textcoords="offset points", fontsize=8)
+    ax.set(xlim=(0.8, 5.2), ylim=(0.8, 5.2), xlabel="Mean self-reported valence (1–5)", ylabel="Mean self-reported arousal (1–5)", title="Empirical ratings by spoken word")
+    _save(fig, output, "02_affect_word_taxonomy.png")
+
+    # 3. Descriptive session plots with FDR-adjusted Welch tests
+    prosody = [
+        ("audio_f0_mean_hz", "Pitch F0 (Hz)"), ("audio_rms_mean", "RMS energy"),
+        ("audio_zcr_mean", "Zero-crossing rate"), ("audio_duration_sec", "Duration (s)"),
     ]
-    
-    # Normalize features between 0.1 and 0.9 for radar visualization
-    radar_df = pd.DataFrame(index=df['affect_category'].unique())
-    for col, label in radar_features:
-        means = df.groupby('affect_category')[col].mean()
-        min_v = df[col].min()
-        max_v = df[col].max()
-        norm_v = 0.15 + 0.7 * (means - min_v) / (max_v - min_v + 1e-6)
-        radar_df[label] = norm_v
-        
-    labels = list(radar_df.columns)
-    num_vars = len(labels)
-    angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
-    angles += angles[:1]
-    
-    fig, ax = plt.subplots(figsize=(8, 8), subplot_kw=dict(polar=True))
-    
-    for cat in ["Fatigue", "Stress/Anxiety", "Positive", "Neutral"]:
-        if cat not in radar_df.index:
-            continue
-        values = radar_df.loc[cat].values.flatten().tolist()
-        values += values[:1]
-        color = AFFECT_PALETTE.get(cat, '#888888')
-        ax.plot(angles, values, linewidth=2.5, linestyle='solid', label=cat, color=color)
-        ax.fill(angles, values, color=color, alpha=0.15)
-        
-    ax.set_theta_offset(np.pi / 2)
-    ax.set_theta_direction(-1)
-    ax.set_thetagrids(np.degrees(angles[:-1]), labels, fontsize=10, fontweight='bold')
-    ax.set_ylim(0, 1.0)
-    ax.set_title("Multimodal Affect Profiles Across Key Dimensions\n(Normalized Acoustic & Visual Signatures)", fontsize=13, fontweight='bold', pad=22)
-    ax.legend(loc='upper right', bbox_to_anchor=(1.25, 1.1), title="Affect Category", frameon=True)
-    
-    plt.tight_layout()
-    f10_path = os.path.join(output_dir, "10_multimodal_radar_affect_profiles.png")
-    plt.savefig(f10_path)
-    plt.close()
-    print(f"Saved: {f10_path}")
-    
-    print("\nAll 10 Publication-Quality Visualizations successfully generated!")
+    p_values = []
+    for column, _ in prosody:
+        am = df.loc[df.session.eq("AM"), column].dropna(); pm = df.loc[df.session.eq("PM"), column].dropna()
+        p_values.append(stats.ttest_ind(am, pm, equal_var=False).pvalue)
+    q_values = benjamini_hochberg(p_values)
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+    for ax, (column, label), q in zip(axes.flat, prosody, q_values):
+        sns.boxplot(data=df, x="session", y=column, hue="session", palette=SESSION_PALETTE, legend=False, ax=ax)
+        sns.stripplot(data=df, x="session", y=column, color="black", alpha=.55, ax=ax)
+        ax.set(title=f"{label} (Welch BH q={q:.3g})", xlabel="Session", ylabel=label)
+    fig.suptitle("Speech features by session\nSession is confounded with subject and class activity", fontweight="bold")
+    _save(fig, output, "03_audio_prosodic_features_by_session.png")
+
+    # 4. MFCC lexical profiles
+    mfcc = [f"audio_mfcc_{i}_mean" for i in range(1, 14)]
+    top_words = df.spoken_word.value_counts().head(6).index
+    matrix = df[df.spoken_word.isin(top_words)].groupby("spoken_word")[mfcc].mean()
+    matrix.columns = [f"MFCC {i}" for i in range(1, 14)]
+    fig, ax = plt.subplots(figsize=(12, 6))
+    sns.heatmap(matrix, cmap="coolwarm", center=0, ax=ax)
+    ax.set(title="Mean MFCC profiles for frequent spoken words", xlabel="Coefficient", ylabel="Spoken word")
+    _save(fig, output, "04_mfcc_feature_heatmaps.png")
+
+    # 5. Spectral features by reference valence group
+    spectral = [("audio_spec_centroid_mean", "Spectral centroid (Hz)"), ("audio_spec_rolloff85_mean", "85% rolloff (Hz)"), ("audio_spec_contrast_mean", "Spectral contrast")]
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+    for ax, (column, label) in zip(axes, spectral):
+        sns.boxplot(data=df, x="valence_group", y=column, order=["Negative", "Neutral", "Positive"], hue="valence_group", palette=VALENCE_PALETTE, legend=False, ax=ax)
+        sns.stripplot(data=df, x="valence_group", y=column, order=["Negative", "Neutral", "Positive"], color="black", alpha=.5, ax=ax)
+        ax.set(xlabel="Self-reported valence group", ylabel=label, title=label)
+    fig.suptitle("Spectral measurements by self-reported valence group", fontweight="bold")
+    _save(fig, output, "05_spectral_characteristics.png")
+
+    # 6. Facial model proxies by reference valence group
+    facial = [
+        ("face_smile_mean", "Smile blendshape proxy"), ("face_frown_mean", "Frown blendshape proxy"),
+        ("face_brow_lowerer_mean", "Brow-lowering proxy"), ("face_ear_mean", "Eye aspect ratio"),
+        ("face_mar_mean", "Mouth aspect ratio"), ("face_expressiveness_proxy", "Blendshape variability proxy"),
+    ]
+    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+    for ax, (column, label) in zip(axes.flat, facial):
+        sns.boxplot(data=df, x="valence_group", y=column, order=["Negative", "Neutral", "Positive"], hue="valence_group", palette=VALENCE_PALETTE, legend=False, ax=ax)
+        sns.stripplot(data=df, x="valence_group", y=column, order=["Negative", "Neutral", "Positive"], color="black", alpha=.45, ax=ax)
+        ax.set(xlabel="Valence group", ylabel=label, title=label)
+    fig.suptitle("MediaPipe-derived expression proxies by self-reported valence", fontweight="bold")
+    _save(fig, output, "06_facial_action_units_by_session.png")
+
+    # 7. Participant-level cross-modal correlations
+    audio_cols = ["audio_f0_mean_hz", "audio_f0_range_hz", "audio_rms_mean", "audio_zcr_mean", "audio_spec_centroid_mean", "audio_spec_rolloff85_mean", "audio_duration_sec"]
+    face_cols = ["face_smile_mean", "face_frown_mean", "face_brow_lowerer_mean", "face_ear_mean", "face_mar_mean", "face_expressiveness_proxy", "face_pitch_mean_deg"]
+    corr = pd.DataFrame(index=[c.replace("audio_", "") for c in audio_cols], columns=[c.replace("face_", "") for c in face_cols], dtype=float)
+    for a in audio_cols:
+        for f in face_cols:
+            corr.loc[a.replace("audio_", ""), f.replace("face_", "")] = df[[a, f]].corr().iloc[0, 1]
+    fig, ax = plt.subplots(figsize=(10, 7))
+    sns.heatmap(corr, cmap="vlag", center=0, vmin=-.6, vmax=.6, annot=True, fmt=".2f", ax=ax)
+    ax.set(title="Participant-level audio–facial Pearson correlations", xlabel="Facial proxy", ylabel="Audio feature")
+    _save(fig, output, "07_audio_facial_multimodal_correlations.png")
+
+    # 8. Predictor-only embeddings; outcomes are used only for color after projection.
+    features = predictor_columns(df)
+    usable = [c for c in features if df[c].notna().any() and df[c].nunique(dropna=True) > 1]
+    x = SimpleImputer(strategy="median").fit_transform(df[usable])
+    x = StandardScaler().fit_transform(x)
+    pca = PCA(n_components=2, random_state=42).fit(x)
+    x_pca = pca.transform(x)
+    x_tsne = TSNE(n_components=2, perplexity=min(10, len(df) - 1), random_state=42, max_iter=1000, init="pca", learning_rate="auto").fit_transform(x)
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+    for group in ["Negative", "Neutral", "Positive"]:
+        mask = df.valence_group.eq(group).to_numpy()
+        axes[0].scatter(x_pca[mask, 0], x_pca[mask, 1], label=group, color=VALENCE_PALETTE[group], edgecolor="black", alpha=.8)
+        axes[1].scatter(x_tsne[mask, 0], x_tsne[mask, 1], label=group, color=VALENCE_PALETTE[group], edgecolor="black", alpha=.8)
+    axes[0].set(title=f"PCA ({pca.explained_variance_ratio_[0]*100:.1f}% + {pca.explained_variance_ratio_[1]*100:.1f}%)", xlabel="PC1", ylabel="PC2")
+    axes[1].set(title="t-SNE descriptive projection", xlabel="Dimension 1", ylabel="Dimension 2")
+    for ax in axes: ax.legend(title="Self-reported valence")
+    fig.suptitle(f"Predictor-only embeddings ({len(usable)} acoustic/facial features)\nRatings were excluded from projection inputs", fontweight="bold")
+    _save(fig, output, "08_multimodal_pca_tsne_clustering.png")
+
+    # 9. Same-word descriptive analysis
+    kapoy = df[df.spoken_word.eq("Kapoy")].sort_values(["valence_score", "arousal_score", "participant_code"])
+    fig, axes = plt.subplots(1, 3, figsize=(15, 6))
+    colors = kapoy.valence_group.map(VALENCE_PALETTE)
+    for ax, column, label in [
+        (axes[0], "audio_f0_mean_hz", "Pitch F0 (Hz; missing if undetected)"),
+        (axes[1], "audio_rms_mean", "RMS energy"), (axes[2], "face_smile_mean", "Smile blendshape proxy"),
+    ]:
+        ax.barh(kapoy.participant_code, kapoy[column].fillna(0), color=colors, edgecolor="black")
+        if column == "audio_f0_mean_hz":
+            for y, missing in enumerate(kapoy[column].isna()):
+                if missing: ax.text(2, y, "NA", va="center", fontsize=8)
+        ax.set(xlabel=label, ylabel="Participant")
+    fig.suptitle("Lexically controlled description: Kapoy\nVariation is descriptive and does not prove affect prediction", fontweight="bold")
+    _save(fig, output, "09_lexically_controlled_analysis.png")
+
+    # 10. Direct context × reference-outcome view
+    fig, axes = plt.subplots(1, 2, figsize=(13, 5))
+    for ax, outcome, title in [(axes[0], "valence_score", "Mean valence"), (axes[1], "arousal_score", "Mean arousal")]:
+        table = df.pivot_table(index="class_activity", columns="session", values=outcome, aggfunc="mean")
+        sns.heatmap(table, annot=True, vmin=1, vmax=5, cmap="viridis", ax=ax, cbar_kws={"label": "Rating (1–5)"})
+        ax.set(title=title, xlabel="Session", ylabel="Class activity")
+    fig.suptitle("Educational context and self-reported affect\nEmpty cells show the session/activity confounding", fontweight="bold")
+    _save(fig, output, "10_context_affect_profiles.png")
+
+    print(f"Generated 10 corrected exploratory figures in {output}")
 
 
 if __name__ == "__main__":

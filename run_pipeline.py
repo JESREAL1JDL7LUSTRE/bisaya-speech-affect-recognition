@@ -4,8 +4,8 @@ Executes the complete Second Deliverables pipeline:
 1. Audio Feature Extraction (Raw .wav)
 2. Facial Feature Extraction (Raw Cut Video)
 3. Multimodal Dataset Merging, Validation, Scaling, & Dictionary
-4. Descriptive Statistics & Hypothesis Testing
-5. Publication-Quality Visualizations
+4. Missing-aware descriptive statistics with FDR adjustment
+5. Exploratory visualizations grounded in self-reported ratings
 """
 
 import os
@@ -56,7 +56,7 @@ def main():
     # -------------------------------------------------------------
     # Step 3: Multimodal Dataset Construction & Cleaning
     # -------------------------------------------------------------
-    print("\n>>> STEP 3/5: Merging, Validating, and Normalizing Multimodal Dataset...")
+    print("\n>>> STEP 3/5: Validating one-to-one correspondence and building multimodal datasets...")
     df_multi, df_scaled, df_dict = build_cleaned_multimodal_dataset(
         audio_csv=audio_csv,
         facial_csv=facial_csv,
@@ -69,16 +69,16 @@ def main():
     # -------------------------------------------------------------
     # Step 4: Descriptive Statistics & Hypothesis Testing
     # -------------------------------------------------------------
-    print("\n>>> STEP 4/5: Computing Descriptive Statistics & Statistical Tests...")
+    print("\n>>> STEP 4/5: Computing missing-aware statistics and FDR-adjusted exploratory tests...")
     stats_results = run_descriptive_statistics(raw_multimodal_csv, stats_dir)
     print(f"[OK] Step 4 Complete: Descriptive reports & CSV tables saved to {stats_dir}.")
     
     # -------------------------------------------------------------
     # Step 5: High-Resolution Visualizations
     # -------------------------------------------------------------
-    print("\n>>> STEP 5/5: Generating Publication-Grade Visualizations (300 DPI)...")
+    print("\n>>> STEP 5/5: Generating rating-grounded exploratory visualizations (300 DPI)...")
     generate_all_visualizations(raw_multimodal_csv, vis_dir)
-    print(f"[OK] Step 5 Complete: All 10 figures saved to {vis_dir}.")
+    print(f"[OK] Step 5 Complete: 10 figures saved to {vis_dir}.")
     
     elapsed = time.time() - t_start
     print("\n" + "=" * 75)

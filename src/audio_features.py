@@ -1,317 +1,333 @@
-"""
-Audio Feature Extraction Module for Bisaya Speech Affect Recognition.
-Processes raw WAV recordings and extracts acoustic, prosodic, and spectral features.
-"""
+"""Validated acoustic feature extraction for the Bisaya affect dataset."""
+
+from __future__ import annotations
 
 import os
-import glob
+from pathlib import Path
+
+import librosa
 import numpy as np
 import pandas as pd
-import librosa
-import soundfile as sf
 from tqdm import tqdm
 
 
-AFFECT_TAXONOMY = {
-    # Fatigue / Physical & Mental Exhaustion
-    "Kapoy": {"category": "Fatigue", "valence_group": "Negative", "arousal_group": "Low", "english": "Tired / Exhausted"},
-    "Hangak": {"category": "Fatigue", "valence_group": "Negative", "arousal_group": "Moderate", "english": "Breathless / Gasping"},
-    "Labad": {"category": "Fatigue", "valence_group": "Negative", "arousal_group": "Moderate", "english": "Headache / Stressed"},
-    "Mamatay": {"category": "Fatigue", "valence_group": "Negative", "arousal_group": "Moderate", "english": "Dying / Drained"},
-    "Lutang": {"category": "Fatigue", "valence_group": "Negative", "arousal_group": "Low", "english": "Spaced out / Floating"},
-    
-    # Stress / Anxiety / Cognitive Strain
-    "Kulba": {"category": "Stress/Anxiety", "valence_group": "Negative", "arousal_group": "High", "english": "Nervous / Anxious"},
-    "Kapuliki": {"category": "Stress/Anxiety", "valence_group": "Negative", "arousal_group": "High", "english": "Overwhelmed / Frantic"},
-    "Lisod": {"category": "Stress/Anxiety", "valence_group": "Negative", "arousal_group": "Moderate", "english": "Difficult / Challenging"},
-    "Libog": {"category": "Stress/Anxiety", "valence_group": "Negative", "arousal_group": "Moderate", "english": "Confused / Perplexed"},
-    "Gaduha-duha": {"category": "Stress/Anxiety", "valence_group": "Negative", "arousal_group": "Moderate", "english": "Hesitant / In doubt"},
-    "Pildi": {"category": "Stress/Anxiety", "valence_group": "Negative", "arousal_group": "Low", "english": "Defeated / Lost"},
-    "Gakaguol": {"category": "Stress/Anxiety", "valence_group": "Negative", "arousal_group": "Low", "english": "Grieving / Gloomy"},
-    "Kaguol": {"category": "Stress/Anxiety", "valence_group": "Negative", "arousal_group": "Low", "english": "Sad / Sorrowful"},
-    
-    # Neutral / Ambivalence / Reflective
-    "Okay": {"category": "Neutral", "valence_group": "Neutral", "arousal_group": "Moderate", "english": "Okay / Fine"},
-    "Ambot": {"category": "Neutral", "valence_group": "Neutral", "arousal_group": "Low", "english": "I don't know / Ambivalent"},
-    "Hilom": {"category": "Neutral", "valence_group": "Neutral", "arousal_group": "Low", "english": "Quiet / Silent"},
-    "Kamatuoran": {"category": "Neutral", "valence_group": "Neutral", "arousal_group": "Moderate", "english": "Truth / Acceptance"},
-    
-    # Positive / Relief / Joy / Satisfaction
-    "Hapsay": {"category": "Positive", "valence_group": "Positive", "arousal_group": "Moderate", "english": "Smooth / Orderly"},
-    "Nahuwasan": {"category": "Positive", "valence_group": "Positive", "arousal_group": "Moderate", "english": "Relieved"},
-    "Relibo": {"category": "Positive", "valence_group": "Positive", "arousal_group": "Moderate", "english": "Relieved"},
-    "Lingaw": {"category": "Positive", "valence_group": "Positive", "arousal_group": "High", "english": "Fun / Enjoyable"},
-    "Chuy": {"category": "Positive", "valence_group": "Positive", "arousal_group": "Moderate", "english": "Cool / Chill"},
-    "Thrilled": {"category": "Positive", "valence_group": "Positive", "arousal_group": "High", "english": "Excited / Thrilled"},
-    "Gihigugma": {"category": "Positive", "valence_group": "Positive", "arousal_group": "Moderate", "english": "Loved / Appreciated"}
+SURVEY_CSV = "DATA/RESEARCH MINI-PROJECT v2 - G7 - 4th year.csv"
+PROVENANCE_CSV = "DATA/metadata_provenance.csv"
+QUALITY_FLAGS_CSV = "DATA/recording_quality_flags.csv"
+
+# Lexical context only; never the reference affect outcome.
+LEXICAL_TAXONOMY = {
+    "Kapoy": ("Fatigue-related word", "Tired / Exhausted"),
+    "Hangak": ("Fatigue-related word", "Breathless / Gasping"),
+    "Labad": ("Fatigue-related word", "Headache / Stressed"),
+    "Mamatay": ("Fatigue-related word", "Dying / Drained"),
+    "Lutang": ("Fatigue-related word", "Spaced out / Floating"),
+    "Kulba": ("Stress-related word", "Nervous / Anxious"),
+    "Kapuliki": ("Stress-related word", "Overwhelmed / Frantic"),
+    "Lisod": ("Stress-related word", "Difficult / Challenging"),
+    "Libog": ("Stress-related word", "Confused / Perplexed"),
+    "Gaduha-duha": ("Stress-related word", "Hesitant / In doubt"),
+    "Duha-duha": ("Stress-related word", "Hesitant / In doubt"),
+    "Pildi": ("Stress-related word", "Defeated / Lost"),
+    "Gakaguol": ("Stress-related word", "Grieving / Gloomy"),
+    "Kaguol": ("Stress-related word", "Sad / Sorrowful"),
+    "Okay": ("Neutral/ambivalent word", "Okay / Fine"),
+    "Ambot": ("Neutral/ambivalent word", "I don't know / Ambivalent"),
+    "Hilom": ("Neutral/ambivalent word", "Quiet / Silent"),
+    "Kamatuoran": ("Neutral/ambivalent word", "Truth / Acceptance"),
+    "Hapsay": ("Positive/relief word", "Smooth / Orderly"),
+    "Nahuwasan": ("Positive/relief word", "Relieved"),
+    "Relibo": ("Positive/relief word", "Relieved"),
+    "Lingaw": ("Positive/relief word", "Fun / Enjoyable"),
+    "Chuy": ("Positive/relief word", "Cool / Chill"),
+    "Thrilled": ("Positive/relief word", "Excited / Thrilled"),
+    "Gihigugma": ("Positive/relief word", "Loved / Appreciated"),
 }
 
+AFFECT_TAXONOMY = {
+    word: {"category": category, "english": english}
+    for word, (category, english) in LEXICAL_TAXONOMY.items()
+}
+FILENAME_WORD_ALIASES = {"Gaduha-duha": "Duha-duha"}
 
-def load_survey_metadata(csv_path: str = "DATA/RESEARCH MINI-PROJECT v2 - G7 - 4th year.csv") -> dict:
-    """Loads official participant survey responses (Valence, Arousal, Class Activity, etc.)."""
-    if not os.path.exists(csv_path):
-        return {}
+
+def _read_csv(path: str) -> pd.DataFrame:
     try:
-        df_meta = pd.read_csv(csv_path, encoding='utf-8')
-    except Exception:
-        df_meta = pd.read_csv(csv_path, encoding='cp1252')
-        
-    val_map = {1: 'Very Unpleasant', 2: 'Unpleasant', 3: 'Neutral', 4: 'Pleasant', 5: 'Very Pleasant'}
-    aro_map = {1: 'Very Low', 2: 'Low', 3: 'Moderate', 4: 'High', 5: 'Very High'}
-    
-    meta_dict = {}
-    for _, row in df_meta.iterrows():
-        p_code = str(row['Participant Code']).strip()
-        v_raw = str(row['Valence (1-5)']).strip()
-        a_raw = str(row['Arousal (1-5)']).strip()
-        
-        v_score = int(v_raw[0]) if len(v_raw) > 0 and v_raw[0].isdigit() else 3
-        a_score = int(a_raw[0]) if len(a_raw) > 0 and a_raw[0].isdigit() else 3
-        
-        meta_dict[p_code] = {
-            'class_activity': str(row['Class Activity']).strip(),
-            'subject': str(row['Subject']).strip(),
-            'session_name': str(row['Session']).strip(),
-            'self_reported_feeling': str(row['Self-Reported Feeling']).strip() if (pd.notna(row['Self-Reported Feeling']) and str(row['Self-Reported Feeling']).strip() != '') else str(row['Spoken Word']).strip(),
-            'valence_score': v_score,
-            'valence_label': val_map.get(v_score, 'Neutral'),
-            'arousal_score': a_score,
-            'arousal_label': aro_map.get(a_score, 'Moderate'),
-            'date_collected': str(row['Date Collected']).strip() if pd.notna(row['Date Collected']) else ''
+        return pd.read_csv(path, encoding="utf-8")
+    except UnicodeDecodeError:
+        return pd.read_csv(path, encoding="cp1252")
+
+
+def _parse_rating(value, field: str) -> int:
+    text = "" if pd.isna(value) else str(value).strip()
+    if not text or not text[0].isdigit():
+        raise ValueError(f"{field} must begin with an integer from 1 to 5; got {value!r}")
+    score = int(text[0])
+    if score not in range(1, 6):
+        raise ValueError(f"{field} must be from 1 to 5; got {score}")
+    return score
+
+
+def _rating_group(score: int, dimension: str) -> str:
+    if dimension == "valence":
+        return "Negative" if score <= 2 else "Neutral" if score == 3 else "Positive"
+    return "Low" if score <= 2 else "Moderate" if score == 3 else "High"
+
+
+def _load_auxiliary_map(path: str, value_columns: list[str]) -> dict[str, dict]:
+    if not os.path.exists(path):
+        return {}
+    df = _read_csv(path)
+    if "Participant Code" not in df.columns:
+        raise ValueError(f"{path} is missing Participant Code")
+    return {
+        str(row["Participant Code"]).strip(): {
+            col: ("" if pd.isna(row.get(col)) else str(row.get(col)).strip())
+            for col in value_columns
         }
-    return meta_dict
+        for _, row in df.iterrows()
+    }
+
+
+def load_survey_metadata(csv_path: str = SURVEY_CSV) -> dict[str, dict]:
+    """Load and validate survey metadata without fabricating missing outcomes."""
+    if not os.path.exists(csv_path):
+        raise FileNotFoundError(f"Required survey metadata not found: {csv_path}")
+    df = _read_csv(csv_path)
+    required = {
+        "Participant Code", "Year Level", "Class Activity", "Subject", "Session",
+        "Spoken Word", "Self-Reported Feeling", "Valence (1-5)", "Arousal (1-5)",
+        "Audio Filename", "Consent Obtained (Y/N)", "Date Collected",
+    }
+    missing = sorted(required - set(df.columns))
+    if missing:
+        raise ValueError(f"Survey metadata is missing columns: {missing}")
+    codes = df["Participant Code"].astype(str).str.strip()
+    if codes.eq("").any() or codes.duplicated().any():
+        duplicates = codes[codes.duplicated(keep=False)].tolist()
+        raise ValueError(f"Participant codes must be nonblank and unique; duplicates={duplicates}")
+
+    provenance = _load_auxiliary_map(PROVENANCE_CSV, ["Field", "Status", "Note"])
+    quality = _load_auxiliary_map(
+        QUALITY_FLAGS_CSV,
+        ["Intentional BGM Boundary Trim", "Background Music Overlap", "Speech Complete", "Notes"],
+    )
+    val_labels = {1: "Very Unpleasant", 2: "Unpleasant", 3: "Neutral", 4: "Pleasant", 5: "Very Pleasant"}
+    aro_labels = {1: "Very Low", 2: "Low", 3: "Moderate", 4: "High", 5: "Very High"}
+    records: dict[str, dict] = {}
+    for _, row in df.iterrows():
+        code = str(row["Participant Code"]).strip()
+        if str(row["Consent Obtained (Y/N)"]).strip().lower() not in {"yes", "y"}:
+            raise ValueError(f"{code} does not have recorded consent")
+        valence = _parse_rating(row["Valence (1-5)"], f"{code} valence")
+        arousal = _parse_rating(row["Arousal (1-5)"], f"{code} arousal")
+        feeling = "" if pd.isna(row["Self-Reported Feeling"]) else str(row["Self-Reported Feeling"]).strip()
+        word = str(row["Spoken Word"]).strip()
+        lexical_category, word_english = LEXICAL_TAXONOMY.get(word, ("Unclassified word", word))
+        v_group = _rating_group(valence, "valence")
+        a_group = _rating_group(arousal, "arousal")
+        prov = provenance.get(code, {})
+        flags = quality.get(code, {})
+        records[code] = {
+            "participant_code": code,
+            "year_level": str(row["Year Level"]).strip(),
+            "class_activity": str(row["Class Activity"]).strip(),
+            "subject": str(row["Subject"]).strip(),
+            "session_name": str(row["Session"]).strip(),
+            "survey_spoken_word": word,
+            "self_reported_feeling": feeling if feeling else pd.NA,
+            "self_reported_feeling_missing": not bool(feeling),
+            "self_reported_feeling_source": prov.get("Status", "Survey entry"),
+            "valence_score": valence,
+            "valence_label": val_labels[valence],
+            "valence_group": v_group,
+            "arousal_score": arousal,
+            "arousal_label": aro_labels[arousal],
+            "arousal_group": a_group,
+            "affect_category": f"{v_group}-{a_group}",
+            "lexical_category": lexical_category,
+            "word_english": word_english,
+            "date_collected": "" if pd.isna(row["Date Collected"]) else str(row["Date Collected"]).strip(),
+            "consent_obtained": True,
+            "survey_audio_filename": str(row["Audio Filename"]).strip(),
+            "intentional_bgm_boundary_trim": flags.get("Intentional BGM Boundary Trim", "No"),
+            "background_music_overlap": flags.get("Background Music Overlap", "Not flagged"),
+            "speech_complete_status": flags.get("Speech Complete", "Not flagged"),
+        }
+    return records
 
 
 SURVEY_METADATA = load_survey_metadata()
 
 
-def parse_filename(filepath: str):
-    """
-    Parses ParticipantCode_YearLevel_Session_Word.wav and enriches with ground truth survey metadata.
-    """
+def parse_filename(filepath: str) -> dict:
+    """Parse a recording name and reconcile it with required survey metadata."""
     filename = os.path.basename(filepath)
-    stem, _ = os.path.splitext(filename)
-    parts = stem.split("_")
-    if len(parts) >= 4:
-        participant_code = parts[0]
-        year_level = parts[1]
-        session_code = parts[2]
-        spoken_word = parts[3]
-    else:
-        participant_code = stem
-        year_level = "Unknown"
-        session_code = "Unknown"
-        spoken_word = "Unknown"
-    
-    tax = AFFECT_TAXONOMY.get(spoken_word, {
-        "category": "Unknown",
-        "valence_group": "Unknown",
-        "arousal_group": "Unknown",
-        "english": spoken_word
-    })
-    
-    survey = SURVEY_METADATA.get(participant_code, {})
-    
-    return {
+    parts = Path(filename).stem.split("_")
+    if len(parts) < 4:
+        raise ValueError(f"Invalid recording filename: {filename}")
+    participant_code, year_code, session_code = parts[:3]
+    spoken_word = "_".join(parts[3:])
+    if participant_code not in SURVEY_METADATA:
+        raise ValueError(f"No survey row for {participant_code}")
+    survey = SURVEY_METADATA[participant_code].copy()
+    survey_word = survey.pop("survey_spoken_word")
+    canonical_filename_word = FILENAME_WORD_ALIASES.get(spoken_word, spoken_word)
+    word_matches = canonical_filename_word.casefold() == survey_word.casefold()
+    if not word_matches:
+        raise ValueError(f"{participant_code}: filename word {spoken_word!r} != survey word {survey_word!r}")
+    if Path(survey["survey_audio_filename"]).stem.casefold() != Path(filename).stem.casefold():
+        raise ValueError(f"{participant_code}: filename does not match survey Audio Filename")
+    expected_session = "AM" if survey["session_name"].lower().startswith("morning") else "PM"
+    if session_code != expected_session:
+        raise ValueError(f"{participant_code}: filename session {session_code} != survey session {survey['session_name']}")
+    survey.update({
         "participant_code": participant_code,
-        "year_level": survey.get("year_level", "4th Year"),
-        "class_activity": survey.get("class_activity", "Unknown"),
-        "subject": survey.get("subject", "Unknown"),
+        "year_code": year_code,
         "session": session_code,
-        "session_name": survey.get("session_name", "Morning" if session_code == "AM" else "Afternoon"),
-        "spoken_word": spoken_word,
-        "self_reported_feeling": survey.get("self_reported_feeling", spoken_word),
-        "valence_score": survey.get("valence_score", 3),
-        "valence_label": survey.get("valence_label", tax["valence_group"]),
-        "arousal_score": survey.get("arousal_score", 3),
-        "arousal_label": survey.get("arousal_label", tax["arousal_group"]),
-        "affect_category": tax["category"],
-        "word_english": tax["english"],
-        "date_collected": survey.get("date_collected", ""),
-        "audio_filename": filename
-    }
+        "spoken_word": canonical_filename_word,
+        "metadata_word_matches_filename": word_matches,
+        "audio_filename": filename,
+    })
+    return survey
+
+
+def _round_or_nan(value: float, digits: int) -> float:
+    return round(float(value), digits) if np.isfinite(value) else np.nan
 
 
 def extract_audio_features_from_file(filepath: str, target_sr: int = 16000) -> dict:
-    """
-    Extracts acoustic and prosodic features from a single WAV audio recording.
-    """
     meta = parse_filename(filepath)
-    
-    # Load audio (downsampled to target_sr for consistent SER processing)
     y, sr = librosa.load(filepath, sr=target_sr, mono=True)
-    
-    # Remove leading/trailing silence
+    if y.size < 512 or not np.isfinite(y).all():
+        raise ValueError("Audio is too short or contains non-finite samples")
     y_trimmed, _ = librosa.effects.trim(y, top_db=25)
-    if len(y_trimmed) < 160: # fallback if trimmed too much
+    if y_trimmed.size < 1024:
         y_trimmed = y
-        
-    duration = float(len(y) / sr)
-    trimmed_duration = float(len(y_trimmed) / sr)
-    
+    duration = len(y) / sr
+    trimmed_duration = len(y_trimmed) / sr
+    end_window = max(1, int(0.05 * sr))
+    chunks = [y[i:i + end_window] for i in range(0, len(y), end_window)]
+    window_rms = [np.sqrt(np.mean(chunk ** 2)) for chunk in chunks]
+    end_rms_ratio = float(np.sqrt(np.mean(y[-end_window:] ** 2)) / (max(window_rms) + 1e-12))
+
     features = {
         **meta,
         "audio_duration_sec": round(duration, 4),
         "audio_trimmed_dur_sec": round(trimmed_duration, 4),
+        "audio_trimmed_fraction": round(trimmed_duration / duration, 4),
         "audio_sampling_rate": sr,
+        "audio_end_boundary_rms_ratio": round(end_rms_ratio, 4),
+        "audio_boundary_review_flag": bool(end_rms_ratio > 0.5),
     }
-    
-    # 1. Pitch / Fundamental Frequency (F0) using pyin
-    # Human speech F0 typically between 50 Hz and 500 Hz
-    f0, voiced_flag, voiced_probs = librosa.pyin(
-        y_trimmed,
-        fmin=50,
-        fmax=500,
-        sr=sr,
-        frame_length=1024,
-        hop_length=256
+
+    frame_length, hop_length = 2048, 256
+    f0, _, _ = librosa.pyin(
+        y_trimmed, fmin=50, fmax=500, sr=sr,
+        frame_length=frame_length, hop_length=hop_length,
     )
-    
-    voiced_f0 = f0[~np.isnan(f0)] if f0 is not None else np.array([])
-    voiced_ratio = float(len(voiced_f0) / len(f0)) if len(f0) > 0 else 0.0
-    
-    if len(voiced_f0) > 0:
-        f0_mean = float(np.mean(voiced_f0))
-        f0_std = float(np.std(voiced_f0))
-        f0_min = float(np.min(voiced_f0))
-        f0_max = float(np.max(voiced_f0))
-        f0_median = float(np.median(voiced_f0))
-        f0_range = float(f0_max - f0_min)
-        
-        # Local Jitter approximation (relative pitch period variation)
-        if len(voiced_f0) > 1:
-            periods = 1.0 / voiced_f0
-            diff_periods = np.abs(np.diff(periods))
-            jitter_local = float(np.mean(diff_periods) / np.mean(periods))
-        else:
-            jitter_local = 0.0
+    valid = np.isfinite(f0) if f0 is not None else np.zeros(0, dtype=bool)
+    voiced_f0 = f0[valid] if f0 is not None else np.array([])
+    pitch_detected = voiced_f0.size > 0
+    adjacent = valid[1:] & valid[:-1] if valid.size > 1 else np.zeros(0, dtype=bool)
+    if pitch_detected:
+        periods = 1.0 / f0
+        period_variation = (
+            float(np.mean(np.abs(np.diff(periods)[adjacent])) / np.mean(periods[valid]))
+            if adjacent.any() else np.nan
+        )
+        pitch_values = [np.mean(voiced_f0), np.std(voiced_f0), np.min(voiced_f0), np.max(voiced_f0), np.median(voiced_f0), np.ptp(voiced_f0)]
     else:
-        f0_mean = 0.0
-        f0_std = 0.0
-        f0_min = 0.0
-        f0_max = 0.0
-        f0_median = 0.0
-        f0_range = 0.0
-        jitter_local = 0.0
-        
+        period_variation = np.nan
+        pitch_values = [np.nan] * 6
     features.update({
-        "audio_f0_mean_hz": round(f0_mean, 2),
-        "audio_f0_std_hz": round(f0_std, 2),
-        "audio_f0_min_hz": round(f0_min, 2),
-        "audio_f0_max_hz": round(f0_max, 2),
-        "audio_f0_median_hz": round(f0_median, 2),
-        "audio_f0_range_hz": round(f0_range, 2),
-        "audio_voiced_ratio": round(voiced_ratio, 4),
-        "audio_jitter_local": round(jitter_local, 5),
+        "audio_pitch_detected": bool(pitch_detected),
+        "audio_voiced_frames": int(valid.sum()),
+        "audio_pitch_total_frames": int(valid.size),
+        "audio_pitch_frame_length": frame_length,
+        "audio_f0_mean_hz": _round_or_nan(pitch_values[0], 2),
+        "audio_f0_std_hz": _round_or_nan(pitch_values[1], 2),
+        "audio_f0_min_hz": _round_or_nan(pitch_values[2], 2),
+        "audio_f0_max_hz": _round_or_nan(pitch_values[3], 2),
+        "audio_f0_median_hz": _round_or_nan(pitch_values[4], 2),
+        "audio_f0_range_hz": _round_or_nan(pitch_values[5], 2),
+        "audio_voiced_ratio": round(float(valid.mean()), 4) if valid.size else 0.0,
+        "audio_period_variation_proxy": _round_or_nan(period_variation, 5),
     })
-    
-    # 2. Energy / Loudness (RMS)
-    rms = librosa.feature.rms(y=y_trimmed, frame_length=1024, hop_length=256)[0]
+
+    rms = librosa.feature.rms(y=y_trimmed, frame_length=1024, hop_length=hop_length)[0]
     rms_mean = float(np.mean(rms))
-    rms_std = float(np.std(rms))
-    rms_max = float(np.max(rms))
-    rms_min = float(np.min(rms))
-    
-    # Local Shimmer approximation (relative amplitude difference between frames)
-    if len(rms) > 1 and rms_mean > 1e-6:
-        diff_rms = np.abs(np.diff(rms))
-        shimmer_local = float(np.mean(diff_rms) / rms_mean)
-    else:
-        shimmer_local = 0.0
-        
+    rms_variation = float(np.mean(np.abs(np.diff(rms))) / rms_mean) if len(rms) > 1 and rms_mean > 1e-8 else np.nan
     features.update({
         "audio_rms_mean": round(rms_mean, 5),
-        "audio_rms_std": round(rms_std, 5),
-        "audio_rms_max": round(rms_max, 5),
-        "audio_rms_min": round(rms_min, 5),
-        "audio_shimmer_local": round(shimmer_local, 5),
+        "audio_rms_std": round(float(np.std(rms)), 5),
+        "audio_rms_max": round(float(np.max(rms)), 5),
+        "audio_rms_min": round(float(np.min(rms)), 5),
+        "audio_rms_frame_variation_proxy": _round_or_nan(rms_variation, 5),
     })
-    
-    # 3. Zero Crossing Rate (ZCR)
-    zcr = librosa.feature.zero_crossing_rate(y=y_trimmed, frame_length=1024, hop_length=256)[0]
-    features.update({
-        "audio_zcr_mean": round(float(np.mean(zcr)), 5),
-        "audio_zcr_std": round(float(np.std(zcr)), 5),
-        "audio_zcr_max": round(float(np.max(zcr)), 5),
-    })
-    
-    # 4. Spectral Features
-    sc = librosa.feature.spectral_centroid(y=y_trimmed, sr=sr, n_fft=1024, hop_length=256)[0]
-    sb = librosa.feature.spectral_bandwidth(y=y_trimmed, sr=sr, n_fft=1024, hop_length=256)[0]
-    srolloff = librosa.feature.spectral_rolloff(y=y_trimmed, sr=sr, roll_percent=0.85, n_fft=1024, hop_length=256)[0]
-    sflatness = librosa.feature.spectral_flatness(y=y_trimmed, n_fft=1024, hop_length=256)[0]
-    scontrast = librosa.feature.spectral_contrast(y=y_trimmed, sr=sr, n_fft=1024, hop_length=256)
-    
-    features.update({
-        "audio_spec_centroid_mean": round(float(np.mean(sc)), 2),
-        "audio_spec_centroid_std": round(float(np.std(sc)), 2),
-        "audio_spec_bandwidth_mean": round(float(np.mean(sb)), 2),
-        "audio_spec_bandwidth_std": round(float(np.std(sb)), 2),
-        "audio_spec_rolloff85_mean": round(float(np.mean(srolloff)), 2),
-        "audio_spec_rolloff85_std": round(float(np.std(srolloff)), 2),
-        "audio_spec_flatness_mean": round(float(np.mean(sflatness)), 6),
-        "audio_spec_flatness_std": round(float(np.std(sflatness)), 6),
-        "audio_spec_contrast_mean": round(float(np.mean(scontrast)), 4),
-        "audio_spec_contrast_std": round(float(np.std(scontrast)), 4),
-    })
-    
-    # 5. Chroma features
-    chroma = librosa.feature.chroma_stft(y=y_trimmed, sr=sr, n_fft=1024, hop_length=256)
-    features.update({
-        "audio_chroma_mean": round(float(np.mean(chroma)), 4),
-        "audio_chroma_std": round(float(np.std(chroma)), 4),
-    })
-    
-    # 6. MFCCs, Delta MFCCs, Delta-Delta MFCCs (13 coefficients each)
+
+    zcr = librosa.feature.zero_crossing_rate(y=y_trimmed, frame_length=1024, hop_length=hop_length)[0]
+    sc = librosa.feature.spectral_centroid(y=y_trimmed, sr=sr, n_fft=1024, hop_length=hop_length)[0]
+    sb = librosa.feature.spectral_bandwidth(y=y_trimmed, sr=sr, n_fft=1024, hop_length=hop_length)[0]
+    rolloff = librosa.feature.spectral_rolloff(y=y_trimmed, sr=sr, roll_percent=0.85, n_fft=1024, hop_length=hop_length)[0]
+    flatness = librosa.feature.spectral_flatness(y=y_trimmed, n_fft=1024, hop_length=hop_length)[0]
+    contrast = librosa.feature.spectral_contrast(y=y_trimmed, sr=sr, n_fft=1024, hop_length=hop_length)
+    chroma = librosa.feature.chroma_stft(y=y_trimmed, sr=sr, n_fft=1024, hop_length=hop_length)
+    for name, arr, digits in [
+        ("audio_zcr", zcr, 5), ("audio_spec_centroid", sc, 2),
+        ("audio_spec_bandwidth", sb, 2), ("audio_spec_rolloff85", rolloff, 2),
+        ("audio_spec_flatness", flatness, 6), ("audio_spec_contrast", contrast, 4),
+        ("audio_chroma", chroma, 4),
+    ]:
+        features[f"{name}_mean"] = round(float(np.mean(arr)), digits)
+        features[f"{name}_std"] = round(float(np.std(arr)), digits)
+        if name == "audio_zcr":
+            features[f"{name}_max"] = round(float(np.max(arr)), digits)
+
     n_mfcc = 13
-    mfcc = librosa.feature.mfcc(y=y_trimmed, sr=sr, n_mfcc=n_mfcc, n_fft=1024, hop_length=256)
-    delta_mfcc = librosa.feature.delta(mfcc)
-    delta2_mfcc = librosa.feature.delta(mfcc, order=2)
-    
+    mfcc = librosa.feature.mfcc(y=y_trimmed, sr=sr, n_mfcc=n_mfcc, n_fft=1024, hop_length=hop_length)
+    frame_count = mfcc.shape[1]
+    delta_width = min(9, frame_count if frame_count % 2 else frame_count - 1)
+    delta_available = delta_width >= 3
+    if delta_available:
+        delta_mfcc = librosa.feature.delta(mfcc, width=delta_width, mode="interp")
+        delta2_mfcc = librosa.feature.delta(mfcc, width=delta_width, order=2, mode="interp")
+    else:
+        delta_mfcc = np.full_like(mfcc, np.nan)
+        delta2_mfcc = np.full_like(mfcc, np.nan)
+    features["audio_delta_available"] = bool(delta_available)
+    features["audio_delta_width"] = int(delta_width) if delta_available else pd.NA
     for i in range(n_mfcc):
-        features[f"audio_mfcc_{i+1}_mean"] = round(float(np.mean(mfcc[i])), 4)
-        features[f"audio_mfcc_{i+1}_std"] = round(float(np.std(mfcc[i])), 4)
-        
-        features[f"audio_delta_mfcc_{i+1}_mean"] = round(float(np.mean(delta_mfcc[i])), 4)
-        features[f"audio_delta_mfcc_{i+1}_std"] = round(float(np.std(delta_mfcc[i])), 4)
-        
-        features[f"audio_delta2_mfcc_{i+1}_mean"] = round(float(np.mean(delta2_mfcc[i])), 4)
-        features[f"audio_delta2_mfcc_{i+1}_std"] = round(float(np.std(delta2_mfcc[i])), 4)
-        
+        for prefix, values in [("audio_mfcc", mfcc), ("audio_delta_mfcc", delta_mfcc), ("audio_delta2_mfcc", delta2_mfcc)]:
+            finite = np.isfinite(values[i])
+            features[f"{prefix}_{i + 1}_mean"] = _round_or_nan(np.mean(values[i][finite]), 4) if finite.any() else np.nan
+            features[f"{prefix}_{i + 1}_std"] = _round_or_nan(np.std(values[i][finite]), 4) if finite.any() else np.nan
     return features
 
 
-def extract_all_audio_features(raw_audio_dir: str, output_csv: str = None) -> pd.DataFrame:
-    """
-    Extracts acoustic features from all WAV files in raw_audio_dir.
-    """
-    raw_audio_dir = os.path.abspath(raw_audio_dir)
-    files = sorted([
-        os.path.join(raw_audio_dir, f)
-        for f in os.listdir(raw_audio_dir)
-        if f.lower().endswith((".wav"))
-    ])
-    
-    print(f"Found {len(files)} audio recordings in {raw_audio_dir}")
-    records = []
+def extract_all_audio_features(raw_audio_dir: str, output_csv: str | None = None) -> pd.DataFrame:
+    raw_dir = Path(raw_audio_dir).resolve()
+    if not raw_dir.is_dir():
+        raise FileNotFoundError(f"Audio directory not found: {raw_dir}")
+    files = sorted(p for p in raw_dir.iterdir() if p.suffix.lower() == ".wav")
+    print(f"Found {len(files)} audio recordings in {raw_dir}")
+    records, failures = [], []
     for filepath in tqdm(files, desc="Extracting Audio Features"):
         try:
-            feat = extract_audio_features_from_file(filepath)
-            records.append(feat)
-        except Exception as e:
-            print(f"Error processing {filepath}: {e}")
-            
+            records.append(extract_audio_features_from_file(str(filepath)))
+        except Exception as exc:
+            failures.append({"filename": filepath.name, "error": str(exc)})
     df = pd.DataFrame(records)
-    
     if output_csv:
-        os.makedirs(os.path.dirname(os.path.abspath(output_csv)), exist_ok=True)
-        df.to_csv(output_csv, index=False)
-        print(f"Audio feature dataset saved to {output_csv} (Shape: {df.shape})")
-        
+        output = Path(output_csv)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        df.to_csv(output, index=False)
+        pd.DataFrame(failures, columns=["filename", "error"]).to_csv(output.parent / "audio_extraction_failures.csv", index=False)
+        print(f"Audio feature dataset saved to {output} (Shape: {df.shape}; failures={len(failures)})")
+    if failures:
+        raise RuntimeError(f"Audio extraction failed for {len(failures)} files; see audio_extraction_failures.csv")
     return df
 
 
 if __name__ == "__main__":
-    audio_dir = "DATA/2AudioRecordings/Raw .wav"
-    out_csv = "datasets/audio/audio_feature_dataset.csv"
-    extract_all_audio_features(audio_dir, out_csv)
+    extract_all_audio_features("DATA/2AudioRecordings/Raw .wav", "datasets/audio/audio_feature_dataset.csv")
