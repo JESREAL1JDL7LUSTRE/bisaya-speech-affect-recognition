@@ -1,41 +1,41 @@
-Participant Code,Year Level,Class Activity,Subject,Session,Spoken Word,Self-Reported Feeling,Valence (1-5),Arousal (1-5),Audio Filename,Consent Obtained (Y/N),Date Collected,Collector Initials,Notes
-Y4-001,4th Year,Lecture / Review,Foreign Language - Japanese,Afternoon,Thrilled,Thrilled,4 — Pleasant,3 — Moderate,Y4-001_Y4_PM_Thrilled.WAV,Yes,9/22/2026,,
-Y4-002,4th Year,Lecture / Review,Foreign Language - Japanese,Afternoon,Lutang,Lutang,4 — Pleasant,3 — Moderate,Y4-002_Y4_PM_Lutang.WAV,Yes,9/22/2026,,
-Y4-003,4th Year,Lecture / Review,Foreign Language - Japanese,Afternoon,Libog,Confused,3 — Neutral,4 — High,Y4-003_Y4_PM_Libog.WAV,Yes,9/22/2026,,
-Y4-004,4th Year,Lecture / Review,Foreign Language - Japanese,Afternoon,Okay,Okay,4 — Pleasant,3 — Moderate,Y4-004_Y4_PM_Okay.WAV,Yes,9/22/2026,,
-Y4-005,4th Year,Lecture / Review,Foreign Language - Japanese,Afternoon,Hapsay,Great,4 — Pleasant,4 — High,Y4-005_Y4_PM_Hapsay.WAV,Yes,9/22/2026,,
-Y4-006,4th Year,Lecture / Review,Foreign Language - Japanese,Afternoon,Kapuliki,Kapuliki,3 — Neutral,3 — Moderate,Y4-006_Y4_PM_Kapuliki.WAV,Yes,9/23/2026,,
-Y4-007,4th Year,Prelim Exam,Graph Theory,Morning,Nahuwasan,Huwaasa,4 — Pleasant,4 — High,Y4-007_Y4_AM_Nahuwasan.WAV,Yes,9/29/2026,,
-Y4-008,4th Year,Prelim Exam,Graph Theory,Morning,Chuy,Chuy,2 — Unpleasant,3 — Moderate,Y4-008_Y4_AM_Chuy.WAV,Yes,9/29/2026,,
-Y4-009,4th Year,Prelim Exam,Graph Theory,Morning,Gakaguol,Kaguol,2 — Unpleasant,3 — Moderate,Y4-009_Y4_AM_Gakaguol.WAV,Yes,9/29/2026,,
-Y4-010,4th Year,Prelim Exam,Graph Theory,Morning,Hapsay,Hapsay,3 — Neutral,5 — Very High,Y4-010_Y4_AM_Hapsay.WAV,Yes,9/29/2026,,
-Y4-011,4th Year,Prelim Exam,Graph Theory,Morning,Kapoy,Kapoy,3 — Neutral,2 — Low,Y4-011_Y4_AM_Kapoy.WAV,Yes,9/29/2026,,
-Y4-012,4th Year,Prelim Exam,Graph Theory,Morning,Okay,Okay,5 — Very Pleasant,5 — Very High,Y4-012_Y4_AM_Okay.WAV,Yes,9/29/2026,,
-Y4-013,4th Year,Prelim Exam,Graph Theory,Morning,Kapoy,Kapoy,3 — Neutral,2 — Low,Y4-013_Y4_AM_Kapoy.WAV,Yes,9/29/2026,,
-Y4-014,4th Year,Prelim Exam,Graph Theory,Morning,Relibo,Relibo,5 — Very Pleasant,5 — Very High,Y4-014_Y4_AM_Relibo.WAV,Yes,9/29/2026,,
-Y4-015,4th Year,Prelim Exam,Graph Theory,Morning,Kapoy,Kulba,5 — Very Pleasant,5 — Very High,Y4-015_Y4_AM_Kapoy.WAV,Yes,9/29/2026,,
-Y4-016,4th Year,Prelim Exam,Graph Theory,Morning,Kulba,Kapoy,3 — Neutral,3 — Moderate,Y4-016_Y4_AM_Kulba.WAV,Yes,9/29/2026,,
-Y4-017,4th Year,Prelim Exam,Graph Theory,Morning,Gihigugma,Gihigugma,5 — Very Pleasant,5 — Very High,Y4-017_Y4_AM_Gihigugma.WAV,Yes,9/29/2026,,
-Y4-018,4th Year,Prelim Exam,Graph Theory,Morning,Lingaw,Lingaw,4 — Pleasant,3 — Moderate,Y4-018_Y4_AM_Lingaw.WAV,Yes,9/29/2026,,
-Y4-019,4th Year,Prelim Exam,Graph Theory,Morning,Kaguol,Kaguol,3 — Neutral,3 — Moderate,Y4-019_Y4_AM_Kaguol.WAV,Yes,9/29/2026,,
-Y4-020,4th Year,Prelim Exam,Graph Theory,Morning,Kulba,Kulba,5 — Very Pleasant,3 — Moderate,Y4-020_Y4_AM_Kulba.WAV,Yes,9/29/2026,,
-Y4-021,4th Year,Quiz,Numerical Analysis,Morning,Duha-duha,Ga duha2 sa answer,2 — Unpleasant,2 — Low,Y4-021_Y4_AM_Gaduha-duha.WAV,Yes,9/30/2026,,
-Y4-022,4th Year,Quiz,Numerical Analysis,Morning,Ambot,,3 — Neutral,2 — Low,Y4-022_Y4_AM_Ambot.WAV,Yes,9/30/2026,,
-Y4-023,4th Year,Quiz,Numerical Analysis,Morning,Kapoy,,3 — Neutral,2 — Low,Y4-023_Y4_AM_Kapoy.WAV,Yes,9/30/2026,,
-Y4-024,4th Year,Quiz,Numerical Analysis,Morning,Okay,,4 — Pleasant,3 — Moderate,Y4-024_Y4_AM_Okay.WAV,Yes,9/30/2026,,
-Y4-025,4th Year,Quiz,Numerical Analysis,Morning,Kapoy,,2 — Unpleasant,2 — Low,Y4-025_Y4_AM_Kapoy.WAV,Yes,9/30/2026,,
-Y4-026,4th Year,Quiz,Numerical Analysis,Morning,Lisod,Lisod 100%,5 — Very Pleasant,5 — Very High,Y4-026_Y4_AM_Lisod.WAV,Yes,9/30/2026,,
-Y4-027,4th Year,Quiz,Numerical Analysis,Morning,Kapoy,,2 — Unpleasant,3 — Moderate,Y4-027_Y4_AM_Kapoy.WAV,Yes,9/30/2026,,
-Y4-028,4th Year,Quiz,Numerical Analysis,Morning,Kapoy,,1 — Very Unpleasant,2 — Low,Y4-028_Y4_AM_Kapoy.WAV,Yes,9/30/2026,,
-Y4-029,4th Year,Quiz,Numerical Analysis,Morning,Pildi,,5 — Very Pleasant,2 — Low,Y4-029_Y4_AM_Pildi.WAV,Yes,9/30/2026,,
-Y4-030,4th Year,Quiz,Numerical Analysis,Morning,Kapoy,,2 — Unpleasant,2 — Low,Y4-030_Y4_AM_Kapoy.WAV,Yes,9/30/2026,,
-Y4-031,4th Year,Quiz,Numerical Analysis,Morning,Lisod,,2 — Unpleasant,3 — Moderate,Y4-031_Y4_AM_Lisod.WAV,Yes,9/30/2026,,
-Y4-032,4th Year,Quiz,Numerical Analysis,Morning,Libog,,3 — Neutral,4 — High,Y4-032_Y4_AM_Libog.WAV,Yes,9/30/2026,,
-Y4-033,4th Year,Quiz,Numerical Analysis,Morning,Hilom,,3 — Neutral,5 — Very High,Y4-033_Y4_AM_Hilom.WAV,Yes,9/30/2026,,
-Y4-034,4th Year,Quiz,Numerical Analysis,Morning,Kapoy,,3 — Neutral,3 — Moderate,Y4-034_Y4_AM_Kapoy.WAV,Yes,9/30/2026,,
-Y4-035,4th Year,Quiz,Numerical Analysis,Morning,Mamatay,Wanna go erk and forget,1 — Very Unpleasant,3 — Moderate,Y4-035_Y4_AM_Mamatay.WAV,Yes,9/30/2026,,
-Y4-036,4th Year,Quiz,Numerical Analysis,Morning,Kapoy,,1 — Very Unpleasant,1 — Very Low,Y4-036_Y4_AM_Kapoy.WAV,Yes,9/30/2026,,
-Y4-037,4th Year,Quiz,Numerical Analysis,Morning,Kapoy,Tired,1 — Very Unpleasant,1 — Very Low,Y4-037_Y4_AM_Kapoy.WAV,Yes,9/30/2026,,
-Y4-038,4th Year,Quiz,Numerical Analysis,Morning,Labad,,1 — Very Unpleasant,3 — Moderate,Y4-038_Y4_AM_Labad.WAV,Yes,9/30/2026,,
-Y4-039,4th Year,Quiz,Numerical Analysis,Morning,Kamatuoran,,3 — Neutral,2 — Low,Y4-039_Y4_AM_Kamatuoran.WAV,Yes,9/30/2026,,
-Y4-040,4th Year,Quiz,Numerical Analysis,Morning,Hangak,,2 — Unpleasant,1 — Very Low,Y4-040_Y4_AM_Hangak.WAV,Yes,9/30/2026,,
+Participant Code,Year Level,Class Activity,Subject,Session,Spoken Word,Self-Reported Feeling,Valence (1-5),Arousal (1-5),Audio Filename,Consent Obtained (Y/N),Date Collected
+Y4-001,4th Year,Lecture / Review,Foreign Language - Japanese,Afternoon,Thrilled,Thrilled,4 — Pleasant,3 — Moderate,Y4-001_Y4_PM_Thrilled.WAV,Yes,9/22/2026
+Y4-002,4th Year,Lecture / Review,Foreign Language - Japanese,Afternoon,Lutang,Lutang,4 — Pleasant,3 — Moderate,Y4-002_Y4_PM_Lutang.WAV,Yes,9/22/2026
+Y4-003,4th Year,Lecture / Review,Foreign Language - Japanese,Afternoon,Libog,Confused,3 — Neutral,4 — High,Y4-003_Y4_PM_Libog.WAV,Yes,9/22/2026
+Y4-004,4th Year,Lecture / Review,Foreign Language - Japanese,Afternoon,Okay,Okay,4 — Pleasant,3 — Moderate,Y4-004_Y4_PM_Okay.WAV,Yes,9/22/2026
+Y4-005,4th Year,Lecture / Review,Foreign Language - Japanese,Afternoon,Hapsay,Great,4 — Pleasant,4 — High,Y4-005_Y4_PM_Hapsay.WAV,Yes,9/22/2026
+Y4-006,4th Year,Lecture / Review,Foreign Language - Japanese,Afternoon,Kapuliki,Kapuliki,3 — Neutral,3 — Moderate,Y4-006_Y4_PM_Kapuliki.WAV,Yes,9/23/2026
+Y4-007,4th Year,Prelim Exam,Graph Theory,Morning,Nahuwasan,Huwaasa,4 — Pleasant,4 — High,Y4-007_Y4_AM_Nahuwasan.WAV,Yes,9/29/2026
+Y4-008,4th Year,Prelim Exam,Graph Theory,Morning,Chuy,Chuy,2 — Unpleasant,3 — Moderate,Y4-008_Y4_AM_Chuy.WAV,Yes,9/29/2026
+Y4-009,4th Year,Prelim Exam,Graph Theory,Morning,Gakaguol,Kaguol,2 — Unpleasant,3 — Moderate,Y4-009_Y4_AM_Gakaguol.WAV,Yes,9/29/2026
+Y4-010,4th Year,Prelim Exam,Graph Theory,Morning,Hapsay,Hapsay,3 — Neutral,5 — Very High,Y4-010_Y4_AM_Hapsay.WAV,Yes,9/29/2026
+Y4-011,4th Year,Prelim Exam,Graph Theory,Morning,Kapoy,Kapoy,3 — Neutral,2 — Low,Y4-011_Y4_AM_Kapoy.WAV,Yes,9/29/2026
+Y4-012,4th Year,Prelim Exam,Graph Theory,Morning,Okay,Okay,5 — Very Pleasant,5 — Very High,Y4-012_Y4_AM_Okay.WAV,Yes,9/29/2026
+Y4-013,4th Year,Prelim Exam,Graph Theory,Morning,Kapoy,Kapoy,3 — Neutral,2 — Low,Y4-013_Y4_AM_Kapoy.WAV,Yes,9/29/2026
+Y4-014,4th Year,Prelim Exam,Graph Theory,Morning,Relibo,Relibo,5 — Very Pleasant,5 — Very High,Y4-014_Y4_AM_Relibo.WAV,Yes,9/29/2026
+Y4-015,4th Year,Prelim Exam,Graph Theory,Morning,Kapoy,Kulba,5 — Very Pleasant,5 — Very High,Y4-015_Y4_AM_Kapoy.WAV,Yes,9/29/2026
+Y4-016,4th Year,Prelim Exam,Graph Theory,Morning,Kulba,Kapoy,3 — Neutral,3 — Moderate,Y4-016_Y4_AM_Kulba.WAV,Yes,9/29/2026
+Y4-017,4th Year,Prelim Exam,Graph Theory,Morning,Gihigugma,Gihigugma,5 — Very Pleasant,5 — Very High,Y4-017_Y4_AM_Gihigugma.WAV,Yes,9/29/2026
+Y4-018,4th Year,Prelim Exam,Graph Theory,Morning,Lingaw,Lingaw,4 — Pleasant,3 — Moderate,Y4-018_Y4_AM_Lingaw.WAV,Yes,9/29/2026
+Y4-019,4th Year,Prelim Exam,Graph Theory,Morning,Kaguol,Kaguol,3 — Neutral,3 — Moderate,Y4-019_Y4_AM_Kaguol.WAV,Yes,9/29/2026
+Y4-020,4th Year,Prelim Exam,Graph Theory,Morning,Kulba,Kulba,5 — Very Pleasant,3 — Moderate,Y4-020_Y4_AM_Kulba.WAV,Yes,9/29/2026
+Y4-021,4th Year,Quiz,Numerical Analysis,Morning,Duha-duha,Ga duha2 sa answer,2 — Unpleasant,2 — Low,Y4-021_Y4_AM_Gaduha-duha.WAV,Yes,9/30/2026
+Y4-022,4th Year,Quiz,Numerical Analysis,Morning,Ambot,Ambot,3 — Neutral,2 — Low,Y4-022_Y4_AM_Ambot.WAV,Yes,9/30/2026
+Y4-023,4th Year,Quiz,Numerical Analysis,Morning,Kapoy,Kapoy,3 — Neutral,2 — Low,Y4-023_Y4_AM_Kapoy.WAV,Yes,9/30/2026
+Y4-024,4th Year,Quiz,Numerical Analysis,Morning,Okay,Okay,4 — Pleasant,3 — Moderate,Y4-024_Y4_AM_Okay.WAV,Yes,9/30/2026
+Y4-025,4th Year,Quiz,Numerical Analysis,Morning,Kapoy,Kapoy,2 — Unpleasant,2 — Low,Y4-025_Y4_AM_Kapoy.WAV,Yes,9/30/2026
+Y4-026,4th Year,Quiz,Numerical Analysis,Morning,Lisod,Lisod 100%,5 — Very Pleasant,5 — Very High,Y4-026_Y4_AM_Lisod.WAV,Yes,9/30/2026
+Y4-027,4th Year,Quiz,Numerical Analysis,Morning,Kapoy,Kapoy,2 — Unpleasant,3 — Moderate,Y4-027_Y4_AM_Kapoy.WAV,Yes,9/30/2026
+Y4-028,4th Year,Quiz,Numerical Analysis,Morning,Kapoy,Kapoy,1 — Very Unpleasant,2 — Low,Y4-028_Y4_AM_Kapoy.WAV,Yes,9/30/2026
+Y4-029,4th Year,Quiz,Numerical Analysis,Morning,Pildi,Pildi,5 — Very Pleasant,2 — Low,Y4-029_Y4_AM_Pildi.WAV,Yes,9/30/2026
+Y4-030,4th Year,Quiz,Numerical Analysis,Morning,Kapoy,Kapoy,2 — Unpleasant,2 — Low,Y4-030_Y4_AM_Kapoy.WAV,Yes,9/30/2026
+Y4-031,4th Year,Quiz,Numerical Analysis,Morning,Lisod,Lisod,2 — Unpleasant,3 — Moderate,Y4-031_Y4_AM_Lisod.WAV,Yes,9/30/2026
+Y4-032,4th Year,Quiz,Numerical Analysis,Morning,Libog,Libog,3 — Neutral,4 — High,Y4-032_Y4_AM_Libog.WAV,Yes,9/30/2026
+Y4-033,4th Year,Quiz,Numerical Analysis,Morning,Hilom,Hilom,3 — Neutral,5 — Very High,Y4-033_Y4_AM_Hilom.WAV,Yes,9/30/2026
+Y4-034,4th Year,Quiz,Numerical Analysis,Morning,Kapoy,Kapoy,3 — Neutral,3 — Moderate,Y4-034_Y4_AM_Kapoy.WAV,Yes,9/30/2026
+Y4-035,4th Year,Quiz,Numerical Analysis,Morning,Mamatay,Wanna go erk and forget,1 — Very Unpleasant,3 — Moderate,Y4-035_Y4_AM_Mamatay.WAV,Yes,9/30/2026
+Y4-036,4th Year,Quiz,Numerical Analysis,Morning,Kapoy,Kapoy,1 — Very Unpleasant,1 — Very Low,Y4-036_Y4_AM_Kapoy.WAV,Yes,9/30/2026
+Y4-037,4th Year,Quiz,Numerical Analysis,Morning,Kapoy,Tired,1 — Very Unpleasant,1 — Very Low,Y4-037_Y4_AM_Kapoy.WAV,Yes,9/30/2026
+Y4-038,4th Year,Quiz,Numerical Analysis,Morning,Labad,Labad,1 — Very Unpleasant,3 — Moderate,Y4-038_Y4_AM_Labad.WAV,Yes,9/30/2026
+Y4-039,4th Year,Quiz,Numerical Analysis,Morning,Kamatuoran,Kamatuoran,3 — Neutral,2 — Low,Y4-039_Y4_AM_Kamatuoran.WAV,Yes,9/30/2026
+Y4-040,4th Year,Quiz,Numerical Analysis,Morning,Hangak,Hangak,2 — Unpleasant,1 — Very Low,Y4-040_Y4_AM_Hangak.WAV,Yes,9/30/2026
