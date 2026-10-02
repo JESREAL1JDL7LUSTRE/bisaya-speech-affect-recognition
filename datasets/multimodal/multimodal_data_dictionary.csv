@@ -1,320 +1,345 @@
-Column_Name,Modality,Feature_Family,Data_Type,Unit,Description
-participant_code,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (participant_code)
-year_level,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (year_level)
-class_activity,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (class_activity)
-subject,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (subject)
-session,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (session)
-session_name,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (session_name)
-spoken_word,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (spoken_word)
-self_reported_feeling,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (self_reported_feeling)
-valence_score,Metadata,Identifiers & Educational Context,int64,categorical/string,Participant / Context variable (valence_score)
-valence_label,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (valence_label)
-arousal_score,Metadata,Identifiers & Educational Context,int64,categorical/string,Participant / Context variable (arousal_score)
-arousal_label,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (arousal_label)
-affect_category,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (affect_category)
-word_english,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (word_english)
-date_collected,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (date_collected)
-audio_filename,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (audio_filename)
-audio_duration_sec,Acoustic / Speech,Audio Metadata,float64,seconds/count,Audio property: audio_duration_sec
-audio_trimmed_dur_sec,Acoustic / Speech,Audio Metadata,float64,seconds/count,Audio property: audio_trimmed_dur_sec
-audio_sampling_rate,Acoustic / Speech,Audio Metadata,int64,seconds/count,Audio property: audio_sampling_rate
-audio_f0_mean_hz,Acoustic / Speech,Prosodic - Pitch & Vocal Stability,float64,Hz,Fundamental frequency or pitch variation measure: audio_f0_mean_hz
-audio_f0_std_hz,Acoustic / Speech,Prosodic - Pitch & Vocal Stability,float64,Hz,Fundamental frequency or pitch variation measure: audio_f0_std_hz
-audio_f0_min_hz,Acoustic / Speech,Prosodic - Pitch & Vocal Stability,float64,Hz,Fundamental frequency or pitch variation measure: audio_f0_min_hz
-audio_f0_max_hz,Acoustic / Speech,Prosodic - Pitch & Vocal Stability,float64,Hz,Fundamental frequency or pitch variation measure: audio_f0_max_hz
-audio_f0_median_hz,Acoustic / Speech,Prosodic - Pitch & Vocal Stability,float64,Hz,Fundamental frequency or pitch variation measure: audio_f0_median_hz
-audio_f0_range_hz,Acoustic / Speech,Prosodic - Pitch & Vocal Stability,float64,Hz,Fundamental frequency or pitch variation measure: audio_f0_range_hz
-audio_voiced_ratio,Acoustic / Speech,Prosodic - Pitch & Vocal Stability,float64,ratio,Fundamental frequency or pitch variation measure: audio_voiced_ratio
-audio_jitter_local,Acoustic / Speech,Prosodic - Pitch & Vocal Stability,float64,ratio,Fundamental frequency or pitch variation measure: audio_jitter_local
-audio_rms_mean,Acoustic / Speech,Prosodic - Intensity & Loudness,float64,amplitude,Root-Mean-Square energy or amplitude stability: audio_rms_mean
-audio_rms_std,Acoustic / Speech,Prosodic - Intensity & Loudness,float64,amplitude,Root-Mean-Square energy or amplitude stability: audio_rms_std
-audio_rms_max,Acoustic / Speech,Prosodic - Intensity & Loudness,float64,amplitude,Root-Mean-Square energy or amplitude stability: audio_rms_max
-audio_rms_min,Acoustic / Speech,Prosodic - Intensity & Loudness,float64,amplitude,Root-Mean-Square energy or amplitude stability: audio_rms_min
-audio_shimmer_local,Acoustic / Speech,Prosodic - Intensity & Loudness,float64,amplitude,Root-Mean-Square energy or amplitude stability: audio_shimmer_local
-audio_zcr_mean,Acoustic / Speech,Temporal - Zero-Crossing Rate,float64,rate,Rate of sign-changes along the speech signal
-audio_zcr_std,Acoustic / Speech,Temporal - Zero-Crossing Rate,float64,rate,Rate of sign-changes along the speech signal
-audio_zcr_max,Acoustic / Speech,Temporal - Zero-Crossing Rate,float64,rate,Rate of sign-changes along the speech signal
-audio_spec_centroid_mean,Acoustic / Speech,Spectral Characteristics,float64,Hz/index,Frequency distribution and brightness: audio_spec_centroid_mean
-audio_spec_centroid_std,Acoustic / Speech,Spectral Characteristics,float64,Hz/index,Frequency distribution and brightness: audio_spec_centroid_std
-audio_spec_bandwidth_mean,Acoustic / Speech,Spectral Characteristics,float64,Hz/index,Frequency distribution and brightness: audio_spec_bandwidth_mean
-audio_spec_bandwidth_std,Acoustic / Speech,Spectral Characteristics,float64,Hz/index,Frequency distribution and brightness: audio_spec_bandwidth_std
-audio_spec_rolloff85_mean,Acoustic / Speech,Spectral Characteristics,float64,Hz/index,Frequency distribution and brightness: audio_spec_rolloff85_mean
-audio_spec_rolloff85_std,Acoustic / Speech,Spectral Characteristics,float64,Hz/index,Frequency distribution and brightness: audio_spec_rolloff85_std
-audio_spec_flatness_mean,Acoustic / Speech,Spectral Characteristics,float64,Hz/index,Frequency distribution and brightness: audio_spec_flatness_mean
-audio_spec_flatness_std,Acoustic / Speech,Spectral Characteristics,float64,Hz/index,Frequency distribution and brightness: audio_spec_flatness_std
-audio_spec_contrast_mean,Acoustic / Speech,Spectral Characteristics,float64,Hz/index,Frequency distribution and brightness: audio_spec_contrast_mean
-audio_spec_contrast_std,Acoustic / Speech,Spectral Characteristics,float64,Hz/index,Frequency distribution and brightness: audio_spec_contrast_std
-audio_chroma_mean,Acoustic / Speech,Spectral Characteristics,float64,Hz/index,Frequency distribution and brightness: audio_chroma_mean
-audio_chroma_std,Acoustic / Speech,Spectral Characteristics,float64,Hz/index,Frequency distribution and brightness: audio_chroma_std
-audio_mfcc_1_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_1_mean
-audio_mfcc_1_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_1_std
-audio_delta_mfcc_1_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_1_mean
-audio_delta_mfcc_1_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_1_std
-audio_delta2_mfcc_1_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_1_mean
-audio_delta2_mfcc_1_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_1_std
-audio_mfcc_2_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_2_mean
-audio_mfcc_2_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_2_std
-audio_delta_mfcc_2_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_2_mean
-audio_delta_mfcc_2_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_2_std
-audio_delta2_mfcc_2_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_2_mean
-audio_delta2_mfcc_2_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_2_std
-audio_mfcc_3_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_3_mean
-audio_mfcc_3_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_3_std
-audio_delta_mfcc_3_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_3_mean
-audio_delta_mfcc_3_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_3_std
-audio_delta2_mfcc_3_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_3_mean
-audio_delta2_mfcc_3_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_3_std
-audio_mfcc_4_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_4_mean
-audio_mfcc_4_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_4_std
-audio_delta_mfcc_4_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_4_mean
-audio_delta_mfcc_4_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_4_std
-audio_delta2_mfcc_4_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_4_mean
-audio_delta2_mfcc_4_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_4_std
-audio_mfcc_5_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_5_mean
-audio_mfcc_5_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_5_std
-audio_delta_mfcc_5_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_5_mean
-audio_delta_mfcc_5_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_5_std
-audio_delta2_mfcc_5_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_5_mean
-audio_delta2_mfcc_5_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_5_std
-audio_mfcc_6_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_6_mean
-audio_mfcc_6_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_6_std
-audio_delta_mfcc_6_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_6_mean
-audio_delta_mfcc_6_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_6_std
-audio_delta2_mfcc_6_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_6_mean
-audio_delta2_mfcc_6_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_6_std
-audio_mfcc_7_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_7_mean
-audio_mfcc_7_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_7_std
-audio_delta_mfcc_7_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_7_mean
-audio_delta_mfcc_7_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_7_std
-audio_delta2_mfcc_7_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_7_mean
-audio_delta2_mfcc_7_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_7_std
-audio_mfcc_8_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_8_mean
-audio_mfcc_8_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_8_std
-audio_delta_mfcc_8_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_8_mean
-audio_delta_mfcc_8_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_8_std
-audio_delta2_mfcc_8_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_8_mean
-audio_delta2_mfcc_8_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_8_std
-audio_mfcc_9_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_9_mean
-audio_mfcc_9_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_9_std
-audio_delta_mfcc_9_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_9_mean
-audio_delta_mfcc_9_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_9_std
-audio_delta2_mfcc_9_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_9_mean
-audio_delta2_mfcc_9_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_9_std
-audio_mfcc_10_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_10_mean
-audio_mfcc_10_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_10_std
-audio_delta_mfcc_10_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_10_mean
-audio_delta_mfcc_10_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_10_std
-audio_delta2_mfcc_10_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_10_mean
-audio_delta2_mfcc_10_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_10_std
-audio_mfcc_11_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_11_mean
-audio_mfcc_11_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_11_std
-audio_delta_mfcc_11_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_11_mean
-audio_delta_mfcc_11_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_11_std
-audio_delta2_mfcc_11_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_11_mean
-audio_delta2_mfcc_11_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_11_std
-audio_mfcc_12_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_12_mean
-audio_mfcc_12_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_12_std
-audio_delta_mfcc_12_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_12_mean
-audio_delta_mfcc_12_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_12_std
-audio_delta2_mfcc_12_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_12_mean
-audio_delta2_mfcc_12_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_12_std
-audio_mfcc_13_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_13_mean
-audio_mfcc_13_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_mfcc_13_std
-audio_delta_mfcc_13_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_13_mean
-audio_delta_mfcc_13_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta_mfcc_13_std
-audio_delta2_mfcc_13_mean,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_13_mean
-audio_delta2_mfcc_13_std,Acoustic / Speech,Timbral - Mel-Frequency Cepstral Coefficients,float64,coefficient,Spectral envelope representation: audio_delta2_mfcc_13_std
-video_filename,Metadata,Identifiers & Educational Context,str,categorical/string,Participant / Context variable (video_filename)
-video_fps,Other,General,float64,unspecified,video_fps
-video_total_frames,Other,General,int64,unspecified,video_total_frames
-video_detected_frames,Other,General,int64,unspecified,video_detected_frames
-video_duration_sec,Other,General,float64,unspecified,video_duration_sec
-face_detection_rate,Visual / Facial,Video Metadata,float64,frames/seconds/rate,Video property: face_detection_rate
-face__neutral_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face__neutral_mean
-face__neutral_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face__neutral_std
-face__neutral_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face__neutral_max
-face_browDownLeft_mean,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_browDownLeft_mean
-face_browDownLeft_std,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_browDownLeft_std
-face_browDownLeft_max,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_browDownLeft_max
-face_browDownRight_mean,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_browDownRight_mean
-face_browDownRight_std,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_browDownRight_std
-face_browDownRight_max,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_browDownRight_max
-face_browInnerUp_mean,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_browInnerUp_mean
-face_browInnerUp_std,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_browInnerUp_std
-face_browInnerUp_max,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_browInnerUp_max
-face_browOuterUpLeft_mean,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_browOuterUpLeft_mean
-face_browOuterUpLeft_std,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_browOuterUpLeft_std
-face_browOuterUpLeft_max,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_browOuterUpLeft_max
-face_browOuterUpRight_mean,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_browOuterUpRight_mean
-face_browOuterUpRight_std,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_browOuterUpRight_std
-face_browOuterUpRight_max,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_browOuterUpRight_max
-face_cheekPuff_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_cheekPuff_mean
-face_cheekPuff_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_cheekPuff_std
-face_cheekPuff_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_cheekPuff_max
-face_cheekSquintLeft_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_cheekSquintLeft_mean
-face_cheekSquintLeft_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_cheekSquintLeft_std
-face_cheekSquintLeft_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_cheekSquintLeft_max
-face_cheekSquintRight_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_cheekSquintRight_mean
-face_cheekSquintRight_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_cheekSquintRight_std
-face_cheekSquintRight_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_cheekSquintRight_max
-face_eyeBlinkLeft_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeBlinkLeft_mean
-face_eyeBlinkLeft_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeBlinkLeft_std
-face_eyeBlinkLeft_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeBlinkLeft_max
-face_eyeBlinkRight_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeBlinkRight_mean
-face_eyeBlinkRight_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeBlinkRight_std
-face_eyeBlinkRight_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeBlinkRight_max
-face_eyeLookDownLeft_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookDownLeft_mean
-face_eyeLookDownLeft_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookDownLeft_std
-face_eyeLookDownLeft_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookDownLeft_max
-face_eyeLookDownRight_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookDownRight_mean
-face_eyeLookDownRight_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookDownRight_std
-face_eyeLookDownRight_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookDownRight_max
-face_eyeLookInLeft_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookInLeft_mean
-face_eyeLookInLeft_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookInLeft_std
-face_eyeLookInLeft_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookInLeft_max
-face_eyeLookInRight_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookInRight_mean
-face_eyeLookInRight_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookInRight_std
-face_eyeLookInRight_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookInRight_max
-face_eyeLookOutLeft_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookOutLeft_mean
-face_eyeLookOutLeft_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookOutLeft_std
-face_eyeLookOutLeft_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookOutLeft_max
-face_eyeLookOutRight_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookOutRight_mean
-face_eyeLookOutRight_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookOutRight_std
-face_eyeLookOutRight_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookOutRight_max
-face_eyeLookUpLeft_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookUpLeft_mean
-face_eyeLookUpLeft_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookUpLeft_std
-face_eyeLookUpLeft_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookUpLeft_max
-face_eyeLookUpRight_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookUpRight_mean
-face_eyeLookUpRight_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookUpRight_std
-face_eyeLookUpRight_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeLookUpRight_max
-face_eyeSquintLeft_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeSquintLeft_mean
-face_eyeSquintLeft_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeSquintLeft_std
-face_eyeSquintLeft_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeSquintLeft_max
-face_eyeSquintRight_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeSquintRight_mean
-face_eyeSquintRight_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeSquintRight_std
-face_eyeSquintRight_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeSquintRight_max
-face_eyeWideLeft_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeWideLeft_mean
-face_eyeWideLeft_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeWideLeft_std
-face_eyeWideLeft_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeWideLeft_max
-face_eyeWideRight_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeWideRight_mean
-face_eyeWideRight_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeWideRight_std
-face_eyeWideRight_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eyeWideRight_max
-face_jawForward_mean,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_jawForward_mean
-face_jawForward_std,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_jawForward_std
-face_jawForward_max,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_jawForward_max
-face_jawLeft_mean,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_jawLeft_mean
-face_jawLeft_std,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_jawLeft_std
-face_jawLeft_max,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_jawLeft_max
-face_jawOpen_mean,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_jawOpen_mean
-face_jawOpen_std,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_jawOpen_std
-face_jawOpen_max,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_jawOpen_max
-face_jawRight_mean,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_jawRight_mean
-face_jawRight_std,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_jawRight_std
-face_jawRight_max,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_jawRight_max
-face_mouthClose_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthClose_mean
-face_mouthClose_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthClose_std
-face_mouthClose_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthClose_max
-face_mouthDimpleLeft_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthDimpleLeft_mean
-face_mouthDimpleLeft_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthDimpleLeft_std
-face_mouthDimpleLeft_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthDimpleLeft_max
-face_mouthDimpleRight_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthDimpleRight_mean
-face_mouthDimpleRight_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthDimpleRight_std
-face_mouthDimpleRight_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthDimpleRight_max
-face_mouthFrownLeft_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthFrownLeft_mean
-face_mouthFrownLeft_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthFrownLeft_std
-face_mouthFrownLeft_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthFrownLeft_max
-face_mouthFrownRight_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthFrownRight_mean
-face_mouthFrownRight_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthFrownRight_std
-face_mouthFrownRight_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthFrownRight_max
-face_mouthFunnel_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthFunnel_mean
-face_mouthFunnel_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthFunnel_std
-face_mouthFunnel_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthFunnel_max
-face_mouthLeft_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthLeft_mean
-face_mouthLeft_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthLeft_std
-face_mouthLeft_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthLeft_max
-face_mouthLowerDownLeft_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthLowerDownLeft_mean
-face_mouthLowerDownLeft_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthLowerDownLeft_std
-face_mouthLowerDownLeft_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthLowerDownLeft_max
-face_mouthLowerDownRight_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthLowerDownRight_mean
-face_mouthLowerDownRight_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthLowerDownRight_std
-face_mouthLowerDownRight_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthLowerDownRight_max
-face_mouthPressLeft_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthPressLeft_mean
-face_mouthPressLeft_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthPressLeft_std
-face_mouthPressLeft_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthPressLeft_max
-face_mouthPressRight_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthPressRight_mean
-face_mouthPressRight_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthPressRight_std
-face_mouthPressRight_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthPressRight_max
-face_mouthPucker_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthPucker_mean
-face_mouthPucker_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthPucker_std
-face_mouthPucker_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthPucker_max
-face_mouthRight_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthRight_mean
-face_mouthRight_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthRight_std
-face_mouthRight_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthRight_max
-face_mouthRollLower_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthRollLower_mean
-face_mouthRollLower_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthRollLower_std
-face_mouthRollLower_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthRollLower_max
-face_mouthRollUpper_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthRollUpper_mean
-face_mouthRollUpper_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthRollUpper_std
-face_mouthRollUpper_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthRollUpper_max
-face_mouthShrugLower_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthShrugLower_mean
-face_mouthShrugLower_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthShrugLower_std
-face_mouthShrugLower_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthShrugLower_max
-face_mouthShrugUpper_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthShrugUpper_mean
-face_mouthShrugUpper_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthShrugUpper_std
-face_mouthShrugUpper_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthShrugUpper_max
-face_mouthSmileLeft_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthSmileLeft_mean
-face_mouthSmileLeft_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthSmileLeft_std
-face_mouthSmileLeft_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthSmileLeft_max
-face_mouthSmileRight_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthSmileRight_mean
-face_mouthSmileRight_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthSmileRight_std
-face_mouthSmileRight_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthSmileRight_max
-face_mouthStretchLeft_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthStretchLeft_mean
-face_mouthStretchLeft_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthStretchLeft_std
-face_mouthStretchLeft_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthStretchLeft_max
-face_mouthStretchRight_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthStretchRight_mean
-face_mouthStretchRight_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthStretchRight_std
-face_mouthStretchRight_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthStretchRight_max
-face_mouthUpperUpLeft_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthUpperUpLeft_mean
-face_mouthUpperUpLeft_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthUpperUpLeft_std
-face_mouthUpperUpLeft_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthUpperUpLeft_max
-face_mouthUpperUpRight_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthUpperUpRight_mean
-face_mouthUpperUpRight_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthUpperUpRight_std
-face_mouthUpperUpRight_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_mouthUpperUpRight_max
-face_noseSneerLeft_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_noseSneerLeft_mean
-face_noseSneerLeft_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_noseSneerLeft_std
-face_noseSneerLeft_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_noseSneerLeft_max
-face_noseSneerRight_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_noseSneerRight_mean
-face_noseSneerRight_std,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_noseSneerRight_std
-face_noseSneerRight_max,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_noseSneerRight_max
-face_smile_mean,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_smile_mean
-face_smile_std,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_smile_std
-face_smile_max,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_smile_max
-face_frown_mean,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_frown_mean
-face_frown_std,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_frown_std
-face_frown_max,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_frown_max
-face_brow_lowerer_mean,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_brow_lowerer_mean
-face_brow_lowerer_std,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_brow_lowerer_std
-face_brow_lowerer_max,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_brow_lowerer_max
-face_brow_inner_raiser_mean,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_brow_inner_raiser_mean
-face_brow_inner_raiser_max,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_brow_inner_raiser_max
-face_jaw_open_mean,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_jaw_open_mean
-face_jaw_open_std,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_jaw_open_std
-face_jaw_open_max,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_jaw_open_max
-face_eye_squint_mean,Visual / Facial,MediaPipe FACS Blendshape,float64,score [0-1],Standard 52 FACS Blendshape coefficient: face_eye_squint_mean
-face_disgust_mean,Visual / Facial,FACS Action Unit Composite,float64,score [0-1],Facial Action Coding System affect indicator: face_disgust_mean
-face_expressiveness_score,Visual / Facial,Video Metadata,float64,frames/seconds/rate,Video property: face_expressiveness_score
-face_ear_mean,Visual / Facial,Geometric Landmark Ratio,float64,ratio,Geometric landmark aspect ratio (EAR/MAR): face_ear_mean
-face_ear_std,Visual / Facial,Geometric Landmark Ratio,float64,ratio,Geometric landmark aspect ratio (EAR/MAR): face_ear_std
-face_ear_min,Visual / Facial,Geometric Landmark Ratio,float64,ratio,Geometric landmark aspect ratio (EAR/MAR): face_ear_min
-face_mar_mean,Visual / Facial,Geometric Landmark Ratio,float64,ratio,Geometric landmark aspect ratio (EAR/MAR): face_mar_mean
-face_mar_std,Visual / Facial,Geometric Landmark Ratio,float64,ratio,Geometric landmark aspect ratio (EAR/MAR): face_mar_std
-face_mar_max,Visual / Facial,Geometric Landmark Ratio,float64,ratio,Geometric landmark aspect ratio (EAR/MAR): face_mar_max
-face_pitch_mean_deg,Visual / Facial,Head Pose,float64,degrees,Head rotation angle: face_pitch_mean_deg
-face_pitch_std_deg,Visual / Facial,Head Pose,float64,degrees,Head rotation angle: face_pitch_std_deg
-face_yaw_mean_deg,Visual / Facial,Head Pose,float64,degrees,Head rotation angle: face_yaw_mean_deg
-face_yaw_std_deg,Visual / Facial,Head Pose,float64,degrees,Head rotation angle: face_yaw_std_deg
-face_roll_mean_deg,Visual / Facial,Head Pose,float64,degrees,Head rotation angle: face_roll_mean_deg
-face_roll_std_deg,Visual / Facial,Head Pose,float64,degrees,Head rotation angle: face_roll_std_deg
-multimodal_expressiveness_index,Multimodal Composite,Cross-Modal Interaction,float64,normalized [0-1],Synthesized audio-visual affective index: multimodal_expressiveness_index
-face_valence_proxy,Visual / Facial,Video Metadata,float64,frames/seconds/rate,Video property: face_valence_proxy
-audio_arousal_proxy,Acoustic / Speech,Audio Metadata,float64,seconds/count,Audio property: audio_arousal_proxy
+Column_Name,Role,Modality,Data_Type,Unit,Missing_Count,Description
+participant_code,identifier,Metadata,str,coefficient or native unit,0,Identifier: participant_code
+year_level,context,Metadata,str,coefficient or native unit,0,Context: year_level
+class_activity,context,Metadata,str,coefficient or native unit,0,Context: class_activity
+subject,context,Metadata,str,coefficient or native unit,0,Context: subject
+session_name,context,Metadata,str,coefficient or native unit,0,Context: session_name
+self_reported_feeling,reference_outcome,Metadata,str,coefficient or native unit,0,Reference Outcome: self_reported_feeling
+self_reported_feeling_missing,reference_outcome,Metadata,bool,boolean,0,Reference Outcome: self_reported_feeling_missing
+self_reported_feeling_source,reference_outcome,Metadata,str,coefficient or native unit,0,Reference Outcome: self_reported_feeling_source
+valence_score,reference_outcome,Metadata,int64,ordinal score 1-5,0,Reference Outcome: valence_score
+valence_label,reference_outcome,Metadata,str,coefficient or native unit,0,Reference Outcome: valence_label
+valence_group,reference_outcome,Metadata,str,coefficient or native unit,0,Reference Outcome: valence_group
+arousal_score,reference_outcome,Metadata,int64,ordinal score 1-5,0,Reference Outcome: arousal_score
+arousal_label,reference_outcome,Metadata,str,coefficient or native unit,0,Reference Outcome: arousal_label
+arousal_group,reference_outcome,Metadata,str,coefficient or native unit,0,Reference Outcome: arousal_group
+affect_category,reference_outcome,Metadata,str,coefficient or native unit,0,Reference Outcome: affect_category
+lexical_category,context,Metadata,str,coefficient or native unit,0,Context: lexical_category
+word_english,context,Metadata,str,coefficient or native unit,0,Context: word_english
+date_collected,context,Metadata,str,coefficient or native unit,0,Context: date_collected
+consent_obtained,context,Metadata,bool,boolean,0,Context: consent_obtained
+survey_audio_filename,identifier,Metadata,str,coefficient or native unit,0,Identifier: survey_audio_filename
+intentional_bgm_boundary_trim,quality_control,Metadata,str,coefficient or native unit,0,Quality Control: intentional_bgm_boundary_trim
+background_music_overlap,quality_control,Metadata,str,coefficient or native unit,0,Quality Control: background_music_overlap
+speech_complete_status,quality_control,Metadata,str,coefficient or native unit,0,Quality Control: speech_complete_status
+year_code,context,Metadata,str,coefficient or native unit,0,Context: year_code
+session,context,Metadata,str,coefficient or native unit,0,Context: session
+spoken_word,context,Metadata,str,coefficient or native unit,0,Context: spoken_word
+metadata_word_matches_filename,quality_control,Metadata,bool,boolean,0,Quality Control: metadata_word_matches_filename
+audio_filename,identifier,Audio,str,coefficient or native unit,0,Identifier: audio_filename
+audio_duration_sec,acoustic_predictor,Audio,float64,seconds,0,Acoustic Predictor: audio_duration_sec
+audio_trimmed_dur_sec,acoustic_predictor,Audio,float64,seconds,0,Acoustic Predictor: audio_trimmed_dur_sec
+audio_trimmed_fraction,acoustic_predictor,Audio,float64,dimensionless,0,Acoustic Predictor: audio_trimmed_fraction
+audio_sampling_rate,quality_control,Audio,int64,dimensionless,0,Quality Control: audio_sampling_rate
+audio_end_boundary_rms_ratio,quality_control,Audio,float64,dimensionless,0,Quality Control: audio_end_boundary_rms_ratio
+audio_boundary_review_flag,quality_control,Audio,bool,boolean,0,Quality Control: audio_boundary_review_flag
+audio_pitch_detected,quality_control,Audio,bool,boolean,0,Quality Control: audio_pitch_detected
+audio_voiced_frames,quality_control,Audio,int64,coefficient or native unit,0,Quality Control: audio_voiced_frames
+audio_pitch_total_frames,quality_control,Audio,int64,coefficient or native unit,0,Quality Control: audio_pitch_total_frames
+audio_pitch_frame_length,quality_control,Audio,int64,coefficient or native unit,0,Quality Control: audio_pitch_frame_length
+audio_f0_mean_hz,acoustic_predictor,Audio,float64,Hz,12,Acoustic Predictor: audio_f0_mean_hz
+audio_f0_std_hz,acoustic_predictor,Audio,float64,Hz,12,Acoustic Predictor: audio_f0_std_hz
+audio_f0_min_hz,acoustic_predictor,Audio,float64,Hz,12,Acoustic Predictor: audio_f0_min_hz
+audio_f0_max_hz,acoustic_predictor,Audio,float64,Hz,12,Acoustic Predictor: audio_f0_max_hz
+audio_f0_median_hz,acoustic_predictor,Audio,float64,Hz,12,Acoustic Predictor: audio_f0_median_hz
+audio_f0_range_hz,acoustic_predictor,Audio,float64,Hz,12,Acoustic Predictor: audio_f0_range_hz
+audio_voiced_ratio,acoustic_predictor,Audio,float64,dimensionless,0,Acoustic Predictor: audio_voiced_ratio
+audio_period_variation_proxy,acoustic_predictor,Audio,float64,coefficient or native unit,12,Acoustic Predictor: audio_period_variation_proxy
+audio_rms_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_rms_mean
+audio_rms_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_rms_std
+audio_rms_max,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_rms_max
+audio_rms_min,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_rms_min
+audio_rms_frame_variation_proxy,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_rms_frame_variation_proxy
+audio_zcr_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_zcr_mean
+audio_zcr_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_zcr_std
+audio_zcr_max,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_zcr_max
+audio_spec_centroid_mean,acoustic_predictor,Audio,float64,Hz,0,Acoustic Predictor: audio_spec_centroid_mean
+audio_spec_centroid_std,acoustic_predictor,Audio,float64,Hz,0,Acoustic Predictor: audio_spec_centroid_std
+audio_spec_bandwidth_mean,acoustic_predictor,Audio,float64,Hz,0,Acoustic Predictor: audio_spec_bandwidth_mean
+audio_spec_bandwidth_std,acoustic_predictor,Audio,float64,Hz,0,Acoustic Predictor: audio_spec_bandwidth_std
+audio_spec_rolloff85_mean,acoustic_predictor,Audio,float64,Hz,0,Acoustic Predictor: audio_spec_rolloff85_mean
+audio_spec_rolloff85_std,acoustic_predictor,Audio,float64,Hz,0,Acoustic Predictor: audio_spec_rolloff85_std
+audio_spec_flatness_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_spec_flatness_mean
+audio_spec_flatness_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_spec_flatness_std
+audio_spec_contrast_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_spec_contrast_mean
+audio_spec_contrast_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_spec_contrast_std
+audio_chroma_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_chroma_mean
+audio_chroma_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_chroma_std
+audio_delta_available,quality_control,Audio,bool,boolean,0,Quality Control: audio_delta_available
+audio_delta_width,quality_control,Audio,int64,coefficient or native unit,0,Quality Control: audio_delta_width
+audio_mfcc_1_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_1_mean
+audio_mfcc_1_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_1_std
+audio_delta_mfcc_1_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_1_mean
+audio_delta_mfcc_1_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_1_std
+audio_delta2_mfcc_1_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_1_mean
+audio_delta2_mfcc_1_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_1_std
+audio_mfcc_2_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_2_mean
+audio_mfcc_2_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_2_std
+audio_delta_mfcc_2_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_2_mean
+audio_delta_mfcc_2_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_2_std
+audio_delta2_mfcc_2_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_2_mean
+audio_delta2_mfcc_2_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_2_std
+audio_mfcc_3_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_3_mean
+audio_mfcc_3_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_3_std
+audio_delta_mfcc_3_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_3_mean
+audio_delta_mfcc_3_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_3_std
+audio_delta2_mfcc_3_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_3_mean
+audio_delta2_mfcc_3_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_3_std
+audio_mfcc_4_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_4_mean
+audio_mfcc_4_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_4_std
+audio_delta_mfcc_4_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_4_mean
+audio_delta_mfcc_4_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_4_std
+audio_delta2_mfcc_4_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_4_mean
+audio_delta2_mfcc_4_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_4_std
+audio_mfcc_5_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_5_mean
+audio_mfcc_5_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_5_std
+audio_delta_mfcc_5_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_5_mean
+audio_delta_mfcc_5_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_5_std
+audio_delta2_mfcc_5_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_5_mean
+audio_delta2_mfcc_5_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_5_std
+audio_mfcc_6_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_6_mean
+audio_mfcc_6_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_6_std
+audio_delta_mfcc_6_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_6_mean
+audio_delta_mfcc_6_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_6_std
+audio_delta2_mfcc_6_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_6_mean
+audio_delta2_mfcc_6_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_6_std
+audio_mfcc_7_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_7_mean
+audio_mfcc_7_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_7_std
+audio_delta_mfcc_7_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_7_mean
+audio_delta_mfcc_7_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_7_std
+audio_delta2_mfcc_7_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_7_mean
+audio_delta2_mfcc_7_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_7_std
+audio_mfcc_8_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_8_mean
+audio_mfcc_8_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_8_std
+audio_delta_mfcc_8_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_8_mean
+audio_delta_mfcc_8_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_8_std
+audio_delta2_mfcc_8_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_8_mean
+audio_delta2_mfcc_8_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_8_std
+audio_mfcc_9_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_9_mean
+audio_mfcc_9_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_9_std
+audio_delta_mfcc_9_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_9_mean
+audio_delta_mfcc_9_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_9_std
+audio_delta2_mfcc_9_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_9_mean
+audio_delta2_mfcc_9_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_9_std
+audio_mfcc_10_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_10_mean
+audio_mfcc_10_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_10_std
+audio_delta_mfcc_10_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_10_mean
+audio_delta_mfcc_10_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_10_std
+audio_delta2_mfcc_10_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_10_mean
+audio_delta2_mfcc_10_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_10_std
+audio_mfcc_11_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_11_mean
+audio_mfcc_11_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_11_std
+audio_delta_mfcc_11_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_11_mean
+audio_delta_mfcc_11_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_11_std
+audio_delta2_mfcc_11_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_11_mean
+audio_delta2_mfcc_11_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_11_std
+audio_mfcc_12_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_12_mean
+audio_mfcc_12_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_12_std
+audio_delta_mfcc_12_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_12_mean
+audio_delta_mfcc_12_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_12_std
+audio_delta2_mfcc_12_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_12_mean
+audio_delta2_mfcc_12_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_12_std
+audio_mfcc_13_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_13_mean
+audio_mfcc_13_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_mfcc_13_std
+audio_delta_mfcc_13_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_13_mean
+audio_delta_mfcc_13_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta_mfcc_13_std
+audio_delta2_mfcc_13_mean,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_13_mean
+audio_delta2_mfcc_13_std,acoustic_predictor,Audio,float64,coefficient or native unit,0,Acoustic Predictor: audio_delta2_mfcc_13_std
+video_filename,identifier,Video,str,coefficient or native unit,0,Identifier: video_filename
+video_fps,quality_control,Video,float64,coefficient or native unit,0,Quality Control: video_fps
+video_reported_frames,quality_control,Video,int64,coefficient or native unit,0,Quality Control: video_reported_frames
+video_decoded_frames,quality_control,Video,int64,coefficient or native unit,0,Quality Control: video_decoded_frames
+video_duration_sec,quality_control,Video,float64,seconds,0,Quality Control: video_duration_sec
+video_width_px,quality_control,Video,int64,pixels,0,Quality Control: video_width_px
+video_height_px,quality_control,Video,int64,pixels,0,Quality Control: video_height_px
+face_detected_frames,quality_control,Facial,int64,dimensionless,0,Quality Control: face_detected_frames
+face_detection_rate,quality_control,Facial,float64,dimensionless,0,Quality Control: face_detection_rate
+face_detection_quality_pass,quality_control,Facial,bool,dimensionless,0,Quality Control: face_detection_quality_pass
+face_geometry_coordinate_system,quality_control,Facial,str,dimensionless,0,Quality Control: face_geometry_coordinate_system
+face_landmarker_running_mode,quality_control,Facial,str,dimensionless,0,Quality Control: face_landmarker_running_mode
+face__neutral_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face__neutral_mean
+face__neutral_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face__neutral_std
+face__neutral_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face__neutral_max
+face_browDownLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_browDownLeft_mean
+face_browDownLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_browDownLeft_std
+face_browDownLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_browDownLeft_max
+face_browDownRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_browDownRight_mean
+face_browDownRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_browDownRight_std
+face_browDownRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_browDownRight_max
+face_browInnerUp_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_browInnerUp_mean
+face_browInnerUp_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_browInnerUp_std
+face_browInnerUp_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_browInnerUp_max
+face_browOuterUpLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_browOuterUpLeft_mean
+face_browOuterUpLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_browOuterUpLeft_std
+face_browOuterUpLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_browOuterUpLeft_max
+face_browOuterUpRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_browOuterUpRight_mean
+face_browOuterUpRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_browOuterUpRight_std
+face_browOuterUpRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_browOuterUpRight_max
+face_cheekPuff_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_cheekPuff_mean
+face_cheekPuff_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_cheekPuff_std
+face_cheekPuff_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_cheekPuff_max
+face_cheekSquintLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_cheekSquintLeft_mean
+face_cheekSquintLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_cheekSquintLeft_std
+face_cheekSquintLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_cheekSquintLeft_max
+face_cheekSquintRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_cheekSquintRight_mean
+face_cheekSquintRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_cheekSquintRight_std
+face_cheekSquintRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_cheekSquintRight_max
+face_eyeBlinkLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeBlinkLeft_mean
+face_eyeBlinkLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeBlinkLeft_std
+face_eyeBlinkLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeBlinkLeft_max
+face_eyeBlinkRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeBlinkRight_mean
+face_eyeBlinkRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeBlinkRight_std
+face_eyeBlinkRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeBlinkRight_max
+face_eyeLookDownLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookDownLeft_mean
+face_eyeLookDownLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookDownLeft_std
+face_eyeLookDownLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookDownLeft_max
+face_eyeLookDownRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookDownRight_mean
+face_eyeLookDownRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookDownRight_std
+face_eyeLookDownRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookDownRight_max
+face_eyeLookInLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookInLeft_mean
+face_eyeLookInLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookInLeft_std
+face_eyeLookInLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookInLeft_max
+face_eyeLookInRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookInRight_mean
+face_eyeLookInRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookInRight_std
+face_eyeLookInRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookInRight_max
+face_eyeLookOutLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookOutLeft_mean
+face_eyeLookOutLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookOutLeft_std
+face_eyeLookOutLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookOutLeft_max
+face_eyeLookOutRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookOutRight_mean
+face_eyeLookOutRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookOutRight_std
+face_eyeLookOutRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookOutRight_max
+face_eyeLookUpLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookUpLeft_mean
+face_eyeLookUpLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookUpLeft_std
+face_eyeLookUpLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookUpLeft_max
+face_eyeLookUpRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookUpRight_mean
+face_eyeLookUpRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookUpRight_std
+face_eyeLookUpRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeLookUpRight_max
+face_eyeSquintLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeSquintLeft_mean
+face_eyeSquintLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeSquintLeft_std
+face_eyeSquintLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeSquintLeft_max
+face_eyeSquintRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeSquintRight_mean
+face_eyeSquintRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeSquintRight_std
+face_eyeSquintRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeSquintRight_max
+face_eyeWideLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeWideLeft_mean
+face_eyeWideLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeWideLeft_std
+face_eyeWideLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeWideLeft_max
+face_eyeWideRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeWideRight_mean
+face_eyeWideRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeWideRight_std
+face_eyeWideRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eyeWideRight_max
+face_jawForward_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_jawForward_mean
+face_jawForward_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_jawForward_std
+face_jawForward_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_jawForward_max
+face_jawLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_jawLeft_mean
+face_jawLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_jawLeft_std
+face_jawLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_jawLeft_max
+face_jawOpen_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_jawOpen_mean
+face_jawOpen_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_jawOpen_std
+face_jawOpen_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_jawOpen_max
+face_jawRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_jawRight_mean
+face_jawRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_jawRight_std
+face_jawRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_jawRight_max
+face_mouthClose_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthClose_mean
+face_mouthClose_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthClose_std
+face_mouthClose_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthClose_max
+face_mouthDimpleLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthDimpleLeft_mean
+face_mouthDimpleLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthDimpleLeft_std
+face_mouthDimpleLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthDimpleLeft_max
+face_mouthDimpleRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthDimpleRight_mean
+face_mouthDimpleRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthDimpleRight_std
+face_mouthDimpleRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthDimpleRight_max
+face_mouthFrownLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthFrownLeft_mean
+face_mouthFrownLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthFrownLeft_std
+face_mouthFrownLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthFrownLeft_max
+face_mouthFrownRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthFrownRight_mean
+face_mouthFrownRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthFrownRight_std
+face_mouthFrownRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthFrownRight_max
+face_mouthFunnel_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthFunnel_mean
+face_mouthFunnel_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthFunnel_std
+face_mouthFunnel_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthFunnel_max
+face_mouthLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthLeft_mean
+face_mouthLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthLeft_std
+face_mouthLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthLeft_max
+face_mouthLowerDownLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthLowerDownLeft_mean
+face_mouthLowerDownLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthLowerDownLeft_std
+face_mouthLowerDownLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthLowerDownLeft_max
+face_mouthLowerDownRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthLowerDownRight_mean
+face_mouthLowerDownRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthLowerDownRight_std
+face_mouthLowerDownRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthLowerDownRight_max
+face_mouthPressLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthPressLeft_mean
+face_mouthPressLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthPressLeft_std
+face_mouthPressLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthPressLeft_max
+face_mouthPressRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthPressRight_mean
+face_mouthPressRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthPressRight_std
+face_mouthPressRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthPressRight_max
+face_mouthPucker_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthPucker_mean
+face_mouthPucker_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthPucker_std
+face_mouthPucker_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthPucker_max
+face_mouthRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthRight_mean
+face_mouthRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthRight_std
+face_mouthRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthRight_max
+face_mouthRollLower_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthRollLower_mean
+face_mouthRollLower_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthRollLower_std
+face_mouthRollLower_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthRollLower_max
+face_mouthRollUpper_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthRollUpper_mean
+face_mouthRollUpper_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthRollUpper_std
+face_mouthRollUpper_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthRollUpper_max
+face_mouthShrugLower_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthShrugLower_mean
+face_mouthShrugLower_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthShrugLower_std
+face_mouthShrugLower_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthShrugLower_max
+face_mouthShrugUpper_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthShrugUpper_mean
+face_mouthShrugUpper_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthShrugUpper_std
+face_mouthShrugUpper_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthShrugUpper_max
+face_mouthSmileLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthSmileLeft_mean
+face_mouthSmileLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthSmileLeft_std
+face_mouthSmileLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthSmileLeft_max
+face_mouthSmileRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthSmileRight_mean
+face_mouthSmileRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthSmileRight_std
+face_mouthSmileRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthSmileRight_max
+face_mouthStretchLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthStretchLeft_mean
+face_mouthStretchLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthStretchLeft_std
+face_mouthStretchLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthStretchLeft_max
+face_mouthStretchRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthStretchRight_mean
+face_mouthStretchRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthStretchRight_std
+face_mouthStretchRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthStretchRight_max
+face_mouthUpperUpLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthUpperUpLeft_mean
+face_mouthUpperUpLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthUpperUpLeft_std
+face_mouthUpperUpLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthUpperUpLeft_max
+face_mouthUpperUpRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthUpperUpRight_mean
+face_mouthUpperUpRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthUpperUpRight_std
+face_mouthUpperUpRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mouthUpperUpRight_max
+face_noseSneerLeft_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_noseSneerLeft_mean
+face_noseSneerLeft_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_noseSneerLeft_std
+face_noseSneerLeft_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_noseSneerLeft_max
+face_noseSneerRight_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_noseSneerRight_mean
+face_noseSneerRight_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_noseSneerRight_std
+face_noseSneerRight_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_noseSneerRight_max
+face_smile_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_smile_mean
+face_smile_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_smile_std
+face_smile_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_smile_max
+face_frown_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_frown_mean
+face_frown_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_frown_std
+face_frown_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_frown_max
+face_brow_lowerer_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_brow_lowerer_mean
+face_brow_lowerer_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_brow_lowerer_std
+face_brow_lowerer_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_brow_lowerer_max
+face_brow_inner_raiser_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_brow_inner_raiser_mean
+face_brow_inner_raiser_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_brow_inner_raiser_std
+face_brow_inner_raiser_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_brow_inner_raiser_max
+face_jaw_open_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_jaw_open_mean
+face_jaw_open_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_jaw_open_std
+face_jaw_open_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_jaw_open_max
+face_eye_squint_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_eye_squint_mean
+face_disgust_proxy_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_disgust_proxy_mean
+face_expressiveness_proxy,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_expressiveness_proxy
+face_ear_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_ear_mean
+face_ear_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_ear_std
+face_ear_min,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_ear_min
+face_mar_mean,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mar_mean
+face_mar_std,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mar_std
+face_mar_max,facial_predictor,Facial,float64,dimensionless,0,Facial Predictor: face_mar_max
+face_pitch_mean_deg,facial_predictor,Facial,float64,degrees,0,Facial Predictor: face_pitch_mean_deg
+face_pitch_std_deg,facial_predictor,Facial,float64,degrees,0,Facial Predictor: face_pitch_std_deg
+face_yaw_mean_deg,facial_predictor,Facial,float64,degrees,0,Facial Predictor: face_yaw_mean_deg
+face_yaw_std_deg,facial_predictor,Facial,float64,degrees,0,Facial Predictor: face_yaw_std_deg
+face_roll_mean_deg,facial_predictor,Facial,float64,degrees,0,Facial Predictor: face_roll_mean_deg
+face_roll_std_deg,facial_predictor,Facial,float64,degrees,0,Facial Predictor: face_roll_std_deg

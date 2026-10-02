@@ -1,0 +1,41 @@
+participant_code,consent_obtained,metadata_word_matches_filename,audio_pitch_detected,face_detection_rate,recording_valid_for_non_pitch_eda,quality_warnings
+Y4-001,True,True,True,1.0,True,
+Y4-002,True,True,True,1.0,True,
+Y4-003,True,True,True,1.0,True,
+Y4-004,True,True,True,1.0,True,
+Y4-005,True,True,False,1.0,True,pitch unavailable
+Y4-006,True,True,True,1.0,True,
+Y4-007,True,True,False,1.0,True,pitch unavailable
+Y4-008,True,True,False,1.0,True,pitch unavailable
+Y4-009,True,True,True,1.0,True,
+Y4-010,True,True,False,1.0,True,pitch unavailable
+Y4-011,True,True,True,1.0,True,
+Y4-012,True,True,False,1.0,True,pitch unavailable
+Y4-013,True,True,True,1.0,True,
+Y4-014,True,True,True,1.0,True,
+Y4-015,True,True,False,1.0,True,pitch unavailable
+Y4-016,True,True,False,1.0,True,pitch unavailable
+Y4-017,True,True,True,1.0,True,
+Y4-018,True,True,False,1.0,True,pitch unavailable
+Y4-019,True,True,True,1.0,True,
+Y4-020,True,True,True,1.0,True,
+Y4-021,True,True,True,1.0,True,
+Y4-022,True,True,True,1.0,True,high-energy audio boundary; intentional trim to avoid background music; background-music overlap unverified; speech completeness unverified; feeling-text provenance unverified
+Y4-023,True,True,False,1.0,True,pitch unavailable; feeling-text provenance unverified
+Y4-024,True,True,False,1.0,True,pitch unavailable; high-energy audio boundary; intentional trim to avoid background music; background-music overlap unverified; speech completeness unverified; feeling-text provenance unverified
+Y4-025,True,True,False,1.0,True,pitch unavailable; high-energy audio boundary; intentional trim to avoid background music; background-music overlap unverified; speech completeness unverified; feeling-text provenance unverified
+Y4-026,True,True,True,1.0,True,
+Y4-027,True,True,True,1.0,True,feeling-text provenance unverified
+Y4-028,True,True,True,1.0,True,feeling-text provenance unverified
+Y4-029,True,True,True,1.0,True,feeling-text provenance unverified
+Y4-030,True,True,True,1.0,True,feeling-text provenance unverified
+Y4-031,True,True,True,1.0,True,feeling-text provenance unverified
+Y4-032,True,True,True,1.0,True,high-energy audio boundary; intentional trim to avoid background music; background-music overlap unverified; speech completeness unverified; feeling-text provenance unverified
+Y4-033,True,True,True,1.0,True,feeling-text provenance unverified
+Y4-034,True,True,True,1.0,True,feeling-text provenance unverified
+Y4-035,True,True,True,1.0,True,
+Y4-036,True,True,False,1.0,True,pitch unavailable; feeling-text provenance unverified
+Y4-037,True,True,True,1.0,True,
+Y4-038,True,True,True,1.0,True,feeling-text provenance unverified
+Y4-039,True,True,True,1.0,True,feeling-text provenance unverified
+Y4-040,True,True,True,1.0,True,feeling-text provenance unverified

@@ -172,14 +172,15 @@ def extract_all_facial_features(raw_video_dir: str, output_csv: str | None = Non
         output_facial_transformation_matrixes=True,
         num_faces=1,
     )
-    detector = vision.FaceLandmarker.create_from_options(options)
     records, failures = [], []
     for filepath in tqdm(files, desc="Extracting Facial Features"):
+        detector = vision.FaceLandmarker.create_from_options(options)
         try:
             records.append(extract_facial_features_from_video(str(filepath), detector))
         except Exception as exc:
             failures.append({"filename": filepath.name, "error": str(exc)})
-    detector.close()
+        finally:
+            detector.close()
     df = pd.DataFrame(records)
     if output_csv:
         output = Path(output_csv)

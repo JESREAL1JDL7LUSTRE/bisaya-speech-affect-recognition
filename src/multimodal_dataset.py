@@ -67,7 +67,7 @@ def _validate_unique(df: pd.DataFrame, name: str):
 
 
 def _metadata_columns(df_audio: pd.DataFrame, df_facial: pd.DataFrame) -> list[str]:
-    shared = set(df_audio.columns) & set(df_facial.columns)
+    shared = (set(df_audio.columns) & set(df_facial.columns)) - {"participant_code"}
     return sorted(c for c in shared if not c.startswith(("audio_", "face_", "video_")))
 
 

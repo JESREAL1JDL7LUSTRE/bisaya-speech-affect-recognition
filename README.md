@@ -13,11 +13,11 @@ All components specified in the **Second Deliverables** have been fully generate
 
 | Deliverable Component | Output Artifact | Status | Description |
 |---|---|:---:|---|
-| **1. Audio Feature Dataset** | [`datasets/audio/audio_feature_dataset.csv`](file:///d:/SCHOOL/affective/datasets/audio/audio_feature_dataset.csv) | **Completed** | 40 observations, 125 acoustic & prosodic features (F0, RMS, ZCR, 13 MFCCs, Deltas, Delta-Deltas, Spectral Centroid, Bandwidth, Rolloff, Flatness, Contrast, Local Jitter & Shimmer) |
-| **2. Facial Feature Dataset** | [`datasets/facial/facial_feature_dataset.csv`](file:///d:/SCHOOL/affective/datasets/facial/facial_feature_dataset.csv) | **Completed** | 40 observations, 206 vision features (52 FACS Blendshapes [mean, std, max], Eye Aspect Ratio [EAR], Mouth Aspect Ratio [MAR], Head Pose [Pitch, Yaw, Roll], Expressiveness) |
-| **3. Cleaned Multimodal Dataset** | [`datasets/multimodal/cleaned_multimodal_dataset.csv`](file:///d:/SCHOOL/affective/datasets/multimodal/cleaned_multimodal_dataset.csv)<br>[`datasets/multimodal/cleaned_multimodal_dataset_scaled.csv`](file:///d:/SCHOOL/affective/datasets/multimodal/cleaned_multimodal_dataset_scaled.csv) | **Completed** | 40 observations, 319 multimodal variables, 0 missing/null values, 0 infinite values. Includes standardized z-score dataset and data dictionary. |
-| **4. Descriptive Statistics** | [`outputs/descriptive_statistics/descriptive_statistics_report.md`](file:///d:/SCHOOL/affective/outputs/descriptive_statistics/descriptive_statistics_report.md)<br>8 CSV Tables in `outputs/descriptive_statistics/` | **Completed** | Univariate statistics, AM vs. PM hypothesis testing (Welch's t-test, Mann-Whitney U, Cohen's d), Affect taxonomy breakdown, Lexically controlled analysis, Cross-modal correlation matrix. |
-| **5. Tables & Visualizations** | 10 Publication-Grade Figures in [`outputs/visualizations/`](file:///d:/SCHOOL/affective/outputs/visualizations/) | **Completed** | 300 DPI high-resolution figures (Circumplex affect space, MFCC heatmaps, session boxplots, facial action units, cross-modal synchronization, PCA/t-SNE clustering, radar profiles). |
+| **1. Audio Feature Dataset** | [`datasets/audio/audio_feature_dataset.csv`](file:///d:/SCHOOL/affective/datasets/audio/audio_feature_dataset.csv) | **Completed** | 40 observations, 146 acoustic & prosodic variables (F0 with pitch-detected flag, RMS, ZCR, 13 MFCCs, Deltas, Delta-Deltas, Spectral features, boundary RMS, period/frame variation proxies). |
+| **2. Facial Feature Dataset** | [`datasets/facial/facial_feature_dataset.csv`](file:///d:/SCHOOL/affective/datasets/facial/facial_feature_dataset.csv) | **Completed** | 40 observations, 225 vision variables (52 FACS Blendshapes [mean, std, max], 2D-pixel Eye Aspect Ratio [EAR], Mouth Aspect Ratio [MAR], Head Pose, MediaPipe Video-mode detection). |
+| **3. Cleaned Multimodal Dataset** | [`datasets/multimodal/cleaned_multimodal_dataset.csv`](file:///d:/SCHOOL/affective/datasets/multimodal/cleaned_multimodal_dataset.csv)<br>[`datasets/multimodal/cleaned_multimodal_dataset_scaled.csv`](file:///d:/SCHOOL/affective/datasets/multimodal/cleaned_multimodal_dataset_scaled.csv) | **Completed** | 40 observations, 344 multimodal variables (295 numeric predictors). Preserves reference outcomes unscaled. Includes descriptive scaling parameters and codebook. |
+| **4. Descriptive Statistics** | [`outputs/descriptive_statistics/descriptive_statistics_report.md`](file:///d:/SCHOOL/affective/outputs/descriptive_statistics/descriptive_statistics_report.md)<br>10 CSV Tables in `outputs/descriptive_statistics/` | **Completed** | Missing-aware univariate stats, FDR-adjusted AM vs. PM Welch tests, empirical rating affect groups, lexically controlled analysis (*Kapoy*), cross-modal and ground-truth correlations. |
+| **5. Tables & Visualizations** | 10 Publication-Grade Figures in [`outputs/visualizations/`](file:///d:/SCHOOL/affective/outputs/visualizations/) | **Completed** | 300 DPI high-resolution figures (Sample composition, empirical valence-arousal space, session boxplots with FDR q-values, MFCC profiles, spectral boxplots, facial proxies, correlation heatmaps, predictor-only PCA/t-SNE, Kapoy analysis, educational context). |
 
 ---
 
@@ -27,15 +27,21 @@ All components specified in the **Second Deliverables** have been fully generate
 d:\SCHOOL\affective\
 ├── datasets/
 │   ├── audio/
-│   │   └── audio_feature_dataset.csv       # Extracted audio acoustic features (40 x 125)
+│   │   ├── audio_feature_dataset.csv       # Extracted audio acoustic features (40 x 146)
+│   │   └── audio_extraction_failures.csv   # Extraction failure log (0 failures)
 │   ├── facial/
-│   │   └── facial_feature_dataset.csv      # Extracted facial vision features (40 x 206)
+│   │   ├── facial_feature_dataset.csv      # Extracted facial vision features (40 x 225)
+│   │   └── facial_extraction_failures.csv  # Extraction failure log (0 failures)
 │   └── multimodal/
-│       ├── cleaned_multimodal_dataset.csv  # THE TRUE CLEANED MULTIMODAL DATASET (40 x 319)
-│       ├── cleaned_multimodal_dataset_scaled.csv # Standardized z-score normalized dataset
-│       └── multimodal_data_dictionary.csv  # 319-entry data dictionary / codebook
+│       ├── cleaned_multimodal_dataset.csv  # THE TRUE CLEANED MULTIMODAL DATASET (40 x 344)
+│       ├── cleaned_multimodal_dataset_scaled.csv # Standardized z-score normalized dataset (EDA)
+│       ├── descriptive_scaling_parameters.csv   # Mean & population std for predictors
+│       └── multimodal_data_dictionary.csv  # 344-entry data dictionary / codebook
 │
 ├── outputs/
+│   ├── data_quality/
+│   │   ├── data_quality_report.csv         # Per-participant quality flags and warnings
+│   │   └── data_quality_report.md          # Data quality summary
 │   ├── descriptive_statistics/
 │   │   ├── descriptive_statistics_report.md
 │   │   ├── summary_statistics_audio.csv
@@ -43,8 +49,12 @@ d:\SCHOOL\affective\
 │   │   ├── session_am_pm_comparison.csv
 │   │   ├── affect_taxonomy_summary.csv
 │   │   ├── lexically_controlled_kapoy.csv
-│   │   └── audio_facial_correlations.csv
-│   └── visualizations/                 # 10 High-Resolution (300 DPI) Figures
+│   │   ├── spoken_word_affect_summary.csv
+│   │   ├── year_level_affect_summary.csv
+│   │   ├── class_activity_summary.csv
+│   │   ├── audio_facial_correlations.csv
+│   │   └── ground_truth_affect_correlations.csv
+│   └── visualizations/                     # 10 High-Resolution (300 DPI) Figures
 │       ├── 01_dataset_distribution_overview.png
 │       ├── 02_affect_word_taxonomy.png
 │       ├── 03_audio_prosodic_features_by_session.png
@@ -54,10 +64,10 @@ d:\SCHOOL\affective\
 │       ├── 07_audio_facial_multimodal_correlations.png
 │       ├── 08_multimodal_pca_tsne_clustering.png
 │       ├── 09_lexically_controlled_analysis.png
-│       └── 10_multimodal_radar_affect_profiles.png
+│       └── 10_context_affect_profiles.png
 │
-├── DATA/                               # Raw recordings (Audio: Raw .wav / Video: Raw Cut Video)
-├── run_pipeline.py                     # Master execution pipeline script
+├── DATA/                                   # Survey CSV & metadata provenance
+├── run_pipeline.py                         # Master execution pipeline script
 └── README.md
 ```
 

@@ -204,6 +204,17 @@ def _fmt_p(value) -> str:
     return f"{value:.2e}" if value < 0.0001 else f"{value:.4f}"
 
 
+def _markdown_table(df: pd.DataFrame, index: bool = False) -> str:
+    try:
+        return df.to_markdown(index=index)
+    except Exception:
+        cols = list(df.columns)
+        header = "| " + " | ".join(str(c) for c in cols) + " |"
+        sep = "| " + " | ".join(["---"] * len(cols)) + " |"
+        body = ["| " + " | ".join(str(val) for val in row) + " |" for row in df.itertuples(index=False)]
+        return "\n".join([header, sep] + body)
+
+
 def generate_descriptive_report(df, audio_stats, facial_stats, session, affect, kapoy, cross, ground) -> str:
     valence_counts = df.valence_score.value_counts().sort_index().to_dict()
     arousal_counts = df.arousal_score.value_counts().sort_index().to_dict()
@@ -224,7 +235,7 @@ def generate_descriptive_report(df, audio_stats, facial_stats, session, affect, 
         "",
         "## Educational context",
         "",
-        activity_map.to_markdown(index=False),
+        _markdown_table(activity_map, index=False),
         "",
         "Session, subject and activity are completely confounded in this group: PM contains Foreign Language / Lecture-Review, while AM contains Graph Theory / Prelim Exam and Numerical Analysis / Quiz. Session comparisons are descriptive and cannot isolate a time-of-day effect. Year-level differences cannot be evaluated because every observation is fourth year.",
         "",
@@ -232,19 +243,19 @@ def generate_descriptive_report(df, audio_stats, facial_stats, session, affect, 
         "",
         f"Welch tests were treated as the primary session tests and adjusted as one family using Benjamini–Hochberg FDR. {session_fdr} of {len(session)} comparisons have q < .05. Mann–Whitney results are secondary sensitivity checks.",
         "",
-        session[["Feature", "AM_N", "PM_N", "AM_Mean", "PM_Mean", "Welch_p", "Welch_q_BH", "Cohens_d"]].to_markdown(index=False) if not session.empty else "No session comparisons were estimable.",
+        _markdown_table(session[["Feature", "AM_N", "PM_N", "AM_Mean", "PM_Mean", "Welch_p", "Welch_q_BH", "Cohens_d"]], index=False) if not session.empty else "No session comparisons were estimable.",
         "",
         "## Rating-derived affect groups",
         "",
         "Valence groups use scores 1–2 = Negative, 3 = Neutral, and 4–5 = Positive. Arousal groups use 1–2 = Low, 3 = Moderate, and 4–5 = High. These are transparent analytical bins, not clinical emotion diagnoses.",
         "",
-        affect.round(3).to_markdown(index=False),
+        _markdown_table(affect.round(3), index=False),
         "",
         "## Same-word analysis",
         "",
         f"There are {len(kapoy)} Kapoy recordings. Their variation can describe within-word heterogeneity, but variation alone does not prove that features predict affect or control for speaker differences.",
         "",
-        kapoy[[c for c in ["participant_code", "valence_score", "arousal_score", "audio_pitch_detected", "audio_f0_mean_hz", "audio_rms_mean", "face_smile_mean"] if c in kapoy]].to_markdown(index=False),
+        _markdown_table(kapoy[[c for c in ["participant_code", "valence_score", "arousal_score", "audio_pitch_detected", "audio_f0_mean_hz", "audio_rms_mean", "face_smile_mean"] if c in kapoy]], index=False),
         "",
         "## Exploratory associations",
         "",

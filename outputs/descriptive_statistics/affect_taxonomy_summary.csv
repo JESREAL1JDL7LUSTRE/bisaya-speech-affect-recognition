@@ -1,5 +1,9 @@
-Affect_Category,Count,Percentage,audio_f0_mean_hz,audio_rms_mean,audio_spec_centroid_mean,face_smile_mean,face_frown_mean,face_brow_lowerer_mean,face_expressiveness_score,face_ear_mean,face_mar_mean
-Fatigue,15,37.5,68.9253,0.0737,1597.3127,0.287,0.0025,0.0313,0.0445,0.473,0.334
-Stress/Anxiety,11,27.5,155.8509,0.0732,1490.4082,0.1259,0.0014,0.0171,0.035,0.4577,0.2561
-Positive,8,20.0,61.395,0.0505,1620.5787,0.3231,0.0009,0.0487,0.0358,0.4086,0.2924
-Neutral,6,15.0,130.6933,0.0672,1593.925,0.2146,0.0024,0.0761,0.0433,0.477,0.2817
+valence_group,arousal_group,affect_category,Count,Mean_Valence,Mean_Arousal,Pitch_Available,Mean_F0_Hz,Mean_RMS,Mean_Smile_Proxy,Percentage
+Negative,Low,Negative-Low,7,1.5714,1.5714,5,196.292,0.088,0.2771,17.5
+Negative,Moderate,Negative-Moderate,6,1.6667,3.0,5,199.198,0.0719,0.2364,15.0
+Neutral,High,Neutral-High,4,3.0,4.5,3,162.2967,0.0682,0.0737,10.0
+Neutral,Low,Neutral-Low,5,3.0,2.0,4,159.865,0.071,0.2403,12.5
+Neutral,Moderate,Neutral-Moderate,4,3.0,3.0,3,171.64,0.0625,0.148,10.0
+Positive,High,Positive-High,7,4.7143,4.7143,3,155.1733,0.0516,0.2995,17.5
+Positive,Low,Positive-Low,1,5.0,2.0,1,160.42,0.1409,0.5182,2.5
+Positive,Moderate,Positive-Moderate,6,4.1667,3.0,4,154.0125,0.0483,0.2867,15.0
