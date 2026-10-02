@@ -78,15 +78,17 @@ def main():
     # -------------------------------------------------------------
     print("\n>>> STEP 5/5: Generating rating-grounded exploratory visualizations (300 DPI)...")
     generate_all_visualizations(raw_multimodal_csv, vis_dir)
-    print(f"[OK] Step 5 Complete: 10 figures saved to {vis_dir}.")
+    print(f"[OK] Step 5 Complete: All disaggregated figures saved across outputs/ and {vis_dir}.")
     
     elapsed = time.time() - t_start
     print("\n" + "=" * 75)
     print(f" ALL DELIVERABLES SUCCESSFULLY PRODUCED IN {elapsed:.2f} SECONDS!")
     print("=" * 75)
-    print(f"Datasets generated in:    {os.path.abspath('datasets')}")
-    print(f"Statistics generated in:  {os.path.abspath(stats_dir)}")
-    print(f"Visualizations generated in: {os.path.abspath(vis_dir)}")
+    print(f"Datasets generated in:        {os.path.abspath('datasets')}")
+    print(f"Statistics generated in:      {os.path.abspath(stats_dir)}")
+    print(f"Audio Outputs in:             {os.path.abspath('outputs/audio')}")
+    print(f"Facial Outputs in:            {os.path.abspath('outputs/facial')}")
+    print(f"Multimodal Outputs in:        {os.path.abspath('outputs/multimodal')}")
 
 
 if __name__ == "__main__":

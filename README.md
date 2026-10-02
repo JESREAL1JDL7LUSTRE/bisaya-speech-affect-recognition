@@ -7,67 +7,85 @@
 
 ---
 
-## 🎯 Deliverables Status Overview
+## 🎯 Deliverables & Project Scope Overview
 
-All components specified in the **Second Deliverables** have been fully generated, validated, and formatted:
+> [!NOTE]
+> **Instructor Guidance (October 2026):**  
+> *"Base lang mo sa acoustic and prosodic features. Ayaw na pila ang sa facial input"*  
+> In accordance with course instructor Ma'am Love Jhoye's guidance, the primary scope for the Midterm PIT modeling and presentation focuses strictly on **Acoustic and Prosodic Speech Emotion Recognition (Audio Modality)**.
+> All facial action unit and multimodal cross-referencing features have been systematically preserved and categorized into dedicated subdirectories (`outputs/facial/` and `outputs/multimodal/`) for complete academic rigor, but all primary analytical tables and 10 publication figures for the PIT presentation are located in [`outputs/audio/`](file:///d:/SCHOOL/affective/outputs/audio/).
 
-| Deliverable Component | Output Artifact | Status | Description |
+| Deliverable Component | Primary Output Artifact | Status | Description |
 |---|---|:---:|---|
-| **1. Audio Feature Dataset** | [`datasets/audio/audio_feature_dataset.csv`](file:///d:/SCHOOL/affective/datasets/audio/audio_feature_dataset.csv) | **Completed** | 40 observations, 146 acoustic & prosodic variables (F0 with pitch-detected flag, RMS, ZCR, 13 MFCCs, Deltas, Delta-Deltas, Spectral features, boundary RMS, period/frame variation proxies). |
-| **2. Facial Feature Dataset** | [`datasets/facial/facial_feature_dataset.csv`](file:///d:/SCHOOL/affective/datasets/facial/facial_feature_dataset.csv) | **Completed** | 40 observations, 225 vision variables (52 FACS Blendshapes [mean, std, max], 2D-pixel Eye Aspect Ratio [EAR], Mouth Aspect Ratio [MAR], Head Pose, MediaPipe Video-mode detection). |
-| **3. Cleaned Multimodal Dataset** | [`datasets/multimodal/cleaned_multimodal_dataset.csv`](file:///d:/SCHOOL/affective/datasets/multimodal/cleaned_multimodal_dataset.csv)<br>[`datasets/multimodal/cleaned_multimodal_dataset_scaled.csv`](file:///d:/SCHOOL/affective/datasets/multimodal/cleaned_multimodal_dataset_scaled.csv) | **Completed** | 40 observations, 344 multimodal variables (295 numeric predictors). Preserves reference outcomes unscaled. Includes descriptive scaling parameters and codebook. |
-| **4. Descriptive Statistics** | [`outputs/descriptive_statistics/descriptive_statistics_report.md`](file:///d:/SCHOOL/affective/outputs/descriptive_statistics/descriptive_statistics_report.md)<br>10 CSV Tables in `outputs/descriptive_statistics/` | **Completed** | Missing-aware univariate stats, FDR-adjusted AM vs. PM Welch tests, empirical rating affect groups, lexically controlled analysis (*Kapoy*), cross-modal and ground-truth correlations. |
-| **5. Tables & Visualizations** | 10 Publication-Grade Figures in [`outputs/visualizations/`](file:///d:/SCHOOL/affective/outputs/visualizations/) | **Completed** | 300 DPI high-resolution figures (Sample composition, empirical valence-arousal space, session boxplots with FDR q-values, MFCC profiles, spectral boxplots, facial proxies, correlation heatmaps, predictor-only PCA/t-SNE, Kapoy analysis, educational context). |
+| **1. Audio Feature Dataset (PRIMARY FOCUS)** | [`datasets/audio/audio_feature_dataset.csv`](file:///d:/SCHOOL/affective/datasets/audio/audio_feature_dataset.csv) | **Completed** | 40 observations, 146 acoustic & prosodic variables (F0 with pitch-detected flag, RMS energy, ZCR, 13 MFCCs, Deltas, Delta-Deltas, Spectral characteristics, pitch dynamics). |
+| **2. Audio Figures & Statistics** | [`outputs/audio/`](file:///d:/SCHOOL/affective/outputs/audio/) | **Completed** | 10 high-resolution (300 DPI) publication figures and 5 CSV summary tables covering speech distribution, Russell's circumplex, session tests, MFCC profiles, spectral contrasts, F0 dynamics, lexically controlled *Kapoy*, and PCA/t-SNE acoustic clustering. |
+| **3. Facial Feature Dataset (Vision)** | [`datasets/facial/facial_feature_dataset.csv`](file:///d:/SCHOOL/affective/datasets/facial/facial_feature_dataset.csv)<br>[`outputs/facial/`](file:///d:/SCHOOL/affective/outputs/facial/) | **Completed** | 40 observations, 225 vision variables (52 FACS Blendshapes, EAR, MAR, Head Pose) + 5 facial figures & summary CSV. |
+| **4. Multimodal Dataset & Cross-Analysis** | [`datasets/multimodal/cleaned_multimodal_dataset.csv`](file:///d:/SCHOOL/affective/datasets/multimodal/cleaned_multimodal_dataset.csv)<br>[`outputs/multimodal/`](file:///d:/SCHOOL/affective/outputs/multimodal/) | **Completed** | 40 observations, 344 variables (295 numeric predictors) + 4 cross-modal correlation figures & joint statistics. |
+| **5. Descriptive Statistics & Audits** | [`outputs/descriptive_statistics/descriptive_statistics_report.md`](file:///d:/SCHOOL/affective/outputs/descriptive_statistics/descriptive_statistics_report.md)<br>[`outputs/data_quality/`](file:///d:/SCHOOL/affective/outputs/data_quality/) | **Completed** | Missing-aware univariate stats, FDR-adjusted AM vs. PM Welch tests, empirical rating affect groups, and data quality flags. |
 
 ---
 
-## 📁 Repository & Dataset Folder Structure
+## 📁 Repository & Output Folder Structure
 
 ```text
 d:\SCHOOL\affective\
 ├── datasets/
 │   ├── audio/
-│   │   ├── audio_feature_dataset.csv       # Extracted audio acoustic features (40 x 146)
-│   │   └── audio_extraction_failures.csv   # Extraction failure log (0 failures)
+│   │   ├── audio_feature_dataset.csv             # Extracted acoustic features (40 x 146)
+│   │   └── audio_extraction_failures.csv         # Extraction failure log (0 failures)
 │   ├── facial/
-│   │   ├── facial_feature_dataset.csv      # Extracted facial vision features (40 x 225)
-│   │   └── facial_extraction_failures.csv  # Extraction failure log (0 failures)
+│   │   ├── facial_feature_dataset.csv            # Extracted facial vision features (40 x 225)
+│   │   └── facial_extraction_failures.csv        # Extraction failure log (0 failures)
 │   └── multimodal/
-│       ├── cleaned_multimodal_dataset.csv  # THE TRUE CLEANED MULTIMODAL DATASET (40 x 344)
+│       ├── cleaned_multimodal_dataset.csv        # True cleaned multimodal dataset (40 x 344)
 │       ├── cleaned_multimodal_dataset_scaled.csv # Standardized z-score normalized dataset (EDA)
-│       ├── descriptive_scaling_parameters.csv   # Mean & population std for predictors
-│       └── multimodal_data_dictionary.csv  # 344-entry data dictionary / codebook
+│       ├── descriptive_scaling_parameters.csv   # Predictor normalization parameters
+│       └── multimodal_data_dictionary.csv        # 344-entry comprehensive data dictionary
 │
 ├── outputs/
-│   ├── data_quality/
-│   │   ├── data_quality_report.csv         # Per-participant quality flags and warnings
-│   │   └── data_quality_report.md          # Data quality summary
-│   ├── descriptive_statistics/
-│   │   ├── descriptive_statistics_report.md
+│   ├── audio/                                    # ⭐ PRIMARY FOCUS FOR MIDTERM PIT
+│   │   ├── 01_audio_sample_distribution.png      # Sample, activity, word frequencies, duration
+│   │   ├── 02_empirical_affect_circumplex_audio.png # Russell's 2D valence-arousal space
+│   │   ├── 03_prosodic_features_by_session.png   # F0, RMS, ZCR, duration boxplots with Welch t & FDR q
+│   │   ├── 04_mfcc_timbral_profiles.png          # 13 MFCC heatmaps across valence & words
+│   │   ├── 05_spectral_biomarkers_by_affect.png  # Centroid, bandwidth, rolloff, contrast
+│   │   ├── 06_pitch_f0_dynamics_and_voicing.png  # F0 mean, voiced ratios, pitch range
+│   │   ├── 07_lexically_controlled_kapoy_acoustics.png # Kapoy (n=11) acoustic variance
+│   │   ├── 08_audio_predictor_pca_tsne_clustering.png  # Acoustic-only unsupervised embeddings
+│   │   ├── 09_acoustic_feature_correlation_matrix.png  # Inter-feature acoustic correlation matrix
+│   │   ├── 10_educational_context_acoustic_shifts.png  # Exam/quiz/lecture acoustic shifts
 │   │   ├── summary_statistics_audio.csv
-│   │   ├── summary_statistics_facial.csv
 │   │   ├── session_am_pm_comparison.csv
-│   │   ├── affect_taxonomy_summary.csv
-│   │   ├── lexically_controlled_kapoy.csv
 │   │   ├── spoken_word_affect_summary.csv
 │   │   ├── year_level_affect_summary.csv
-│   │   ├── class_activity_summary.csv
+│   │   └── class_activity_summary.csv
+│   │
+│   ├── facial/                                   # Vision-only analysis
+│   │   ├── 01_facial_action_units_by_valence.png
+│   │   ├── 02_geometric_ratios_ear_mar.png
+│   │   ├── 03_head_pose_dynamics.png
+│   │   ├── 04_facial_expression_variability.png
+│   │   ├── 05_facial_predictor_pca_tsne.png
+│   │   └── summary_statistics_facial.csv
+│   │
+│   ├── multimodal/                               # Cross-modal analysis
+│   │   ├── 01_audio_facial_correlation_heatmap.png
+│   │   ├── 02_multimodal_joint_pca_tsne.png
+│   │   ├── 03_multimodal_lexically_controlled_kapoy.png
+│   │   ├── 04_educational_context_affect_profiles.png
 │   │   ├── audio_facial_correlations.csv
-│   │   └── ground_truth_affect_correlations.csv
-│   └── visualizations/                     # 10 High-Resolution (300 DPI) Figures
-│       ├── 01_dataset_distribution_overview.png
-│       ├── 02_affect_word_taxonomy.png
-│       ├── 03_audio_prosodic_features_by_session.png
-│       ├── 04_mfcc_feature_heatmaps.png
-│       ├── 05_spectral_characteristics.png
-│       ├── 06_facial_action_units_by_session.png
-│       ├── 07_audio_facial_multimodal_correlations.png
-│       ├── 08_multimodal_pca_tsne_clustering.png
-│       ├── 09_lexically_controlled_analysis.png
-│       └── 10_context_affect_profiles.png
+│   │   ├── affect_taxonomy_summary.csv
+│   │   ├── ground_truth_affect_correlations.csv
+│   │   └── lexically_controlled_kapoy.csv
+│   │
+│   ├── descriptive_statistics/
+│   │   └── descriptive_statistics_report.md
+│   └── data_quality/
+│       ├── data_quality_report.csv
+│       └── data_quality_report.md
 │
-├── DATA/                                   # Survey CSV & metadata provenance
-├── run_pipeline.py                         # Master execution pipeline script
+├── DATA/                                         # Source survey & recordings
+├── run_pipeline.py                               # Master execution pipeline
 └── README.md
 ```
 

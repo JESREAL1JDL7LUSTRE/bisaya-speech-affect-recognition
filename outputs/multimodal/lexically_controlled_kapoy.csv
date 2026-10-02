@@ -1,0 +1,12 @@
+participant_code,session,class_activity,self_reported_feeling,self_reported_feeling_source,valence_score,arousal_score,affect_category,audio_pitch_detected,audio_duration_sec,audio_f0_mean_hz,audio_rms_mean,audio_spec_centroid_mean,face_smile_mean,face_frown_mean,face_brow_lowerer_mean,face_ear_mean,face_mar_mean
+Y4-036,AM,Quiz,Kapoy,Unverified word fill,1,1,Negative-Low,False,0.8824,,0.11504,1777.4,0.4625,0.002,0.137,0.3236,0.1775
+Y4-037,AM,Quiz,Tired,Survey entry,1,1,Negative-Low,True,1.0217,178.11,0.10202,1374.81,0.0048,0.0052,0.051,0.3155,0.0787
+Y4-028,AM,Quiz,Kapoy,Unverified word fill,1,2,Negative-Low,True,0.8127,156.66,0.11739,1346.32,0.2787,0.0,0.0381,0.3362,0.1908
+Y4-025,AM,Quiz,Kapoy,Unverified word fill,2,2,Negative-Low,False,0.8127,,0.06956,1657.15,0.0793,0.0003,0.0216,0.314,0.1885
+Y4-030,AM,Quiz,Kapoy,Unverified word fill,2,2,Negative-Low,True,0.8824,176.77,0.04083,1515.74,0.1741,0.0,0.0201,0.3551,0.1612
+Y4-027,AM,Quiz,Kapoy,Unverified word fill,2,3,Negative-Moderate,True,0.6734,296.69,0.12357,1542.37,0.3027,0.0008,0.0187,0.393,0.1953
+Y4-011,AM,Prelim Exam,Kapoy,Survey entry,3,2,Neutral-Low,True,1.0449,154.08,0.07889,1555.13,0.4538,0.0003,0.0732,0.3186,0.2234
+Y4-013,AM,Prelim Exam,Kapoy,Survey entry,3,2,Neutral-Low,True,1.2771,52.16,0.05473,1611.17,0.3573,0.0063,0.0184,0.3131,0.1502
+Y4-023,AM,Quiz,Kapoy,Unverified word fill,3,2,Neutral-Low,False,0.8359,,0.05488,1798.18,0.0752,0.0007,0.0686,0.3101,0.1473
+Y4-034,AM,Quiz,Kapoy,Unverified word fill,3,3,Neutral-Moderate,True,0.8359,180.02,0.08475,1652.39,0.4011,0.0228,0.0663,0.3347,0.2009
+Y4-015,AM,Prelim Exam,Kulba,Survey entry,5,5,Positive-High,False,0.9056,,0.04569,1713.26,0.1608,0.0025,0.0073,0.3248,0.1411

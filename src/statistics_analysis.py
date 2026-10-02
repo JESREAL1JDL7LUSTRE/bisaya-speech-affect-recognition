@@ -191,6 +191,28 @@ def run_descriptive_statistics(
 
     report = generate_descriptive_report(df, audio_stats, facial_stats, session, affect, kapoy, cross, ground)
     (output / "descriptive_statistics_report.md").write_text(report, encoding="utf-8")
+
+    # Also mirror modality-specific tables to outputs/audio, outputs/facial, outputs/multimodal
+    audio_dir = Path("outputs/audio")
+    facial_dir = Path("outputs/facial")
+    multi_dir = Path("outputs/multimodal")
+    audio_dir.mkdir(parents=True, exist_ok=True)
+    facial_dir.mkdir(parents=True, exist_ok=True)
+    multi_dir.mkdir(parents=True, exist_ok=True)
+
+    audio_stats.to_csv(audio_dir / "summary_statistics_audio.csv", index=False)
+    session.to_csv(audio_dir / "session_am_pm_comparison.csv", index=False)
+    activity.to_csv(audio_dir / "class_activity_summary.csv", index=False)
+    words.to_csv(audio_dir / "spoken_word_affect_summary.csv", index=False)
+    years.to_csv(audio_dir / "year_level_affect_summary.csv", index=False)
+
+    facial_stats.to_csv(facial_dir / "summary_statistics_facial.csv", index=False)
+
+    cross.to_csv(multi_dir / "audio_facial_correlations.csv", index=False)
+    ground.to_csv(multi_dir / "ground_truth_affect_correlations.csv", index=False)
+    affect.to_csv(multi_dir / "affect_taxonomy_summary.csv", index=False)
+    kapoy.to_csv(multi_dir / "lexically_controlled_kapoy.csv", index=False)
+
     return {
         "audio_stats": audio_stats, "facial_stats": facial_stats, "session_comp": session,
         "affect_summary": affect, "kapoy_analysis": kapoy, "correlations": cross,
