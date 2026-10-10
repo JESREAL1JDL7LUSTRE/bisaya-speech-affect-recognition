@@ -25,6 +25,13 @@ from sklearn.decomposition import PCA
 from sklearn.impute import SimpleImputer
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.dummy import DummyClassifier
+from sklearn.model_selection import StratifiedKFold, cross_validate, cross_val_predict
+from sklearn.metrics import confusion_matrix, classification_report
 
 from src.multimodal_dataset import predictor_columns
 from src.statistics_analysis import benjamini_hochberg
@@ -324,7 +331,145 @@ def generate_audio_visualizations(df: pd.DataFrame, output_dirs: list[Path]):
 
     fig.suptitle("Acoustic Shift and Confounding Across Educational Contexts", fontsize=13, fontweight="bold")
     _save_to_dirs(fig, output_dirs, "10_educational_context_acoustic_shifts.png")
-    print("  [OK] 10 Audio-Only Figures Generated.")
+
+    # =========================================================================
+    # ML Evaluation Figures (Rubric: At least 2 models per task & comparison)
+    # =========================================================================
+    print("  -> Training ML Models & Generating Evaluation Visualizations...")
+    X_mat = df[audio_features].values
+    y_val_arr = df["valence_group"].values
+    y_aro_arr = df["arousal_group"].values
+    cv5 = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+
+    ml_models = {
+        "Majority Baseline": DummyClassifier(strategy="most_frequent"),
+        "Logistic Regression": LogisticRegression(penalty="l2", C=0.1, max_iter=1000, random_state=42),
+        "Linear SVM": SVC(kernel="linear", C=0.1, random_state=42),
+        "RBF SVM": SVC(kernel="rbf", C=1.0, gamma="scale", random_state=42),
+        "Random Forest": RandomForestClassifier(n_estimators=100, max_depth=3, random_state=42)
+    }
+    scoring = ["accuracy", "precision_macro", "recall_macro", "f1_macro"]
+
+    summary_rows = []
+    val_preds, aro_preds = {}, {}
+    val_stats, aro_stats = {}, {}
+
+    for task_name, y_target, preds_dict, stats_dict in [
+        ("Valence", y_val_arr, val_preds, val_stats),
+        ("Arousal", y_aro_arr, aro_preds, aro_stats)
+    ]:
+        for m_name, clf in ml_models.items():
+            pipe = Pipeline([
+                ("imputer", SimpleImputer(strategy="median")),
+                ("scaler", StandardScaler()),
+                ("clf", clf)
+            ])
+            cv_res = cross_validate(pipe, X_mat, y_target, cv=cv5, scoring=scoring)
+            preds_dict[m_name] = cross_val_predict(pipe, X_mat, y_target, cv=cv5)
+
+            acc_m = cv_res["test_accuracy"].mean()
+            acc_s = cv_res["test_accuracy"].std()
+            f1_m = cv_res["test_f1_macro"].mean()
+            f1_s = cv_res["test_f1_macro"].std()
+            prec_m = cv_res["test_precision_macro"].mean()
+            prec_s = cv_res["test_precision_macro"].std()
+            rec_m = cv_res["test_recall_macro"].mean()
+            rec_s = cv_res["test_recall_macro"].std()
+
+            stats_dict[m_name] = {"acc_mean": acc_m, "acc_std": acc_s, "f1_mean": f1_m, "f1_std": f1_s}
+            summary_rows.append({
+                "Task": task_name, "Model": m_name,
+                "Accuracy_Mean": round(acc_m, 4), "Accuracy_Std": round(acc_s, 4),
+                "Precision_Macro_Mean": round(prec_m, 4), "Precision_Macro_Std": round(prec_s, 4),
+                "Recall_Macro_Mean": round(rec_m, 4), "Recall_Macro_Std": round(rec_s, 4),
+                "F1_Macro_Mean": round(f1_m, 4), "F1_Macro_Std": round(f1_s, 4),
+                "Accuracy_Display": f"{acc_m*100:.1f}% ± {acc_s*100:.1f}%",
+                "Precision_Display": f"{prec_m:.3f} ± {prec_s:.3f}",
+                "Recall_Display": f"{rec_m:.3f} ± {rec_s:.3f}",
+                "F1_Macro_Display": f"{f1_m:.3f} ± {f1_s:.3f}"
+            })
+
+    # Export metrics CSVs
+    df_metrics = pd.DataFrame(summary_rows)
+    per_class_rows = []
+    rf_v_rep = classification_report(y_val_arr, val_preds["Random Forest"], labels=["Negative", "Neutral", "Positive"], output_dict=True, zero_division=0)
+    for cls in ["Negative", "Neutral", "Positive"]:
+        per_class_rows.append({"Task": "Valence", "Model": "Random Forest", "Class": cls, "Precision": round(rf_v_rep[cls]["precision"], 3), "Recall": round(rf_v_rep[cls]["recall"], 3), "F1-Score": round(rf_v_rep[cls]["f1-score"], 3), "Support": int(rf_v_rep[cls]["support"])})
+    svm_a_rep = classification_report(y_aro_arr, aro_preds["Linear SVM"], labels=["Low", "Moderate", "High"], output_dict=True, zero_division=0)
+    for cls in ["Low", "Moderate", "High"]:
+        per_class_rows.append({"Task": "Arousal", "Model": "Linear SVM", "Class": cls, "Precision": round(svm_a_rep[cls]["precision"], 3), "Recall": round(svm_a_rep[cls]["recall"], 3), "F1-Score": round(svm_a_rep[cls]["f1-score"], 3), "Support": int(svm_a_rep[cls]["support"])})
+    df_per_class = pd.DataFrame(per_class_rows)
+
+    for d in output_dirs:
+        d.mkdir(parents=True, exist_ok=True)
+        df_metrics.to_csv(d / "metrics_summary.csv", index=False)
+        df_per_class.to_csv(d / "per_class_report.csv", index=False)
+
+    # Figure 11: 2x2 Confusion Matrices Grid
+    fig_cm, axes_cm = plt.subplots(2, 2, figsize=(13, 11))
+    cm_configs = [
+        (0, 0, "Valence", "Random Forest", val_preds["Random Forest"], y_val_arr, ["Negative", "Neutral", "Positive"], "Blues", val_stats["Random Forest"]["acc_mean"]),
+        (0, 1, "Valence", "Logistic Regression", val_preds["Logistic Regression"], y_val_arr, ["Negative", "Neutral", "Positive"], "Blues", val_stats["Logistic Regression"]["acc_mean"]),
+        (1, 0, "Arousal", "Linear SVM", aro_preds["Linear SVM"], y_aro_arr, ["Low", "Moderate", "High"], "Oranges", aro_stats["Linear SVM"]["acc_mean"]),
+        (1, 1, "Arousal", "Random Forest", aro_preds["Random Forest"], y_aro_arr, ["Low", "Moderate", "High"], "Oranges", aro_stats["Random Forest"]["acc_mean"]),
+    ]
+    for r, c, task, m_name, y_p, y_true, labels, cmap, acc in cm_configs:
+        ax = axes_cm[r, c]
+        cm_counts = confusion_matrix(y_true, y_p, labels=labels)
+        row_sums = cm_counts.sum(axis=1)[:, np.newaxis]
+        cm_norm = np.divide(cm_counts.astype(float), row_sums, out=np.zeros_like(cm_counts, dtype=float), where=row_sums != 0)
+        annot_matrix = np.empty_like(cm_counts, dtype=object)
+        for i in range(cm_counts.shape[0]):
+            for j in range(cm_counts.shape[1]):
+                annot_matrix[i, j] = f"{cm_counts[i, j]}\n({cm_norm[i, j]*100:.0f}%)"
+        sns.heatmap(cm_norm, annot=annot_matrix, fmt="", cmap=cmap, vmin=0.0, vmax=1.0, cbar=(c == 1), cbar_kws={"label": "Row-Normalized Recall"} if c == 1 else None, xticklabels=labels, yticklabels=labels, ax=ax, linewidths=1, linecolor="white", annot_kws={"fontsize": 11, "fontweight": "bold"})
+        badge = " [BEST MODEL]" if (m_name == "Random Forest" and task == "Valence") or (m_name == "Linear SVM" and task == "Arousal") else " [COMPARISON]"
+        ax.set_title(f"{task}: {m_name} — Acc: {acc*100:.1f}%{badge}", fontsize=12, fontweight="bold", pad=10)
+        ax.set_xlabel("Predicted Class", fontsize=10, fontweight="bold")
+        ax.set_ylabel("True Ground Truth", fontsize=10, fontweight="bold")
+
+    fig_cm.suptitle("Figure 11: Out-of-Fold Confusion Matrices (Stratified 5-Fold Cross-Validation)\nCell text: raw count (row recall %); colored by row-normalized recall", fontsize=14, fontweight="bold", y=0.98)
+    fig_cm.tight_layout(rect=[0, 0.03, 1, 0.95])
+    for d in output_dirs:
+        d.mkdir(parents=True, exist_ok=True)
+        fig_cm.savefig(d / "11_ser_model_confusion_matrices.png", bbox_inches="tight", dpi=300)
+        fig_cm.savefig(d / "confusion_matrices.png", bbox_inches="tight", dpi=300)
+    plt.close(fig_cm)
+
+    # Figure 12: Model Comparison Bar Chart
+    fig_bar, axes_bar = plt.subplots(1, 2, figsize=(15, 6))
+    model_order = ["Majority Baseline", "Logistic Regression", "Linear SVM", "RBF SVM", "Random Forest"]
+    x = np.arange(len(model_order))
+    w = 0.35
+
+    for idx, (task, pal_acc, pal_f1, base_val) in enumerate([("Valence", "#457B9D", "#2A9D8F", 35.0), ("Arousal", "#E76F51", "#F4A261", 40.0)]):
+        ax = axes_bar[idx]
+        acc_means = [df_metrics.loc[(df_metrics.Task == task) & (df_metrics.Model == m), "Accuracy_Mean"].values[0] * 100 for m in model_order]
+        acc_stds = [df_metrics.loc[(df_metrics.Task == task) & (df_metrics.Model == m), "Accuracy_Std"].values[0] * 100 for m in model_order]
+        f1_means = [df_metrics.loc[(df_metrics.Task == task) & (df_metrics.Model == m), "F1_Macro_Mean"].values[0] * 100 for m in model_order]
+        f1_stds = [df_metrics.loc[(df_metrics.Task == task) & (df_metrics.Model == m), "F1_Macro_Std"].values[0] * 100 for m in model_order]
+
+        ax.bar(x - w/2, acc_means, w, yerr=acc_stds, capsize=4, label="Accuracy", color=pal_acc, edgecolor="black", alpha=0.9)
+        ax.bar(x + w/2, f1_means, w, yerr=f1_stds, capsize=4, label="Macro F1", color=pal_f1, edgecolor="black", alpha=0.9)
+        ax.axhline(33.33, color="#E63946", linestyle="--", linewidth=1.8, label="Chance Level (33.3%)")
+        ax.axhline(base_val, color="#6C7A89", linestyle=":", linewidth=2.0, label=f"Majority Baseline ({base_val:.1f}%)")
+
+        ax.set_title(f"3-Class {task} Classification", fontsize=13, fontweight="bold")
+        ax.set_ylabel("Score (%)", fontsize=11, fontweight="bold")
+        ax.set_xticks(x)
+        ax.set_xticklabels(["Majority\nBaseline", "Logistic\nRegression", "Linear\nSVM", "RBF\nSVM", "Random\nForest"], fontsize=9)
+        ax.set_ylim(0, 75)
+        ax.legend(loc="upper right", frameon=True, fontsize=9)
+
+    fig_bar.suptitle("Figure 12: SER Model Performance Comparison (Stratified 5-Fold CV)\nError bars represent ±1 standard deviation across folds", fontsize=14, fontweight="bold", y=0.98)
+    fig_bar.tight_layout(rect=[0, 0.03, 1, 0.95])
+    for d in output_dirs:
+        d.mkdir(parents=True, exist_ok=True)
+        fig_bar.savefig(d / "12_ser_model_performance_comparison.png", bbox_inches="tight", dpi=300)
+        fig_bar.savefig(d / "model_comparison.png", bbox_inches="tight", dpi=300)
+    plt.close(fig_bar)
+
+    print("  [OK] 12 Audio-Only Figures Generated (including ML Confusion Matrices & Comparison).")
 
 
 # =========================================================================

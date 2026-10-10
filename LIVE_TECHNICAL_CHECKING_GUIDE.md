@@ -27,7 +27,8 @@
    * Tab 2: [`demo_verification.py`](file:///d:/SCHOOL/affective/demo_verification.py)
    * Tab 3: [`src/audio_features.py`](file:///d:/SCHOOL/affective/src/audio_features.py)
    * Tab 4: [`ser_machine_learning_experiments.ipynb`](file:///d:/SCHOOL/affective/ser_machine_learning_experiments.ipynb)
-   * Tab 5: [`outputs/audio/11_confusion_matrices_ml.png`](file:///d:/SCHOOL/affective/outputs/audio/11_confusion_matrices_ml.png)
+   * Tab 5: [`outputs/audio/11_ser_model_confusion_matrices.png`](file:///d:/SCHOOL/affective/outputs/audio/11_ser_model_confusion_matrices.png)
+   * Tab 6: [`outputs/audio/12_ser_model_performance_comparison.png`](file:///d:/SCHOOL/affective/outputs/audio/12_ser_model_performance_comparison.png)
 4. **Have File Explorer open** to `DATA\2AudioRecordings\Raw .wav` showing the 40 audio files.
 
 ---
@@ -131,11 +132,16 @@ In your terminal, execute:
      * **Linear SVM (Winner):** $\mathbf{47.5\% \pm 9.4\%}$ (LOOCV: $\mathbf{55.0\%}$, Precision: $0.528$, Macro F1: $\mathbf{0.437}$)
      * Random Forest: $45.0\% \pm 6.1\%$ (Macro F1: $0.403$)
      * Logistic Regression: $45.0\% \pm 10.0\%$ (Macro F1: $0.402$)
-3. **Show the Confusion Matrices:**
-   * Open the generated figure: [`outputs/audio/11_confusion_matrices_ml.png`](file:///d:/SCHOOL/affective/outputs/audio/11_confusion_matrices_ml.png).
-   * Show that Random Forest distributes valence predictions across all 3 classes, while Linear SVM captures low and moderate arousal with high recall.
-4. **Explain the Variance Across Folds:**
-   * Note the fold standard deviations ($\pm 6.1\%$ to $\pm 18.7\%$), explaining why single train/test splits are invalid on $N=40$.
+3. **Show the Confusion Matrices & Model Comparison Figures:**
+   * Open Figure 11: [`outputs/audio/11_ser_model_confusion_matrices.png`](file:///d:/SCHOOL/affective/outputs/audio/11_ser_model_confusion_matrices.png).
+     * Show the 2×2 grid: Valence (Random Forest, Logistic Regression) and Arousal (Linear SVM, Random Forest).
+     * Explain: Annotated with counts, colored by row-normalized recall.
+   * Open Figure 12: [`outputs/audio/12_ser_model_performance_comparison.png`](file:///d:/SCHOOL/affective/outputs/audio/12_ser_model_performance_comparison.png).
+     * Show grouped bars for Accuracy & Macro-F1 across all 5 models with error bars ($\pm 1\text{ SD}$).
+     * Point to the dashed chance level line ($33.3\%$) and dotted majority baseline ($35.0\%$ Valence, $40.0\%$ Arousal).
+4. **Explain the Majority Baseline & Variance Across Folds:**
+   * *Baseline Note:* Explain why majority baseline shows $25.0\%$ in 5-fold CV: "known artifact of stratified CV where the most common training class is slightly under-represented in the test split; full dataset majority is $35.0\%$, and chance is $\approx 33.3\%$."
+   * *Fold Variance:* Note the standard deviations ($\pm 6.1\%$ to $\pm 18.7\%$), proving that single splits are volatile for $N=40$.
 
 > 🎙️ **Talking Points for Part C:**  
 > *"In Part C, we benchmark our acoustic classifiers using Stratified 5-Fold Cross-Validation. We enforce strict data hygiene: scaling and pitch imputation are fitted inside the CV loop to prevent data leakage. For 3-class Valence, Random Forest achieves 32.5% accuracy and an F1 of 0.306, performing close to chance level (33.3%). This proves empirically that speech acoustics alone have difficulty distinguishing pleasant from unpleasant states in short natural utterances. However, for 3-class Arousal, Linear SVM achieves 47.5% in 5-fold CV and 55.0% in Leave-One-Out CV, significantly beating the 40.0% majority baseline. Energy and pitch provide a reliable acoustic signature of physiological activation."*
