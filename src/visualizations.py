@@ -30,8 +30,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.dummy import DummyClassifier
-from sklearn.model_selection import StratifiedKFold, cross_validate, cross_val_predict
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.model_selection import StratifiedKFold, LeaveOneOut, cross_validate, cross_val_predict
+from sklearn.metrics import confusion_matrix, classification_report, accuracy_score, f1_score
 
 from src.multimodal_dataset import predictor_columns
 from src.statistics_analysis import benjamini_hochberg
@@ -352,6 +352,7 @@ def generate_audio_visualizations(df: pd.DataFrame, output_dirs: list[Path]):
     y_val_arr = df["valence_group"].values
     y_aro_arr = df["arousal_group"].values
     cv5 = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    loo = LeaveOneOut()
 
     ml_models = {
         "Majority Baseline": DummyClassifier(strategy="most_frequent"),
@@ -376,6 +377,7 @@ def generate_audio_visualizations(df: pd.DataFrame, output_dirs: list[Path]):
                 ("scaler", StandardScaler()),
                 ("clf", clf)
             ])
+            # 5-Fold Stratified CV
             cv_res = cross_validate(pipe, X_mat, y_target, cv=cv5, scoring=scoring)
             preds_dict[m_name] = cross_val_predict(pipe, X_mat, y_target, cv=cv5)
 
@@ -388,7 +390,16 @@ def generate_audio_visualizations(df: pd.DataFrame, output_dirs: list[Path]):
             rec_m = cv_res["test_recall_macro"].mean()
             rec_s = cv_res["test_recall_macro"].std()
 
-            stats_dict[m_name] = {"acc_mean": acc_m, "acc_std": acc_s, "f1_mean": f1_m, "f1_std": f1_s}
+            # Leave-One-Out CV (LOOCV)
+            y_pred_loo = cross_val_predict(pipe, X_mat, y_target, cv=loo)
+            acc_loo = accuracy_score(y_target, y_pred_loo)
+            f1_loo = f1_score(y_target, y_pred_loo, average="macro", zero_division=0)
+
+            stats_dict[m_name] = {
+                "acc_mean": acc_m, "acc_std": acc_s,
+                "f1_mean": f1_m, "f1_std": f1_s,
+                "acc_loo": acc_loo, "f1_loo": f1_loo
+            }
             summary_rows.append({
                 "Task": task_name, "Model": m_name,
                 "Accuracy_Mean": round(acc_m, 4), "Accuracy_Std": round(acc_s, 4),
@@ -398,7 +409,11 @@ def generate_audio_visualizations(df: pd.DataFrame, output_dirs: list[Path]):
                 "Accuracy_Display": f"{acc_m*100:.1f}% ± {acc_s*100:.1f}%",
                 "Precision_Display": f"{prec_m:.3f} ± {prec_s:.3f}",
                 "Recall_Display": f"{rec_m:.3f} ± {rec_s:.3f}",
-                "F1_Macro_Display": f"{f1_m:.3f} ± {f1_s:.3f}"
+                "F1_Macro_Display": f"{f1_m:.3f} ± {f1_s:.3f}",
+                "LOOCV_Accuracy": round(acc_loo, 4),
+                "LOOCV_F1_Macro": round(f1_loo, 4),
+                "LOOCV_Accuracy_Display": f"{acc_loo*100:.1f}%",
+                "LOOCV_F1_Macro_Display": f"{f1_loo:.3f}"
             })
 
     # Export metrics CSVs
@@ -420,12 +435,12 @@ def generate_audio_visualizations(df: pd.DataFrame, output_dirs: list[Path]):
     # Figure 11: 2x2 Confusion Matrices Grid
     fig_cm, axes_cm = plt.subplots(2, 2, figsize=(13, 11))
     cm_configs = [
-        (0, 0, "Valence", "Random Forest", val_preds["Random Forest"], y_val_arr, ["Negative", "Neutral", "Positive"], "Blues", val_stats["Random Forest"]["acc_mean"]),
-        (0, 1, "Valence", "Logistic Regression", val_preds["Logistic Regression"], y_val_arr, ["Negative", "Neutral", "Positive"], "Blues", val_stats["Logistic Regression"]["acc_mean"]),
-        (1, 0, "Arousal", "Linear SVM", aro_preds["Linear SVM"], y_aro_arr, ["Low", "Moderate", "High"], "Oranges", aro_stats["Linear SVM"]["acc_mean"]),
-        (1, 1, "Arousal", "Random Forest", aro_preds["Random Forest"], y_aro_arr, ["Low", "Moderate", "High"], "Oranges", aro_stats["Random Forest"]["acc_mean"]),
+        (0, 0, "Valence", "Random Forest", val_preds["Random Forest"], y_val_arr, ["Negative", "Neutral", "Positive"], "Blues", val_stats["Random Forest"]["acc_mean"], val_stats["Random Forest"]["acc_loo"]),
+        (0, 1, "Valence", "Logistic Regression", val_preds["Logistic Regression"], y_val_arr, ["Negative", "Neutral", "Positive"], "Blues", val_stats["Logistic Regression"]["acc_mean"], val_stats["Logistic Regression"]["acc_loo"]),
+        (1, 0, "Arousal", "Linear SVM", aro_preds["Linear SVM"], y_aro_arr, ["Low", "Moderate", "High"], "Oranges", aro_stats["Linear SVM"]["acc_mean"], aro_stats["Linear SVM"]["acc_loo"]),
+        (1, 1, "Arousal", "Random Forest", aro_preds["Random Forest"], y_aro_arr, ["Low", "Moderate", "High"], "Oranges", aro_stats["Random Forest"]["acc_mean"], aro_stats["Random Forest"]["acc_loo"]),
     ]
-    for r, c, task, m_name, y_p, y_true, labels, cmap, acc in cm_configs:
+    for r, c, task, m_name, y_p, y_true, labels, cmap, acc_5f, acc_loo_val in cm_configs:
         ax = axes_cm[r, c]
         cm_counts = confusion_matrix(y_true, y_p, labels=labels)
         row_sums = cm_counts.sum(axis=1)[:, np.newaxis]
@@ -436,11 +451,11 @@ def generate_audio_visualizations(df: pd.DataFrame, output_dirs: list[Path]):
                 annot_matrix[i, j] = f"{cm_counts[i, j]}\n({cm_norm[i, j]*100:.0f}%)"
         sns.heatmap(cm_norm, annot=annot_matrix, fmt="", cmap=cmap, vmin=0.0, vmax=1.0, cbar=(c == 1), cbar_kws={"label": "Row-Normalized Recall"} if c == 1 else None, xticklabels=labels, yticklabels=labels, ax=ax, linewidths=1, linecolor="white", annot_kws={"fontsize": 11, "fontweight": "bold"})
         badge = " [BEST MODEL]" if (m_name == "Random Forest" and task == "Valence") or (m_name == "Linear SVM" and task == "Arousal") else " [COMPARISON]"
-        ax.set_title(f"{task}: {m_name} — Acc: {acc*100:.1f}%{badge}", fontsize=12, fontweight="bold", pad=10)
+        ax.set_title(f"{task}: {m_name}{badge}\n5-Fold CV: {acc_5f*100:.1f}%  |  LOOCV: {acc_loo_val*100:.1f}%", fontsize=11, fontweight="bold", pad=8)
         ax.set_xlabel("Predicted Class", fontsize=10, fontweight="bold")
         ax.set_ylabel("True Ground Truth", fontsize=10, fontweight="bold")
 
-    fig_cm.suptitle("Figure 11: Out-of-Fold Confusion Matrices (Stratified 5-Fold Cross-Validation)\nCell text: raw count (row recall %); colored by row-normalized recall", fontsize=14, fontweight="bold", y=0.98)
+    fig_cm.suptitle("Figure 11: Out-of-Fold Confusion Matrices (Stratified 5-Fold CV & LOOCV Benchmarked)\nCell text: raw count (row recall %); colored by row-normalized recall", fontsize=14, fontweight="bold", y=0.98)
     fig_cm.tight_layout(rect=[0, 0.03, 1, 0.95])
     for d in output_dirs:
         d.mkdir(parents=True, exist_ok=True)
@@ -459,9 +474,18 @@ def generate_audio_visualizations(df: pd.DataFrame, output_dirs: list[Path]):
         acc_stds = [df_metrics.loc[(df_metrics.Task == task) & (df_metrics.Model == m), "Accuracy_Std"].values[0] * 100 for m in model_order]
         f1_means = [df_metrics.loc[(df_metrics.Task == task) & (df_metrics.Model == m), "F1_Macro_Mean"].values[0] * 100 for m in model_order]
         f1_stds = [df_metrics.loc[(df_metrics.Task == task) & (df_metrics.Model == m), "F1_Macro_Std"].values[0] * 100 for m in model_order]
+        loo_accs = [df_metrics.loc[(df_metrics.Task == task) & (df_metrics.Model == m), "LOOCV_Accuracy"].values[0] * 100 for m in model_order]
 
-        ax.bar(x - w/2, acc_means, w, yerr=acc_stds, capsize=4, label="Accuracy", color=pal_acc, edgecolor="black", alpha=0.9)
-        ax.bar(x + w/2, f1_means, w, yerr=f1_stds, capsize=4, label="Macro F1", color=pal_f1, edgecolor="black", alpha=0.9)
+        ax.bar(x - w/2, acc_means, w, yerr=acc_stds, capsize=4, label="5-Fold CV Accuracy", color=pal_acc, edgecolor="black", alpha=0.9)
+        ax.bar(x + w/2, f1_means, w, yerr=f1_stds, capsize=4, label="5-Fold CV Macro F1", color=pal_f1, edgecolor="black", alpha=0.9)
+        ax.scatter(x - w/2, loo_accs, color="#1D3557" if task == "Valence" else "#780000", marker="D", s=55, zorder=5, label="LOOCV Accuracy (◆)", edgecolor="white", linewidth=1.2)
+
+        # Highlight winner callout
+        if task == "Arousal":
+            ax.annotate("LOOCV: 55.0%", xy=(2 - w/2, 55.0), xytext=(2 - w/2, 64.0),
+                        ha="center", fontsize=9.5, fontweight="bold", color="#780000",
+                        arrowprops=dict(arrowstyle="->", color="#780000", lw=1.2))
+
         ax.axhline(33.33, color="#E63946", linestyle="--", linewidth=1.8, label="Chance Level (33.3%)")
         ax.axhline(base_val, color="#6C7A89", linestyle=":", linewidth=2.0, label=f"Majority Baseline ({base_val:.1f}%)")
 
@@ -470,9 +494,9 @@ def generate_audio_visualizations(df: pd.DataFrame, output_dirs: list[Path]):
         ax.set_xticks(x)
         ax.set_xticklabels(["Majority\nBaseline", "Logistic\nRegression", "Linear\nSVM", "RBF\nSVM", "Random\nForest"], fontsize=9)
         ax.set_ylim(0, 75)
-        ax.legend(loc="upper right", frameon=True, fontsize=9)
+        ax.legend(loc="upper right", frameon=True, fontsize=8.5)
 
-    fig_bar.suptitle("Figure 12: SER Model Performance Comparison (Stratified 5-Fold CV)\nError bars represent ±1 standard deviation across folds", fontsize=14, fontweight="bold", y=0.98)
+    fig_bar.suptitle("Figure 12: SER Model Performance Comparison (Stratified 5-Fold CV vs. LOOCV)\nBars show 5-Fold CV (±1 SD); Diamonds (◆) denote Leave-One-Out CV Accuracy", fontsize=14, fontweight="bold", y=0.98)
     fig_bar.tight_layout(rect=[0, 0.03, 1, 0.95])
     for d in output_dirs:
         d.mkdir(parents=True, exist_ok=True)
