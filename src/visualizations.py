@@ -433,7 +433,6 @@ def generate_audio_visualizations(df: pd.DataFrame, output_dirs: list[Path]):
     for d in output_dirs:
         d.mkdir(parents=True, exist_ok=True)
         fig_cm.savefig(d / "11_ser_model_confusion_matrices.png", bbox_inches="tight", dpi=300)
-        fig_cm.savefig(d / "confusion_matrices.png", bbox_inches="tight", dpi=300)
     plt.close(fig_cm)
 
     # Figure 12: Model Comparison Bar Chart
@@ -466,7 +465,6 @@ def generate_audio_visualizations(df: pd.DataFrame, output_dirs: list[Path]):
     for d in output_dirs:
         d.mkdir(parents=True, exist_ok=True)
         fig_bar.savefig(d / "12_ser_model_performance_comparison.png", bbox_inches="tight", dpi=300)
-        fig_bar.savefig(d / "model_comparison.png", bbox_inches="tight", dpi=300)
     plt.close(fig_bar)
 
     print("  [OK] 12 Audio-Only Figures Generated (including ML Confusion Matrices & Comparison).")

@@ -152,8 +152,8 @@ def run_ml_demonstration():
 
     # Saved Visualizations
     print("\n[6] Generated Publication-Quality Artifacts (300 DPI):")
-    print("    - 2x2 Confusion Matrices: outputs/audio/confusion_matrices.png")
-    print("    - Model Comparison Chart: outputs/audio/model_comparison.png")
+    print("    - 2x2 Confusion Matrices: outputs/audio/11_ser_model_confusion_matrices.png")
+    print("    - Model Comparison Chart: outputs/audio/12_ser_model_performance_comparison.png")
     print("    - Metrics Summary CSV:    outputs/audio/metrics_summary.csv")
     print("    - Per-Class Report CSV:   outputs/audio/per_class_report.csv")
 
