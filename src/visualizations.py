@@ -35,6 +35,7 @@ from sklearn.metrics import confusion_matrix, classification_report
 
 from src.multimodal_dataset import predictor_columns
 from src.statistics_analysis import benjamini_hochberg
+from adjustText import adjust_text
 
 # Plot aesthetic configuration
 sns.set_theme(style="whitegrid")
@@ -111,15 +112,15 @@ def generate_audio_visualizations(df: pd.DataFrame, output_dirs: list[Path]):
     _save_to_dirs(fig, output_dirs, "01_audio_sample_distribution.png")
 
     # Figure 2: Empirical Affect Circumplex Space
-    fig, ax = plt.subplots(figsize=(10, 8))
+    fig, ax = plt.subplots(figsize=(10, 7))
     ax.axhline(3, color="gray", ls="--", lw=1.2, alpha=0.7)
     ax.axvline(3, color="gray", ls="--", lw=1.2, alpha=0.7)
     
     # Quadrant annotations
-    ax.text(1.2, 4.8, "High Arousal / Negative\n(Stress / Anxiety / Frustration)", fontsize=9, color="#D95F59", fontweight="bold", alpha=0.85)
-    ax.text(3.8, 4.8, "High Arousal / Positive\n(Excitement / Joy / Thrilled)", fontsize=9, color="#2A9D8F", fontweight="bold", alpha=0.85)
-    ax.text(1.2, 1.3, "Low Arousal / Negative\n(Fatigue / Exhaustion / Sadness)", fontsize=9, color="#6C7A89", fontweight="bold", alpha=0.85)
-    ax.text(3.8, 1.3, "Low Arousal / Positive\n(Relief / Calm / Relaxation)", fontsize=9, color="#457B9D", fontweight="bold", alpha=0.85)
+    ax.text(1.1, 5.0, "High Arousal / Negative\n(Stress / Anxiety / Frustration)", fontsize=9, color="#D95F59", fontweight="bold", alpha=0.85, va="top")
+    ax.text(3.7, 5.0, "High Arousal / Positive\n(Excitement / Joy / Relief)", fontsize=9, color="#2A9D8F", fontweight="bold", alpha=0.85, va="top")
+    ax.text(1.1, 1.25, "Low Arousal / Negative\n(Fatigue / Exhaustion / Sadness)", fontsize=9, color="#6C7A89", fontweight="bold", alpha=0.85, va="bottom")
+    ax.text(3.7, 1.25, "Low Arousal / Positive\n(Calm / Relaxation / Peace)", fontsize=9, color="#457B9D", fontweight="bold", alpha=0.85, va="bottom")
 
     grouped = df.groupby("spoken_word").agg(
         Valence=("valence_score", "mean"),
@@ -128,15 +129,26 @@ def generate_audio_visualizations(df: pd.DataFrame, output_dirs: list[Path]):
         Mean_F0=("audio_f0_mean_hz", "mean")
     ).reset_index()
 
+    texts = []
     for _, row in grouped.iterrows():
-        # Assign color based on valence quadrant
         c = "#D95F59" if row.Valence < 2.8 else "#2A9D8F" if row.Valence > 3.2 else "#6C7A89"
-        size = 100 + 50 * row.N
-        ax.scatter(row.Valence, row.Arousal, s=size, color=c, alpha=0.8, edgecolor="black", zorder=4)
-        ax.annotate(f"{row.spoken_word} (n={row.N})", (row.Valence, row.Arousal), xytext=(5, 5), textcoords="offset points", fontsize=8.5, fontweight="medium")
+        if row.N >= 2:
+            size = 140 + 60 * row.N
+            ax.scatter(row.Valence, row.Arousal, s=size, color=c, alpha=0.85, edgecolor="black", linewidth=1.5, zorder=4)
+            texts.append(ax.text(row.Valence, row.Arousal, f"{row.spoken_word} (n={row.N})", fontsize=14, fontweight="bold", color="#111111", zorder=5))
+        else:
+            # Unlabeled n=1 words
+            ax.scatter(row.Valence, row.Arousal, s=120, color=c, alpha=0.55, edgecolor="black", linewidth=0.8, zorder=3)
+
+    if texts:
+        adjust_text(texts, ax=ax, arrowprops=dict(arrowstyle="-", color="#333333", lw=0.8), expand=(1.3, 1.3))
+
+    # Caption for unlabeled points
+    ax.text(0.98, 0.03, "n=1 words unlabeled.", transform=ax.transAxes, ha="right", va="bottom", fontsize=10, fontstyle="italic", color="#555555",
+            bbox=dict(boxstyle="round,pad=0.3", facecolor="white", edgecolor="#cccccc", alpha=0.8))
 
     ax.set(xlim=(0.8, 5.2), ylim=(0.8, 5.2), xlabel="Mean Self-Reported Valence (1 = Unpleasant, 5 = Pleasant)", ylabel="Mean Self-Reported Arousal (1 = Low Energy, 5 = High Energy)")
-    ax.set_title("Empirical Affective Circumplex of Bisaya Spoken Responses\nPositioned strictly by participant self-reports (bubble size = word frequency)", fontsize=12, fontweight="bold")
+    ax.set_title("Empirical Affective Circumplex of Bisaya Spoken Responses\nPositioned strictly by participant self-reports (bubble size = word frequency)", fontsize=13, fontweight="bold", pad=12)
     _save_to_dirs(fig, output_dirs, "02_empirical_affect_circumplex_audio.png")
 
     # Figure 3: Prosodic Features by Session with FDR
