@@ -2,20 +2,29 @@
 
 from __future__ import annotations
 
-import os
-from pathlib import Path
+# --- Standard Library Imports ---
+import os                    # Operating system utilities (path checking, directory walking)
+from pathlib import Path     # Object-oriented filesystem path manipulation
 
-import librosa
-import numpy as np
-import pandas as pd
-from tqdm import tqdm
+# --- Scientific & Signal Processing Libraries ---
+import librosa               # Audio and speech signal processing (pYIN, STFT, RMS, ZCR, MFCC)
+import numpy as np           # Numerical linear algebra and vectorized array operations
+import pandas as pd          # Tabular dataset manipulation and CSV export
+from tqdm import tqdm        # Progress bar for batch feature extraction
 
-
+# --- File Paths for Data and Metadata Audit Trails ---
+# Primary survey responses containing participant demographics, Likert ratings, and filenames
 SURVEY_CSV = "DATA/RESEARCH MINI-PROJECT v2 - G7 - 4th year.csv"
+# Provenance audit log documenting data provenance, corrections, and entry verification status
 PROVENANCE_CSV = "DATA/metadata_provenance.csv"
+# Audio quality flags documenting background music overlap and speech completeness
 QUALITY_FLAGS_CSV = "DATA/recording_quality_flags.csv"
 
-# Lexical context only; never the reference affect outcome.
+# --- Lexical Word Taxonomy Dictionary ---
+# Maps each spoken Bisaya word to an academic lexical category and its English translation.
+# CRITICAL RESEARCH DEFENSE POINT:
+# The spoken word represents LEXICAL CONTEXT ONLY. It is NEVER used as the emotion target outcome!
+# Emotional ground truth is strictly derived from the participant's independent self-reported ratings.
 LEXICAL_TAXONOMY = {
     "Kapoy": ("Fatigue-related word", "Tired / Exhausted"),
     "Hangak": ("Fatigue-related word", "Breathless / Gasping"),
@@ -44,14 +53,21 @@ LEXICAL_TAXONOMY = {
     "Gihigugma": ("Positive/relief word", "Loved / Appreciated"),
 }
 
+# Structured dictionary representation of the lexical taxonomy for programmatic lookups
 AFFECT_TAXONOMY = {
     word: {"category": category, "english": english}
     for word, (category, english) in LEXICAL_TAXONOMY.items()
 }
+
+# Alias mapping: handles minor spelling variations between filenames and survey entries
 FILENAME_WORD_ALIASES = {"Gaduha-duha": "Duha-duha"}
 
 
 def _read_csv(path: str) -> pd.DataFrame:
+    """
+    Robust CSV reader that handles Windows encoding variations.
+    Tries UTF-8 first; if a UnicodeDecodeError occurs, falls back to CP1252 (Windows Latin-1).
+    """
     try:
         return pd.read_csv(path, encoding="utf-8")
     except UnicodeDecodeError:
@@ -94,13 +110,19 @@ def _rating_group(score: int, dimension: str) -> str:
 
 
 def _load_auxiliary_map(path: str, value_columns: list[str]) -> dict[str, dict]:
+    """
+    Helper function to load provenance or quality flag tables into a fast lookup dictionary.
+    Returns: {participant_code: {col_name: value}}
+    """
     if not os.path.exists(path):
-        return {}
-    df = _read_csv(path)
+        return {}  # If audit file is absent, return empty mapping
+    df = _read_csv(path)  # Read audit CSV with robust encoding
     if "Participant Code" not in df.columns:
-        raise ValueError(f"{path} is missing Participant Code")
+        raise ValueError(f"{path} is missing Participant Code")  # Ensure foreign key exists
     return {
+        # Key: Participant Code string (e.g. 'Y4-001')
         str(row["Participant Code"]).strip(): {
+            # Value: dictionary of audit attributes (e.g. 'Intentional BGM Boundary Trim')
             col: ("" if pd.isna(row.get(col)) else str(row.get(col)).strip())
             for col in value_columns
         }
@@ -109,10 +131,20 @@ def _load_auxiliary_map(path: str, value_columns: list[str]) -> dict[str, dict]:
 
 
 def load_survey_metadata(csv_path: str = SURVEY_CSV) -> dict[str, dict]:
-    """Load and validate survey metadata without fabricating missing outcomes."""
+    """
+    Loads, sanitizes, and verifies the 40 participant survey metadata records.
+    
+    DEFENSE POINTS:
+    1. Zero Data Fabrication: Missing text entries remain NaN; ratings must be valid 1-5 integers.
+    2. Strict Ethical Consent: All 40 participants must have verified informed consent ('Yes').
+    3. Ground-Truth Construction: Valence and Arousal are mapped into analytical bins (Negative/Neutral/Positive).
+    """
     if not os.path.exists(csv_path):
         raise FileNotFoundError(f"Required survey metadata not found: {csv_path}")
-    df = _read_csv(csv_path)
+        
+    df = _read_csv(csv_path)  # Read primary survey CSV
+    
+    # 1. Enforce strict column schema requirements
     required = {
         "Participant Code", "Year Level", "Class Activity", "Subject", "Session",
         "Spoken Word", "Self-Reported Feeling", "Valence (1-5)", "Arousal (1-5)",
@@ -121,32 +153,53 @@ def load_survey_metadata(csv_path: str = SURVEY_CSV) -> dict[str, dict]:
     missing = sorted(required - set(df.columns))
     if missing:
         raise ValueError(f"Survey metadata is missing columns: {missing}")
+        
+    # 2. Check for empty or duplicate participant codes
     codes = df["Participant Code"].astype(str).str.strip()
     if codes.eq("").any() or codes.duplicated().any():
         duplicates = codes[codes.duplicated(keep=False)].tolist()
         raise ValueError(f"Participant codes must be nonblank and unique; duplicates={duplicates}")
 
+    # 3. Load supplementary audit trails (provenance of text notes & recording acoustic flags)
     provenance = _load_auxiliary_map(PROVENANCE_CSV, ["Field", "Status", "Note"])
     quality = _load_auxiliary_map(
         QUALITY_FLAGS_CSV,
         ["Intentional BGM Boundary Trim", "Background Music Overlap", "Speech Complete", "Notes"],
     )
+    
+    # Textual Likert descriptors for human-readable logging
     val_labels = {1: "Very Unpleasant", 2: "Unpleasant", 3: "Neutral", 4: "Pleasant", 5: "Very Pleasant"}
     aro_labels = {1: "Very Low", 2: "Low", 3: "Moderate", 4: "High", 5: "Very High"}
+    
     records: dict[str, dict] = {}
+    
+    # 4. Iterate and validate each participant row
     for _, row in df.iterrows():
         code = str(row["Participant Code"]).strip()
+        
+        # Verify Informed Consent - Ethics requirement (CS412 PIT requirement)
         if str(row["Consent Obtained (Y/N)"]).strip().lower() not in {"yes", "y"}:
             raise ValueError(f"{code} does not have recorded consent")
+            
+        # Parse numerical ratings (1 to 5)
         valence = _parse_rating(row["Valence (1-5)"], f"{code} valence")
         arousal = _parse_rating(row["Arousal (1-5)"], f"{code} arousal")
+        
+        # Parse self-reported qualitative text
         feeling = "" if pd.isna(row["Self-Reported Feeling"]) else str(row["Self-Reported Feeling"]).strip()
         word = str(row["Spoken Word"]).strip()
+        
+        # Look up word taxonomy (Context only - not emotion outcome)
         lexical_category, word_english = LEXICAL_TAXONOMY.get(word, ("Unclassified word", word))
+        
+        # Segment ratings into 3 analytical categories (Negative/Neutral/Positive and Low/Moderate/High)
         v_group = _rating_group(valence, "valence")
         a_group = _rating_group(arousal, "arousal")
+        
         prov = provenance.get(code, {})
         flags = quality.get(code, {})
+        
+        # Construct verified metadata record dictionary
         records[code] = {
             "participant_code": code,
             "year_level": str(row["Year Level"]).strip(),
@@ -159,11 +212,11 @@ def load_survey_metadata(csv_path: str = SURVEY_CSV) -> dict[str, dict]:
             "self_reported_feeling_source": prov.get("Status", "Survey entry"),
             "valence_score": valence,
             "valence_label": val_labels[valence],
-            "valence_group": v_group,
+            "valence_group": v_group,                          # Target 1: 3-Class Valence
             "arousal_score": arousal,
             "arousal_label": aro_labels[arousal],
-            "arousal_group": a_group,
-            "affect_category": f"{v_group}-{a_group}",
+            "arousal_group": a_group,                          # Target 2: 3-Class Arousal
+            "affect_category": f"{v_group}-{a_group}",          # Compound 2D Affect Quadrant
             "lexical_category": lexical_category,
             "word_english": word_english,
             "date_collected": "" if pd.isna(row["Date Collected"]) else str(row["Date Collected"]).strip(),
@@ -176,30 +229,55 @@ def load_survey_metadata(csv_path: str = SURVEY_CSV) -> dict[str, dict]:
     return records
 
 
+# Preload and validate all survey metadata at module import time
 SURVEY_METADATA = load_survey_metadata()
 
 
 def parse_filename(filepath: str) -> dict:
-    """Parse a recording name and reconcile it with required survey metadata."""
+    """
+    Parses audio filename and enforces 1-to-1 consistency with survey metadata.
+    
+    NAMING SYNTAX:
+    <ParticipantCode>_<YearLevel>_<Session>_<SpokenWord>.WAV
+    Example: 'Y4-011_Y4_AM_Kapoy.WAV'
+    
+    DEFENSE POINT:
+    Throws ValueError if the filename does not strictly correspond with its survey record,
+    preventing any file-swapping or corrupted audio associations.
+    """
     filename = os.path.basename(filepath)
     parts = Path(filename).stem.split("_")
+    
+    # Must have at least 4 tokens: Participant, Year, Session, Word
     if len(parts) < 4:
         raise ValueError(f"Invalid recording filename: {filename}")
+        
     participant_code, year_code, session_code = parts[:3]
     spoken_word = "_".join(parts[3:])
+    
+    # 1. Verify participant exists in survey records
     if participant_code not in SURVEY_METADATA:
         raise ValueError(f"No survey row for {participant_code}")
+        
     survey = SURVEY_METADATA[participant_code].copy()
     survey_word = survey.pop("survey_spoken_word")
     canonical_filename_word = FILENAME_WORD_ALIASES.get(spoken_word, spoken_word)
+    
+    # 2. Verify spoken word in filename matches word in survey
     word_matches = canonical_filename_word.casefold() == survey_word.casefold()
     if not word_matches:
         raise ValueError(f"{participant_code}: filename word {spoken_word!r} != survey word {survey_word!r}")
+        
+    # 3. Verify filename on disk matches Audio Filename recorded in survey
     if Path(survey["survey_audio_filename"]).stem.casefold() != Path(filename).stem.casefold():
         raise ValueError(f"{participant_code}: filename does not match survey Audio Filename")
+        
+    # 4. Verify session code (AM vs PM) matches survey class schedule
     expected_session = "AM" if survey["session_name"].lower().startswith("morning") else "PM"
     if session_code != expected_session:
         raise ValueError(f"{participant_code}: filename session {session_code} != survey session {survey['session_name']}")
+        
+    # Reconciled metadata ready for feature association
     survey.update({
         "participant_code": participant_code,
         "year_code": year_code,
@@ -380,28 +458,50 @@ def extract_audio_features_from_file(filepath: str, target_sr: int = 16000) -> d
 
 
 def extract_all_audio_features(raw_audio_dir: str, output_csv: str | None = None) -> pd.DataFrame:
+    """
+    Batch feature extraction orchestrator:
+    Iterates across all 40 raw .WAV files on disk, processes each file,
+    collects extracted feature row vectors, and exports the final dataset to CSV.
+    """
     raw_dir = Path(raw_audio_dir).resolve()
     if not raw_dir.is_dir():
         raise FileNotFoundError(f"Audio directory not found: {raw_dir}")
+        
+    # Gather and sort all .wav audio files alphabetically (deterministic ordering)
     files = sorted(p for p in raw_dir.iterdir() if p.suffix.lower() == ".wav")
     print(f"Found {len(files)} audio recordings in {raw_dir}")
+    
     records, failures = [], []
+    
+    # Progress bar iteration across all recordings using tqdm
     for filepath in tqdm(files, desc="Extracting Audio Features"):
         try:
+            # Extract 108 acoustic predictors + metadata for this recording
             records.append(extract_audio_features_from_file(str(filepath)))
         except Exception as exc:
+            # Audit log any corrupted audio files without silently dropping them
             failures.append({"filename": filepath.name, "error": str(exc)})
+            
+    # Assemble master DataFrame (40 rows x 146 columns)
     df = pd.DataFrame(records)
+    
+    # Save to disk if an output CSV destination path was specified
     if output_csv:
         output = Path(output_csv)
-        output.parent.mkdir(parents=True, exist_ok=True)
-        df.to_csv(output, index=False)
+        output.parent.mkdir(parents=True, exist_ok=True)  # Create datasets/audio directory if needed
+        df.to_csv(output, index=False)                    # Save master acoustic dataset
+        # Save extraction error log (empty if 100% successful)
         pd.DataFrame(failures, columns=["filename", "error"]).to_csv(output.parent / "audio_extraction_failures.csv", index=False)
         print(f"Audio feature dataset saved to {output} (Shape: {df.shape}; failures={len(failures)})")
+        
+    # Throws error if any recording failed extraction (maintains data integrity)
     if failures:
         raise RuntimeError(f"Audio extraction failed for {len(failures)} files; see audio_extraction_failures.csv")
+        
     return df
 
 
+# Script entry point: runs full extraction when invoked directly from command line
 if __name__ == "__main__":
+    # Extracts all features from DATA/2AudioRecordings/Raw .wav and saves to datasets/audio/audio_feature_dataset.csv
     extract_all_audio_features("DATA/2AudioRecordings/Raw .wav", "datasets/audio/audio_feature_dataset.csv")

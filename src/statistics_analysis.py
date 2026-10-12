@@ -1,60 +1,109 @@
-"""Missing-aware exploratory statistics grounded in self-reported affect ratings."""
+"""
+Missing-aware exploratory statistics grounded in self-reported affect ratings.
+CS412 - Bisaya Speech Affect Recognition (Group 7)
+
+STATISTICAL DESIGN OBJECTIVES:
+1. Missing-Aware Univariate Statistics: Analyzes N, Mean, Std (ddof=1), Median, IQR, Skewness, Kurtosis.
+2. Multiple Comparison Control: Implements the Benjamini-Hochberg False Discovery Rate (FDR) algorithm.
+3. Group Comparisons: Welch's t-test (unequal variances) + Mann-Whitney U test (non-parametric rank-sum).
+4. Effect Sizes: Computes Cohen's d to quantify real-world magnitude of difference.
+5. Dual Correlation: Computes both Pearson r (linear) and Spearman rho (monotonic rank-based).
+"""
 
 from __future__ import annotations
 
+# Standard library
 import os
 import sys
 from pathlib import Path
 
+# Add project root directory to path for package imports
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-import numpy as np
-import pandas as pd
-from scipy import stats
+# Scientific computing and statistical test modules
+import numpy as np            # Vectorized math and array masking
+import pandas as pd           # Tabular manipulation and aggregation
+from scipy import stats       # Hypothesis testing (ttest_ind, mannwhitneyu, pearsonr, spearmanr)
 
 
 def benjamini_hochberg(p_values) -> np.ndarray:
+    """
+    Benjamini-Hochberg (1995) False Discovery Rate (FDR) p-value adjustment.
+    
+    MATHEMATICAL FORMULATION:
+    Given m ranked p-values: p(1) <= p(2) <= ... <= p(m)
+    Adjusted q-value: q(i) = min_{k >= i} ( (m * p(k)) / k )
+    
+    DEFENSE POINT (Why not Bonferroni?):
+    Bonferroni correction (alpha / m) is excessively conservative for exploratory biomarker discovery,
+    inflating Type II errors (false negatives) when analyzing dozens of acoustic features on N=40.
+    Benjamini-Hochberg controls the EXPECTED PROPORTION of false discoveries among rejected hypotheses,
+    providing balanced statistical power.
+    """
     values = np.asarray(p_values, dtype=float)
-    result = np.full(values.shape, np.nan)
-    valid = np.isfinite(values)
+    result = np.full(values.shape, np.nan)  # Initialize NaN array matching input shape
+    valid = np.isfinite(values)             # Mask out any NaN or non-finite values
     if not valid.any():
         return result
-    p = values[valid]
-    order = np.argsort(p)
-    ranked = p[order]
+        
+    p = values[valid]                       # Isolate valid p-values
+    order = np.argsort(p)                   # Rank order indices (ascending)
+    ranked = p[order]                       # Sorted p-values: p(1), p(2), ..., p(m)
+    
+    # Cumulative minimum from right to left enforces monotonicity: q(i) <= q(i+1)
     adjusted = np.minimum.accumulate((ranked * len(ranked) / np.arange(1, len(ranked) + 1))[::-1])[::-1]
+    
+    # Restore original unsorted order
     restored = np.empty_like(adjusted)
-    restored[order] = np.clip(adjusted, 0, 1)
+    restored[order] = np.clip(adjusted, 0, 1) # Bound q-values between 0.0 and 1.0
     result[valid] = restored
     return result
 
 
 def compute_univariate_stats(series: pd.Series) -> dict:
+    """
+    Computes missing-aware descriptive statistics for a feature series.
+    DEFENSE POINT: NaNs are quarantined rather than imputed with zero, ensuring mean and variance integrity.
+    """
     clean = pd.to_numeric(series, errors="coerce").dropna().to_numpy(dtype=float)
     if clean.size == 0:
         return {key: np.nan for key in ["N", "Missing", "Mean", "Std", "Median", "IQR", "Min", "Max", "Skewness", "Kurtosis"]}
+        
+    # Percentiles for Interquartile Range (IQR = Q3 - Q1)
     q25, q75 = np.percentile(clean, [25, 75])
+    # Sample standard deviation using Bessel's correction (ddof=1)
     std = float(np.std(clean, ddof=1)) if clean.size > 1 else 0.0
+    
     return {
-        "N": int(clean.size), "Missing": int(series.size - clean.size),
-        "Mean": round(float(np.mean(clean)), 4), "Std": round(std, 4),
-        "Median": round(float(np.median(clean)), 4), "IQR": round(float(q75 - q25), 4),
-        "Min": round(float(np.min(clean)), 4), "Max": round(float(np.max(clean)), 4),
-        "Skewness": round(float(stats.skew(clean)), 4) if clean.size > 2 and std > 1e-12 else 0.0,
-        "Kurtosis": round(float(stats.kurtosis(clean)), 4) if clean.size > 3 and std > 1e-12 else 0.0,
+        "N": int(clean.size),                                   # Valid sample count
+        "Missing": int(series.size - clean.size),               # Missing/NaN count
+        "Mean": round(float(np.mean(clean)), 4),                # Arithmetic mean
+        "Std": round(std, 4),                                   # Sample standard deviation
+        "Median": round(float(np.median(clean)), 4),            # 50th percentile (robust to outliers)
+        "IQR": round(float(q75 - q25), 4),                      # Interquartile range
+        "Min": round(float(np.min(clean)), 4),                  # Minimum value
+        "Max": round(float(np.max(clean)), 4),                  # Maximum value
+        "Skewness": round(float(stats.skew(clean)), 4) if clean.size > 2 and std > 1e-12 else 0.0,    # Asymmetry
+        "Kurtosis": round(float(stats.kurtosis(clean)), 4) if clean.size > 3 and std > 1e-12 else 0.0, # Tail heaviness
     }
 
 
 def _pairwise(df: pd.DataFrame, a: str, b: str):
+    """
+    Computes both Pearson r (linear) and Spearman rho (rank/monotonic) correlation.
+    Uses pairwise complete observations (excludes rows where either feature is NaN).
+    """
     pair = df[[a, b]].apply(pd.to_numeric, errors="coerce").dropna()
     if len(pair) < 3 or pair[a].nunique() < 2 or pair[b].nunique() < 2:
         return len(pair), np.nan, np.nan, np.nan, np.nan
-    pearson = stats.pearsonr(pair[a], pair[b])
-    spearman = stats.spearmanr(pair[a], pair[b])
+        
+    pearson = stats.pearsonr(pair[a], pair[b])   # Linear correlation + p-value
+    spearman = stats.spearmanr(pair[a], pair[b]) # Rank correlation + p-value
     return len(pair), pearson.statistic, pearson.pvalue, spearman.statistic, spearman.pvalue
 
 
 def _save_summary(df: pd.DataFrame, columns: list[str], path: Path) -> pd.DataFrame:
+    """Helper: iterates across columns, computes univariate stats, and writes CSV to disk."""
     records = []
     for column in columns:
         if column in df:
@@ -68,27 +117,45 @@ def _save_summary(df: pd.DataFrame, columns: list[str], path: Path) -> pd.DataFr
 
 
 def _session_comparison(df: pd.DataFrame, features: list[str]) -> pd.DataFrame:
+    """
+    Compares feature distributions between AM (Prelim Exam) and PM (Lecture Review) sessions.
+    
+    STATISTICAL TESTS:
+    1. Welch's t-test (equal_var=False): Does not assume equal population variances.
+    2. Mann-Whitney U test: Non-parametric rank-sum test robust to non-normal distributions.
+    3. Cohen's d: Standardized mean difference effect size: (mean_AM - mean_PM) / pooled_std.
+    4. Benjamini-Hochberg FDR: Adjusts all session p-values to control family-wise false discoveries.
+    """
     rows = []
     for feature in features:
         if feature not in df:
             continue
+            
+        # Isolate AM and PM distributions
         am = pd.to_numeric(df.loc[df.session == "AM", feature], errors="coerce").dropna().to_numpy()
         pm = pd.to_numeric(df.loc[df.session == "PM", feature], errors="coerce").dropna().to_numpy()
         if len(am) < 2 or len(pm) < 2:
             continue
+            
+        # 1. Welch's t-test
         welch = stats.ttest_ind(am, pm, equal_var=False)
+        # 2. Mann-Whitney U test
         mwu = stats.mannwhitneyu(am, pm, alternative="two-sided")
+        # 3. Pooled standard deviation for Cohen's d
         pooled = np.sqrt(((len(am) - 1) * np.var(am, ddof=1) + (len(pm) - 1) * np.var(pm, ddof=1)) / (len(am) + len(pm) - 2))
+        cohens_d = (np.mean(am) - np.mean(pm)) / pooled if pooled > 1e-12 else 0.0
+        
         rows.append({
             "Feature": feature, "AM_N": len(am), "PM_N": len(pm),
             "AM_Mean": np.mean(am), "AM_Std": np.std(am, ddof=1),
             "PM_Mean": np.mean(pm), "PM_Std": np.std(pm, ddof=1),
             "Welch_T": welch.statistic, "Welch_p": welch.pvalue,
             "MannWhitney_U": mwu.statistic, "MannWhitney_p": mwu.pvalue,
-            "Cohens_d": (np.mean(am) - np.mean(pm)) / pooled if pooled > 1e-12 else 0.0,
+            "Cohens_d": cohens_d,
         })
     result = pd.DataFrame(rows)
     if not result.empty:
+        # Apply Benjamini-Hochberg FDR adjustment across all comparisons
         result["Welch_q_BH"] = benjamini_hochberg(result.Welch_p)
         result["Welch_FDR_05"] = result.Welch_q_BH < 0.05
         numeric = result.select_dtypes(include=np.number).columns
@@ -97,6 +164,7 @@ def _session_comparison(df: pd.DataFrame, features: list[str]) -> pd.DataFrame:
 
 
 def _correlations(df: pd.DataFrame, left: list[str], right: list[str], left_name: str, right_name: str) -> pd.DataFrame:
+    """Helper: runs pairwise correlations between two feature sets and applies Benjamini-Hochberg FDR."""
     rows = []
     for a in left:
         for b in right:
@@ -106,6 +174,7 @@ def _correlations(df: pd.DataFrame, left: list[str], right: list[str], left_name
             rows.append({left_name: a, right_name: b, "N": n, "Pearson_r": r, "Pearson_p": p, "Spearman_rho": rho, "Spearman_p": sp})
     result = pd.DataFrame(rows)
     if not result.empty:
+        # Apply BH FDR correction to Pearson p-values
         result["Pearson_q_BH"] = benjamini_hochberg(result.Pearson_p)
         result["Pearson_FDR_05"] = result.Pearson_q_BH < 0.05
         numeric = result.select_dtypes(include=np.number).columns
