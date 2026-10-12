@@ -9,23 +9,23 @@
 
 | Section | Target Duration | Primary Objective | Key Artifacts Demonstrated |
 | :--- | :---: | :--- | :--- |
-| **A. Raw Data & Dataset Verification** | ~3 mins | Prove 40 valid participants, 1-to-1 file correspondence, and ground-truth affect labels. | Metadata CSV, Raw `.wav` directory, `demo_verification.py` |
-| **B. Preprocessing & Feature Extraction** | ~3 mins | Demonstrate raw `.wav` loading, silence trimming, and live extraction of 108 acoustic features. | `src/audio_features.py`, `demo_feature_extraction.py` |
-| **C. Machine Learning & Results** | ~4 mins | Show leak-free CV pipeline, evaluation metric tables, confusion matrices, and model comparison. | `ser_machine_learning_experiments.ipynb`, `demo_ml_evaluation.py` |
+| **A. Raw Data & Dataset Verification** | ~3 mins | Prove 40 valid participants, 1-to-1 file correspondence, and ground-truth affect labels. | Metadata CSV, Raw `.wav` directory, `verify_dataset.py` |
+| **B. Preprocessing & Feature Extraction** | ~3 mins | Demonstrate raw `.wav` loading, silence trimming, and live extraction of 108 acoustic features. | `src/audio_features.py`, `extract_single_feature.py` |
+| **C. Machine Learning & Results** | ~4 mins | Show leak-free CV pipeline, evaluation metric tables, confusion matrices, and model comparison. | `ser_machine_learning_experiments.ipynb`, `evaluate_models.py` |
 
 ---
 
 ## 💻 Pre-Demo Checklist (Do this 5 minutes before your turn!)
 
-1. **Open VS Code** with the project folder: `D:\SCHOOL\affective`.
+1. **Open VS Code** with the project folder.
 2. **Open a PowerShell Terminal** in VS Code and activate the virtual environment:
    ```powershell
    .\.venv\Scripts\Activate.ps1
    ```
 3. **Open the following files in tabs** so you can click between them instantly:
-   * Tab 1: [`DATA/RESEARCH MINI-PROJECT v2 - G7 - 4th year.csv`](file:///d:/SCHOOL/affective/DATA/RESEARCH%20MINI-PROJECT%20v2%20-%20G7%20-%204th%20year.csv)
-   * Tab 2: [`demo_verification.py`](file:///d:/SCHOOL/affective/demo_verification.py)
-   * Tab 3: [`src/audio_features.py`](file:///d:/SCHOOL/affective/src/audio_features.py)
+   * Tab 1: [`DATA/RESEARCH MINI-PROJECT v2 - G7 - 4th year.csv`](file:///e:/SCHOOL/3rd%20year/elec1/bisaya-speech-affect-recognition/DATA/RESEARCH%20MINI-PROJECT%20v2%20-%20G7%20-%204th%20year.csv)
+   * Tab 2: [`verify_dataset.py`](file:///e:/SCHOOL/3rd%20year/elec1/bisaya-speech-affect-recognition/verify_dataset.py)
+   * Tab 3: [`src/audio_features.py`](file:///e:/SCHOOL/3rd%20year/elec1/bisaya-speech-affect-recognition/src/audio_features.py)
    * Tab 4: [`ser_machine_learning_experiments.ipynb`](file:///d:/SCHOOL/affective/ser_machine_learning_experiments.ipynb)
    * Tab 5: [`outputs/audio/11_ser_model_confusion_matrices.png`](file:///d:/SCHOOL/affective/outputs/audio/11_ser_model_confusion_matrices.png)
    * Tab 6: [`outputs/audio/12_ser_model_performance_comparison.png`](file:///d:/SCHOOL/affective/outputs/audio/12_ser_model_performance_comparison.png)
@@ -40,7 +40,7 @@
 #### Step A1: Run the Automated Verification Script
 In your terminal, execute:
 ```powershell
-.\.venv\Scripts\python.exe demo_verification.py
+.\.venv\Scripts\python.exe verify_dataset.py
 ```
 *(Runs in ~1 second and prints a clean, tabulated verification summary).*
 
@@ -71,9 +71,9 @@ In your terminal, execute:
 #### Step B1: Run the Single-Recording Extraction Demonstration
 In your terminal, execute:
 ```powershell
-.\.venv\Scripts\python.exe demo_feature_extraction.py
+.\.venv\Scripts\python.exe extract_single_feature.py
 ```
-*(Optionally test another file: `.\.venv\Scripts\python.exe demo_feature_extraction.py "DATA/2AudioRecordings/Raw .wav/Y4-001_Y4_PM_Thrilled.WAV"`)*
+*(Optionally test another file: `.\.venv\Scripts\python.exe extract_single_feature.py "DATA/2AudioRecordings/Raw .wav/Y4-001_Y4_PM_Thrilled.WAV"`)*
 
 #### Step B2: What to Show on Screen
 1. **Show the Preprocessing Parameters in the Output:**
@@ -106,7 +106,7 @@ Open [`ser_machine_learning_experiments.ipynb`](file:///d:/SCHOOL/affective/ser_
 ##### Option 2 (Instant CLI Execution):
 In your terminal, execute:
 ```powershell
-.\.venv\Scripts\python.exe demo_ml_evaluation.py
+.\.venv\Scripts\python.exe evaluate_models.py
 ```
 
 #### Step C2: What to Show on Screen
@@ -157,13 +157,13 @@ Copy-paste these commands directly into your terminal during the demo:
 .\.venv\Scripts\Activate.ps1
 
 # 2. Part A: Verify 40 participants, files, and labels (1 sec)
-.\.venv\Scripts\python.exe demo_verification.py
+.\.venv\Scripts\python.exe verify_dataset.py
 
 # 3. Part B: Preprocess & extract 108 features from one raw WAV (1 sec)
-.\.venv\Scripts\python.exe demo_feature_extraction.py
+.\.venv\Scripts\python.exe extract_single_feature.py
 
 # 4. Part C: Run 5-fold CV evaluation & plot confusion matrices (8 secs)
-.\.venv\Scripts\python.exe demo_ml_evaluation.py
+.\.venv\Scripts\python.exe evaluate_models.py
 ```
 
 ---

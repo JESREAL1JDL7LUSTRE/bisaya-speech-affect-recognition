@@ -9,20 +9,20 @@
 
 ## Table of Contents
 1. [Overview & Demonstration Context](#1-overview--demonstration-context)
-2. [Part A: Raw Data & Dataset Verification (`demo_verification.py`)](#2-part-a-raw-data--dataset-verification)
+2. [Part A: Raw Data & Dataset Verification (`verify_dataset.py`)](#2-part-a-raw-data--dataset-verification)
    - [Section [1] Survey Metadata CSV](#section-1-survey-metadata-csv)
    - [Section [2] Raw Audio Directory](#section-2-raw-audio-directory)
    - [Section [3] 1-to-1 File Correspondence](#section-3-1-to-1-file-correspondence)
    - [Section [4] Ground-Truth Affect Labels (Russell's Circumplex)](#section-4-ground-truth-affect-labels)
    - [Section [5] Sample Verification Records](#section-5-sample-verification-records)
    - [Section [6] Secondary Facial Dataset Archival](#section-6-secondary-facial-dataset-archival)
-3. [Part B: Preprocessing & Feature Extraction (`demo_feature_extraction.py`)](#3-part-b-preprocessing--feature-extraction)
+3. [Part B: Preprocessing & Feature Extraction (`extract_single_feature.py`)](#3-part-b-preprocessing--feature-extraction)
    - [Section [1] Target Recording](#section-1-target-recording)
    - [Section [2] Audio Preprocessing Pipeline](#section-2-audio-preprocessing-pipeline)
    - [Section [3] Biomarker Extraction Timing](#section-3-biomarker-extraction-timing)
    - [Section [4] Structured Feature Domains & Mathematical Meaning](#section-4-structured-feature-domains)
    - [Section [5] Vector Dimensionality & Architecture](#section-5-vector-dimensionality)
-4. [Part C: Machine Learning Evaluation & Benchmarking (`demo_ml_evaluation.py`)](#4-part-c-machine-learning-evaluation--benchmarking)
+4. [Part C: Machine Learning Evaluation & Benchmarking (`evaluate_models.py`)](#4-part-c-machine-learning-evaluation--benchmarking)
    - [Section [1] Leakage-Free Pipeline Architecture](#section-1-leakage-free-pipeline-architecture)
    - [Section [2] 3-Class Valence Classification Analysis](#section-2-3-class-valence-classification-analysis)
    - [Section [3] 3-Class Arousal Classification Analysis](#section-3-3-class-arousal-classification-analysis)
@@ -38,9 +38,9 @@
 During the 10-Minute Live Technical Checking, each group must prove the mathematical authenticity, pipeline integrity, and empirical results of their research on their live laptops. 
 
 The demonstration is split into three corresponding scripts:
-1. `demo_verification.py` -> Proves raw data validity, participant consent, and ground-truth mapping.
-2. `demo_feature_extraction.py` -> Proves live signal preprocessing and acoustic feature transformation.
-3. `demo_ml_evaluation.py` -> Proves leak-free cross-validation, multi-model evaluation, and affective benchmarks.
+1. `verify_dataset.py` -> Proves raw data validity, participant consent, and ground-truth mapping.
+2. `extract_single_feature.py` -> Proves live signal preprocessing and acoustic feature transformation.
+3. `evaluate_models.py` -> Proves leak-free cross-validation, multi-model evaluation, and affective benchmarks.
 
 ---
 
@@ -48,7 +48,7 @@ The demonstration is split into three corresponding scripts:
 
 **Command Executed:**
 ```powershell
-.\.venv\Scripts\python.exe demo_verification.py
+.\.venv\Scripts\python.exe verify_dataset.py
 ```
 
 ### Terminal Output:
@@ -146,7 +146,7 @@ The demonstration is split into three corresponding scripts:
 
 **Command Executed:**
 ```powershell
-.\.venv\Scripts\python.exe demo_feature_extraction.py
+.\.venv\Scripts\python.exe extract_single_feature.py
 ```
 
 ### Terminal Output:
@@ -250,7 +250,7 @@ The demonstration is split into three corresponding scripts:
 
 **Command Executed:**
 ```powershell
-.\.venv\Scripts\python.exe demo_ml_evaluation.py
+.\.venv\Scripts\python.exe evaluate_models.py
 ```
 
 ### Terminal Output:

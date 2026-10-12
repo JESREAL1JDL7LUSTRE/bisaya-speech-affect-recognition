@@ -18,13 +18,13 @@
    - [3.1 Architectural Purpose & Role](#31-architectural-purpose--role)
    - [3.2 Statistical Formulations & Algorithms](#32-statistical-formulations--algorithms)
    - [3.3 Function-by-Function Deep Dive](#33-function-by-function-deep-dive)
-4. [File 3: `demo_verification.py` (Part A Verification Demo)](#4-file-3-demo_verificationpy)
+4. [File 3: `verify_dataset.py` (Part A Verification Demo)](#4-file-3-verify_datasetpy)
    - [4.1 Architectural Purpose & Logic](#41-architectural-purpose--logic)
    - [4.2 Code Walkthrough](#42-code-walkthrough)
-5. [File 4: `demo_feature_extraction.py` (Part B Single-Recording Demo)](#5-file-4-demo_feature_extractionpy)
+5. [File 4: `extract_single_feature.py` (Part B Single-Recording Demo)](#5-file-4-extract_single_featurepy)
    - [5.1 Architectural Purpose & Logic](#51-architectural-purpose--logic)
    - [5.2 Code Walkthrough](#52-code-walkthrough)
-6. [File 5: `demo_ml_evaluation.py` (Part C Machine Learning Benchmark)](#6-file-5-demo_ml_evaluationpy)
+6. [File 5: `evaluate_models.py` (Part C Machine Learning Benchmark)](#6-file-5-evaluate_modelspy)
    - [6.1 Architectural Purpose & Zero-Leakage Pipeline](#61-architectural-purpose--zero-leakage-pipeline)
    - [6.2 Code Walkthrough & Evaluation Mathematics](#62-code-walkthrough--evaluation-mathematics)
 7. [File 6: `run_pipeline.py` (Master Execution Pipeline Orchestrator)](#7-file-6-run_pipelinepy)
@@ -58,10 +58,10 @@ flowchart TD
         RP["run_pipeline.py<br/>(Batch Pipeline Steps 1 to 5)"]
     end
 
-    subgraph DemoScripts ["4. Live 10-Minute Technical Checking Demo Scripts"]
-        DV["demo_verification.py<br/>(Part A: 40 Records, Consent, 1-to-1 Check)"]
-        DF["demo_feature_extraction.py<br/>(Part B: Live Single-WAV Processing)"]
-        DM["demo_ml_evaluation.py<br/>(Part C: 5-Fold CV & Multi-Model Benchmark)"]
+    subgraph DemoScripts ["4. Live 10-Minute Technical Checking Demonstration Scripts"]
+        DV["verify_dataset.py<br/>(Part A: 40 Records, Consent, 1-to-1 Check)"]
+        DF["extract_single_feature.py<br/>(Part B: Live Single-WAV Processing)"]
+        DM["evaluate_models.py<br/>(Part C: 5-Fold CV & Multi-Model Benchmark)"]
     end
 
     CSV --> AF
@@ -299,10 +299,10 @@ A feature is deemed statistically significant after adjustment if $q_{(i)} < 0.0
 
 ---
 
-## 4. File 3: `demo_verification.py`
+## 4. File 3: `verify_dataset.py`
 
 ### 4.1 Architectural Purpose & Logic
-[`demo_verification.py`](file:///e:/SCHOOL/3rd%20year/elec1/bisaya-speech-affect-recognition/demo_verification.py) automates the live technical checking for **Part A: Raw Data and Dataset Verification**.
+[`verify_dataset.py`](file:///e:/SCHOOL/3rd%20year/elec1/bisaya-speech-affect-recognition/verify_dataset.py) automates the live technical checking for **Part A: Raw Data and Dataset Verification**.
 
 ### 4.2 Code Walkthrough
 * **Step 1 (Lines 33–40):** Loads `DATA/RESEARCH MINI-PROJECT v2 - G7 - 4th year.csv`, verifies 40 participant codes (`Y4-001` to `Y4-040`), and validates that all 40 consent entries are `"YES"`.
@@ -319,10 +319,10 @@ A feature is deemed statistically significant after adjustment if $q_{(i)} < 0.0
 
 ---
 
-## 5. File 4: `demo_feature_extraction.py`
+## 5. File 4: `extract_single_feature.py`
 
 ### 5.1 Architectural Purpose & Logic
-[`demo_feature_extraction.py`](file:///e:/SCHOOL/3rd%20year/elec1/bisaya-speech-affect-recognition/demo_feature_extraction.py) automates the live technical checking for **Part B: Preprocessing and Feature Extraction**.
+[`extract_single_feature.py`](file:///e:/SCHOOL/3rd%20year/elec1/bisaya-speech-affect-recognition/extract_single_feature.py) automates the live technical checking for **Part B: Preprocessing and Feature Extraction**.
 
 ### 5.2 Code Walkthrough
 * **Line 36:** Defaults to target file `Y4-011_Y4_AM_Kapoy.WAV`, or accepts an optional file path from the command line (`sys.argv[1]`).
@@ -338,10 +338,10 @@ A feature is deemed statistically significant after adjustment if $q_{(i)} < 0.0
 
 ---
 
-## 6. File 5: `demo_ml_evaluation.py`
+## 6. File 5: `evaluate_models.py`
 
 ### 6.1 Architectural Purpose & Zero-Leakage Pipeline
-[`demo_ml_evaluation.py`](file:///e:/SCHOOL/3rd%20year/elec1/bisaya-speech-affect-recognition/demo_ml_evaluation.py) automates the live technical checking for **Part C: Machine Learning and Results**.
+[`evaluate_models.py`](file:///e:/SCHOOL/3rd%20year/elec1/bisaya-speech-affect-recognition/evaluate_models.py) automates the live technical checking for **Part C: Machine Learning and Results**.
 
 ```mermaid
 flowchart TD
@@ -434,15 +434,15 @@ flowchart TD
 > **Answer:**  
 > *"Student's t-test assumes equal variances between groups ($\sigma_1^2 = \sigma_2^2$). In our dataset, the morning (AM) and afternoon (PM) sessions have unequal sample sizes and differing variances due to different classroom activities (Prelim Exam vs. Lecture Review). Welch's t-test does not assume equal variances, making it more robust."*
 
-### Q6: "In `demo_ml_evaluation.py` line 96, why did you put `SimpleImputer` and `StandardScaler` inside `Pipeline`?"
+### Q6: "In `evaluate_models.py` line 96, why did you put `SimpleImputer` and `StandardScaler` inside `Pipeline`?"
 > **Answer:**  
 > *"To prevent data leakage. If we imputed or scaled the whole dataset before splitting into folds, validation data statistics would leak into the training features, producing overly optimistic, non-reproducible performance. Placing them inside the scikit-learn Pipeline guarantees they are fitted strictly on the 32 training instances per fold and then applied to the 8 test instances."*
 
-### Q7: "In `demo_ml_evaluation.py` lines 70–71, why did you constrain Random Forest to `max_depth=3` and SVM to `C=0.1`?"
+### Q7: "In `evaluate_models.py` lines 70–71, why did you constrain Random Forest to `max_depth=3` and SVM to `C=0.1`?"
 > **Answer:**  
 > *"With $N=40$ observations and 108 predictor features, high-capacity models easily overfit by memorizing individual speakers. Setting `max_depth=3` on Random Forest and using strong regularization ($C=0.1$) on SVM restricts model complexity and encourages learning generalizable acoustic patterns."*
 
-### Q8: "In `demo_verification.py` lines 51–53, how do you verify file correspondence?"
+### Q8: "In `verify_dataset.py` lines 51–53, how do you verify file correspondence?"
 > **Answer:**  
 > *"We compute symmetric set differences between the filenames declared in the survey CSV and the actual `.WAV` files on disk. `survey_filenames - disk_filenames` verifies no survey record lacks an audio file, and `disk_filenames - survey_filenames` verifies no audio file lacks a consent-verified survey record. Both sets evaluate to empty, proving 100% 1-to-1 correspondence."*
 

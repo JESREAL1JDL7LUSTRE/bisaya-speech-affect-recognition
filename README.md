@@ -171,10 +171,10 @@ To re-extract all features, compile the multimodal dataset, perform statistical 
 .\.venv\Scripts\Activate.ps1
 
 # --- Part A: Raw Data and Dataset Verification ---
-.\.venv\Scripts\python.exe demo_verification.py
+.\.venv\Scripts\python.exe verify_dataset.py
 
 # --- Part B: Preprocessing and Feature Extraction ---
-.\.venv\Scripts\python.exe demo_feature_extraction.py
+.\.venv\Scripts\python.exe extract_single_feature.py
 
 # --- Part C: Machine Learning and Results ---
-.\.venv\Scripts\python.exe demo_ml_evaluation.py
+.\.venv\Scripts\python.exe evaluate_models.py
