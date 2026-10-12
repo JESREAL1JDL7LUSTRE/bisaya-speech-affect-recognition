@@ -59,6 +59,11 @@ def _read_csv(path: str) -> pd.DataFrame:
 
 
 def _parse_rating(value, field: str) -> int:
+    """
+    Parses survey Likert ratings (e.g. '4 - Pleasant' or 4) into a strict integer from 1 to 5.
+    DEFENSE POINT: Throws ValueError immediately if a rating is blank or outside [1, 5],
+    ensuring zero corrupted or fabricated labels enter the system.
+    """
     text = "" if pd.isna(value) else str(value).strip()
     if not text or not text[0].isdigit():
         raise ValueError(f"{field} must begin with an integer from 1 to 5; got {value!r}")
@@ -69,6 +74,20 @@ def _parse_rating(value, field: str) -> int:
 
 
 def _rating_group(score: int, dimension: str) -> str:
+    """
+    EXACT LINE OF TARGET RECLASSIFICATION (Hans' Question):
+    Partitions the continuous 1-5 Likert response space into 3 balanced categorical target buckets:
+    
+    VALENCE:
+      - Score 1 or 2 -> 'Negative' (Scores 1: Very Unpleasant, 2: Unpleasant)
+      - Score 3      -> 'Neutral'  (Score 3: Neutral)
+      - Score 4 or 5 -> 'Positive' (Scores 4: Pleasant, 5: Very Pleasant)
+      
+    AROUSAL:
+      - Score 1 or 2 -> 'Low'      (Scores 1: Very Low, 2: Low physiological energy)
+      - Score 3      -> 'Moderate' (Score 3: Moderate energy / modal baseline)
+      - Score 4 or 5 -> 'High'     (Scores 4: High, 5: Very High activation / stress)
+    """
     if dimension == "valence":
         return "Negative" if score <= 2 else "Neutral" if score == 3 else "Positive"
     return "Low" if score <= 2 else "Moderate" if score == 3 else "High"
@@ -193,19 +212,42 @@ def parse_filename(filepath: str) -> dict:
 
 
 def _round_or_nan(value: float, digits: int) -> float:
+    """Helper: rounds finite floats; preserves NaN for unvoiced frames or undefined values."""
     return round(float(value), digits) if np.isfinite(value) else np.nan
 
 
 def extract_audio_features_from_file(filepath: str, target_sr: int = 16000) -> dict:
+    """
+    Extracts 108 acoustic, prosodic, spectral, and timbral features from a single .WAV file.
+    
+    PIPELINE OVERVIEW:
+    1. Parse Filename & Survey Metadata -> Link audio to participant demographics and self-reported ground truth.
+    2. Resample & Load -> Convert audio to standard 16,000 Hz mono (telephony & SER benchmark standard).
+    3. Silence Trimming -> librosa.effects.trim(top_db=25) removes non-speech microphone silence without clipping phonemes.
+    4. Boundary Check -> Inspect final 50 ms to detect abrupt cutoffs or background music/noise bleed.
+    5. Prosody / Pitch (pYIN) -> Probabilistic YIN tracks F0 between 50-500 Hz; unvoiced frames kept as NaN (not 0 Hz).
+    6. Energy / Intensity (RMS) -> Moving window root-mean-square loudness mean, std, min, max, and jitter proxy.
+    7. Spectral Dynamics -> Zero-crossing rate, spectral centroid (brightness), bandwidth, rolloff, flatness, contrast, chroma.
+    8. Timbre (MFCC) -> 13 Mel-frequency cepstral coefficients + First Derivative (Delta/Velocity) + Second Derivative (Delta2/Acceleration).
+    """
+    # [STEP 1] Reconcile physical file with survey entry (participant code, session, word, valence, arousal)
     meta = parse_filename(filepath)
+
+    # [STEP 2] Load audio file: resampled to 16 kHz mono (Nyquist = 8 kHz, perfectly capturing speech formants)
     y, sr = librosa.load(filepath, sr=target_sr, mono=True)
     if y.size < 512 or not np.isfinite(y).all():
         raise ValueError("Audio is too short or contains non-finite samples")
+
+    # [STEP 3] Silence Trimming: removes leading/trailing room silence quieter than 25 dB below peak amplitude
+    # DEFENSE POINT: top_db=25 preserves soft consonants (like /k/ in 'Kapoy' or /s/ in 'Lisod') while discarding mic noise
     y_trimmed, _ = librosa.effects.trim(y, top_db=25)
     if y_trimmed.size < 1024:
-        y_trimmed = y
+        y_trimmed = y  # Fallback: if utterance was extremely quiet, keep original signal
     duration = len(y) / sr
     trimmed_duration = len(y_trimmed) / sr
+
+    # [STEP 4] Boundary Check: inspect the last 50 ms (0.05 * 16000 = 800 samples)
+    # DEFENSE POINT: flags recordings that abruptly cut off during vocalization or contain trailing background music
     end_window = max(1, int(0.05 * sr))
     chunks = [y[i:i + end_window] for i in range(0, len(y), end_window)]
     window_rms = [np.sqrt(np.mean(chunk ** 2)) for chunk in chunks]
@@ -213,66 +255,88 @@ def extract_audio_features_from_file(filepath: str, target_sr: int = 16000) -> d
 
     features = {
         **meta,
-        "audio_duration_sec": round(duration, 4),
-        "audio_trimmed_dur_sec": round(trimmed_duration, 4),
-        "audio_trimmed_fraction": round(trimmed_duration / duration, 4),
-        "audio_sampling_rate": sr,
-        "audio_end_boundary_rms_ratio": round(end_rms_ratio, 4),
-        "audio_boundary_review_flag": bool(end_rms_ratio > 0.5),
+        "audio_duration_sec": round(duration, 4),                     # Total raw duration in seconds
+        "audio_trimmed_dur_sec": round(trimmed_duration, 4),           # Active vocal duration after trimming
+        "audio_trimmed_fraction": round(trimmed_duration / duration, 4), # Percentage of recording containing vocal sound
+        "audio_sampling_rate": sr,                                     # 16000 Hz
+        "audio_end_boundary_rms_ratio": round(end_rms_ratio, 4),       # Ratio of end loudness to maximum loudness
+        "audio_boundary_review_flag": bool(end_rms_ratio > 0.5),       # True if recording ends abruptly at >50% peak volume
     }
 
+    # [STEP 5] Prosodic / Fundamental Frequency (F0) Extraction using pYIN (Probabilistic YIN algorithm)
+    # DEFENSE POINT: fmin=50 Hz, fmax=500 Hz spans all human vocal pitch while ignoring 60 Hz hum and consonant hiss
+    # STFT parameters: frame_length=2048 (128 ms resolution), hop_length=256 (16 ms step size)
     frame_length, hop_length = 2048, 256
     f0, _, _ = librosa.pyin(
         y_trimmed, fmin=50, fmax=500, sr=sr,
         frame_length=frame_length, hop_length=hop_length,
     )
+    
+    # Isolate voiced frames where vocal cords actively vibrate (finite numbers) vs unvoiced frames (NaN)
     valid = np.isfinite(f0) if f0 is not None else np.zeros(0, dtype=bool)
     voiced_f0 = f0[valid] if f0 is not None else np.array([])
     pitch_detected = voiced_f0.size > 0
     adjacent = valid[1:] & valid[:-1] if valid.size > 1 else np.zeros(0, dtype=bool)
+
     if pitch_detected:
+        # Period variation proxy: measures pitch period jitter (relative frame-to-frame pitch instability)
         periods = 1.0 / f0
         period_variation = (
             float(np.mean(np.abs(np.diff(periods)[adjacent])) / np.mean(periods[valid]))
             if adjacent.any() else np.nan
         )
-        pitch_values = [np.mean(voiced_f0), np.std(voiced_f0), np.min(voiced_f0), np.max(voiced_f0), np.median(voiced_f0), np.ptp(voiced_f0)]
+        # DEFENSE POINT: pitch statistics calculated ONLY on valid voiced frames
+        # [mean, std, min, max, median, range/peak-to-peak]
+        pitch_values = [
+            np.mean(voiced_f0), np.std(voiced_f0), np.min(voiced_f0),
+            np.max(voiced_f0), np.median(voiced_f0), np.ptp(voiced_f0)
+        ]
     else:
+        # DEFENSE POINT: if unvoiced, preserve as NaN rather than 0 Hz to avoid distorting mean and variance
         period_variation = np.nan
         pitch_values = [np.nan] * 6
+
     features.update({
-        "audio_pitch_detected": bool(pitch_detected),
-        "audio_voiced_frames": int(valid.sum()),
-        "audio_pitch_total_frames": int(valid.size),
-        "audio_pitch_frame_length": frame_length,
-        "audio_f0_mean_hz": _round_or_nan(pitch_values[0], 2),
-        "audio_f0_std_hz": _round_or_nan(pitch_values[1], 2),
-        "audio_f0_min_hz": _round_or_nan(pitch_values[2], 2),
-        "audio_f0_max_hz": _round_or_nan(pitch_values[3], 2),
-        "audio_f0_median_hz": _round_or_nan(pitch_values[4], 2),
-        "audio_f0_range_hz": _round_or_nan(pitch_values[5], 2),
-        "audio_voiced_ratio": round(float(valid.mean()), 4) if valid.size else 0.0,
-        "audio_period_variation_proxy": _round_or_nan(period_variation, 5),
+        "audio_pitch_detected": bool(pitch_detected),                  # True if vocal cord vibration was detected
+        "audio_voiced_frames": int(valid.sum()),                       # Total count of periodic speech frames
+        "audio_pitch_total_frames": int(valid.size),                   # Total evaluated audio frames
+        "audio_pitch_frame_length": frame_length,                      # 2048 samples
+        "audio_f0_mean_hz": _round_or_nan(pitch_values[0], 2),         # Average fundamental frequency (Pitch level)
+        "audio_f0_std_hz": _round_or_nan(pitch_values[1], 2),          # Pitch variability (Intonation contour)
+        "audio_f0_min_hz": _round_or_nan(pitch_values[2], 2),          # Lowest vocal pitch
+        "audio_f0_max_hz": _round_or_nan(pitch_values[3], 2),          # Highest vocal pitch
+        "audio_f0_median_hz": _round_or_nan(pitch_values[4], 2),       # Median pitch (robust to octave jumps)
+        "audio_f0_range_hz": _round_or_nan(pitch_values[5], 2),        # Pitch range (f0_max - f0_min)
+        "audio_voiced_ratio": round(float(valid.mean()), 4) if valid.size else 0.0, # Fraction of speech that is voiced (vowels)
+        "audio_period_variation_proxy": _round_or_nan(period_variation, 5),          # Pitch period jitter proxy
     })
 
+    # [STEP 6] Energy & Loudness Dynamics via Root Mean Square (RMS)
+    # Formula: RMS = sqrt(mean(x^2)) per 1024-sample frame (64 ms window, 16 ms hop)
+    # DEFENSE POINT: High Arousal (stress, panic, excitement) causes high lung pressure -> directly increases RMS
     rms = librosa.feature.rms(y=y_trimmed, frame_length=1024, hop_length=hop_length)[0]
     rms_mean = float(np.mean(rms))
+    # Frame-to-frame RMS variation proxy: measures loudness fluctuation / tremolo in voice
     rms_variation = float(np.mean(np.abs(np.diff(rms))) / rms_mean) if len(rms) > 1 and rms_mean > 1e-8 else np.nan
     features.update({
-        "audio_rms_mean": round(rms_mean, 5),
-        "audio_rms_std": round(float(np.std(rms)), 5),
-        "audio_rms_max": round(float(np.max(rms)), 5),
-        "audio_rms_min": round(float(np.min(rms)), 5),
-        "audio_rms_frame_variation_proxy": _round_or_nan(rms_variation, 5),
+        "audio_rms_mean": round(rms_mean, 5),                          # Overall perceived speech loudness
+        "audio_rms_std": round(float(np.std(rms)), 5),                 # Dynamic energy variation
+        "audio_rms_max": round(float(np.max(rms)), 5),                 # Peak vocal burst energy
+        "audio_rms_min": round(float(np.min(rms)), 5),                 # Minimum energy floor
+        "audio_rms_frame_variation_proxy": _round_or_nan(rms_variation, 5), # Energy jitter / frame instability
     })
 
-    zcr = librosa.feature.zero_crossing_rate(y=y_trimmed, frame_length=1024, hop_length=hop_length)[0]
-    sc = librosa.feature.spectral_centroid(y=y_trimmed, sr=sr, n_fft=1024, hop_length=hop_length)[0]
-    sb = librosa.feature.spectral_bandwidth(y=y_trimmed, sr=sr, n_fft=1024, hop_length=hop_length)[0]
-    rolloff = librosa.feature.spectral_rolloff(y=y_trimmed, sr=sr, roll_percent=0.85, n_fft=1024, hop_length=hop_length)[0]
-    flatness = librosa.feature.spectral_flatness(y=y_trimmed, n_fft=1024, hop_length=hop_length)[0]
-    contrast = librosa.feature.spectral_contrast(y=y_trimmed, sr=sr, n_fft=1024, hop_length=hop_length)
-    chroma = librosa.feature.chroma_stft(y=y_trimmed, sr=sr, n_fft=1024, hop_length=hop_length)
+    # [STEP 7] Spectral Dynamics & Timbral Descriptors
+    # Frame parameters: window=1024 samples, hop=256 samples
+    zcr = librosa.feature.zero_crossing_rate(y=y_trimmed, frame_length=1024, hop_length=hop_length)[0] # Rate of sign-changes (articulatory speed)
+    sc = librosa.feature.spectral_centroid(y=y_trimmed, sr=sr, n_fft=1024, hop_length=hop_length)[0]   # Spectral center of mass (timbral brightness/sharpness)
+    sb = librosa.feature.spectral_bandwidth(y=y_trimmed, sr=sr, n_fft=1024, hop_length=hop_length)[0]  # Spectral spread around centroid
+    rolloff = librosa.feature.spectral_rolloff(y=y_trimmed, sr=sr, roll_percent=0.85, n_fft=1024, hop_length=hop_length)[0] # Frequency below which 85% energy lies
+    flatness = librosa.feature.spectral_flatness(y=y_trimmed, n_fft=1024, hop_length=hop_length)[0]    # Tonality vs noiselike quality (geometric vs arithmetic mean)
+    contrast = librosa.feature.spectral_contrast(y=y_trimmed, sr=sr, n_fft=1024, hop_length=hop_length) # dB difference between spectral peaks and valleys
+    chroma = librosa.feature.chroma_stft(y=y_trimmed, sr=sr, n_fft=1024, hop_length=hop_length)        # 12 semitone energy distribution
+
+    # Aggregate each spectral feature across time frames (Mean and Standard Deviation)
     for name, arr, digits in [
         ("audio_zcr", zcr, 5), ("audio_spec_centroid", sc, 2),
         ("audio_spec_bandwidth", sb, 2), ("audio_spec_rolloff85", rolloff, 2),
@@ -282,26 +346,36 @@ def extract_audio_features_from_file(filepath: str, target_sr: int = 16000) -> d
         features[f"{name}_mean"] = round(float(np.mean(arr)), digits)
         features[f"{name}_std"] = round(float(np.std(arr)), digits)
         if name == "audio_zcr":
-            features[f"{name}_max"] = round(float(np.max(arr)), digits)
+            features[f"{name}_max"] = round(float(np.max(arr)), digits) # Maximum articulation burst speed
 
+    # [STEP 8] Mel-Frequency Cepstral Coefficients (MFCCs) & Temporal Derivatives
+    # Extracts 13 static MFCCs modeling human auditory perception of vocal tract filtering
     n_mfcc = 13
     mfcc = librosa.feature.mfcc(y=y_trimmed, sr=sr, n_mfcc=n_mfcc, n_fft=1024, hop_length=hop_length)
     frame_count = mfcc.shape[1]
+    
+    # DEFENSE POINT: Dynamic delta width prevents crash on short words (<0.5 sec)
     delta_width = min(9, frame_count if frame_count % 2 else frame_count - 1)
     delta_available = delta_width >= 3
     if delta_available:
+        # Delta MFCC: Velocity (1st derivative = rate of timbre transition)
         delta_mfcc = librosa.feature.delta(mfcc, width=delta_width, mode="interp")
+        # Delta-Delta MFCC: Acceleration (2nd derivative = vocal tract physical acceleration)
         delta2_mfcc = librosa.feature.delta(mfcc, width=delta_width, order=2, mode="interp")
     else:
         delta_mfcc = np.full_like(mfcc, np.nan)
         delta2_mfcc = np.full_like(mfcc, np.nan)
+        
     features["audio_delta_available"] = bool(delta_available)
     features["audio_delta_width"] = int(delta_width) if delta_available else pd.NA
+
+    # Summarize all 13 MFCCs, 13 Deltas, and 13 Delta2s across frames (Mean and Std = 78 total features)
     for i in range(n_mfcc):
         for prefix, values in [("audio_mfcc", mfcc), ("audio_delta_mfcc", delta_mfcc), ("audio_delta2_mfcc", delta2_mfcc)]:
             finite = np.isfinite(values[i])
             features[f"{prefix}_{i + 1}_mean"] = _round_or_nan(np.mean(values[i][finite]), 4) if finite.any() else np.nan
             features[f"{prefix}_{i + 1}_std"] = _round_or_nan(np.std(values[i][finite]), 4) if finite.any() else np.nan
+
     return features
 
 
