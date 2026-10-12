@@ -245,39 +245,46 @@ def parse_filename(filepath: str) -> dict:
     Throws ValueError if the filename does not strictly correspond with its survey record,
     preventing any file-swapping or corrupted audio associations.
     """
+    # Extract base filename from path (e.g., 'Y4-011_Y4_AM_Kapoy.WAV' from 'DATA/.../Y4-011_Y4_AM_Kapoy.WAV')
     filename = os.path.basename(filepath)
+    # Strip .WAV extension using .stem, then split on underscore delimiter: ['Y4-011', 'Y4', 'AM', 'Kapoy']
     parts = Path(filename).stem.split("_")
     
-    # Must have at least 4 tokens: Participant, Year, Session, Word
+    # Must have at least 4 tokens: Participant Code, Year Level, Session, and Spoken Word
     if len(parts) < 4:
         raise ValueError(f"Invalid recording filename: {filename}")
         
+    # Unpack the first 3 tokens: 'Y4-011' (participant), 'Y4' (year), 'AM' (session)
     participant_code, year_code, session_code = parts[:3]
+    # Rejoin any remaining tokens in case the word itself had underscores (e.g. 'Duha_duha')
     spoken_word = "_".join(parts[3:])
     
-    # 1. Verify participant exists in survey records
+    # 1. Verify participant code exists in the survey metadata registry
     if participant_code not in SURVEY_METADATA:
         raise ValueError(f"No survey row for {participant_code}")
         
+    # Make a shallow copy of the survey metadata dictionary to avoid mutating the master cache
     survey = SURVEY_METADATA[participant_code].copy()
+    # Pop the self-reported spoken word recorded by the student in the survey
     survey_word = survey.pop("survey_spoken_word")
+    # Resolve aliases (e.g., mapping 'Gaduha-duha' to canonical 'Duha-duha')
     canonical_filename_word = FILENAME_WORD_ALIASES.get(spoken_word, spoken_word)
     
-    # 2. Verify spoken word in filename matches word in survey
+    # 2. Case-insensitive comparison confirming the word spoken in the audio file matches the survey entry
     word_matches = canonical_filename_word.casefold() == survey_word.casefold()
     if not word_matches:
         raise ValueError(f"{participant_code}: filename word {spoken_word!r} != survey word {survey_word!r}")
         
-    # 3. Verify filename on disk matches Audio Filename recorded in survey
+    # 3. Verify the file stem on disk matches the exact Audio Filename documented in the survey CSV
     if Path(survey["survey_audio_filename"]).stem.casefold() != Path(filename).stem.casefold():
         raise ValueError(f"{participant_code}: filename does not match survey Audio Filename")
         
-    # 4. Verify session code (AM vs PM) matches survey class schedule
+    # 4. Verify session code (AM vs PM) matches survey class schedule (Morning -> AM, Afternoon/Evening -> PM)
     expected_session = "AM" if survey["session_name"].lower().startswith("morning") else "PM"
     if session_code != expected_session:
         raise ValueError(f"{participant_code}: filename session {session_code} != survey session {survey['session_name']}")
         
-    # Reconciled metadata ready for feature association
+    # Reconciled metadata ready for feature association with validated audit properties
     survey.update({
         "participant_code": participant_code,
         "year_code": year_code,

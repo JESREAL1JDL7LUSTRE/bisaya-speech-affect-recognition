@@ -121,22 +121,30 @@ def run_ml_demonstration():
     # -------------------------------------------------------------------------
     # [STEP 2] Leak-Free Cross-Validation Benchmark Loop
     # -------------------------------------------------------------------------
+    # Accumulator lists to store formatted summary rows for the terminal tables
     val_table, aro_table = [], []
+    # Dictionaries to store concatenated out-of-fold predictions across all 40 participants
     val_preds, aro_preds = {}, {}
 
+    # Iterate through each of the 5 candidate models
     for name, clf in models.items():
-        # ZERO LEAKAGE PIPELINE:
-        # Imputer and Scaler fit strictly inside each fold's 32 training samples,
-        # then transform the 8 validation samples without seeing validation labels.
+        # ZERO LEAKAGE SCIKIT-LEARN PIPELINE:
+        # Crucial Defense Principle: The SimpleImputer and StandardScaler are fit ONLY on the 32 training
+        # samples of each fold. They never see or compute statistics from the 8 validation samples.
         pipe = Pipeline([
+            # Impute unvoiced pitch NaNs using the median of the current training fold
             ("imp", SimpleImputer(strategy="median")),
+            # Standardize feature values to mean=0, variance=1 using training fold parameters
             ("s", StandardScaler()),
+            # Instantiate candidate classifier with fixed random seed
             ("clf", clf)
         ])
         
-        # 1. Evaluate 3-Class Valence
+        # 1. Evaluate 3-Class Valence using 5-Fold Stratified Cross-Validation
         res_v = cross_validate(pipe, X, y_val, cv=cv5, scoring=scoring)
+        # Generate out-of-fold predictions across all 40 participants for confusion matrix analysis
         val_preds[name] = cross_val_predict(pipe, X, y_val, cv=cv5)
+        # Format metrics: Mean Accuracy ± SD, Macro Precision, Macro Recall, and Macro F1 ± SD
         val_table.append([
             name,
             f"{res_v['test_accuracy'].mean()*100:.1f}% ± {res_v['test_accuracy'].std()*100:.1f}%",
@@ -145,9 +153,11 @@ def run_ml_demonstration():
             f"{res_v['test_f1_macro'].mean():.3f} ± {res_v['test_f1_macro'].std():.3f}"
         ])
         
-        # 2. Evaluate 3-Class Arousal
+        # 2. Evaluate 3-Class Arousal using 5-Fold Stratified Cross-Validation
         res_a = cross_validate(pipe, X, y_aro, cv=cv5, scoring=scoring)
+        # Generate out-of-fold predictions for Arousal
         aro_preds[name] = cross_val_predict(pipe, X, y_aro, cv=cv5)
+        # Format metrics for Arousal table
         aro_table.append([
             name,
             f"{res_a['test_accuracy'].mean()*100:.1f}% ± {res_a['test_accuracy'].std()*100:.1f}%",
