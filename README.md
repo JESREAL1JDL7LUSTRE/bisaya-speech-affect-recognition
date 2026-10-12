@@ -165,3 +165,16 @@ To re-extract all features, compile the multimodal dataset, perform statistical 
 - **Build Multimodal Dataset:** `.\.venv\Scripts\python.exe src/multimodal_dataset.py`
 - **Run Descriptive Statistics:** `.\.venv\Scripts\python.exe src/statistics_analysis.py`
 - **Generate Visualizations:** `.\.venv\Scripts\python.exe src/visualizations.py`
+
+
+# 0. Activate Virtual Environment (Run once at the start)
+.\.venv\Scripts\Activate.ps1
+
+# --- Part A: Raw Data and Dataset Verification ---
+.\.venv\Scripts\python.exe demo_verification.py
+
+# --- Part B: Preprocessing and Feature Extraction ---
+.\.venv\Scripts\python.exe demo_feature_extraction.py
+
+# --- Part C: Machine Learning and Results ---
+.\.venv\Scripts\python.exe demo_ml_evaluation.py
