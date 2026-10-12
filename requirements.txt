@@ -1,0 +1,30 @@
+# ==============================================================================
+# Bisaya Speech Affect Recognition - Dependencies
+# CS412 Affective Computing Research Mini-Project
+# ==============================================================================
+
+# Core Scientific Computing & Data Processing
+numpy>=1.24.0
+scipy>=1.11.0
+pandas>=2.0.0
+
+# Audio Processing & Feature Extraction (F0/pYIN, MFCCs, RMS, Spectral)
+librosa>=0.10.0
+soundfile>=0.12.1
+
+# Computer Vision & Facial Action Unit Extraction (MediaPipe FACS Blendshapes)
+mediapipe>=0.10.0
+opencv-python>=4.8.0
+
+# Machine Learning & Statistical Modeling (Stratified CV, LOOCV, Pipelines)
+scikit-learn>=1.3.0
+
+# Visualization & Tabular Reporting
+matplotlib>=3.7.0
+seaborn>=0.12.0
+adjustText>=1.0.0
+tabulate>=0.9.0
+tqdm>=4.65.0
+
+# Interactive Notebook Environment (ser_machine_learning_experiments.ipynb)
+ipykernel>=6.25.0
